@@ -191,6 +191,7 @@ function generateUUID(){return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[
 
 async function init(){
   loadFromStorage();
+  await loadPublicConfig();
   await loadCourse();
   if(!state.studentName||!state.studentUUID){
     showScreen('screen-onboard');
@@ -216,10 +217,23 @@ async function completeOnboarding(){
   showScreen('screen-main');
   renderMainScreen();
 }
+async function loadPublicConfig(){
+  try{
+    const response=await fetch('/.netlify/functions/public-config',{cache:'no-store'});
+    const data=await response.json();
+    GOOGLE_OAUTH_CLIENT_ID=data.googleOAuthClientId || '';
+  }catch(err){
+    console.error(err);
+    toast('Could not load app configuration.','error');
+  }
+}
 function renderGoogleSignIn(){
   const box=document.getElementById('googleSignInBox');
   if(!box)return;
-
+if(!GOOGLE_OAUTH_CLIENT_ID){
+  toast('Missing Google OAuth client configuration.','error');
+  return;
+}
   if(!window.google || !google.accounts || !google.accounts.id){
     setTimeout(renderGoogleSignIn,200);
     return;
