@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MedTutor</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
 :root{--bg:#f5f2eb;--bg2:#ede9e0;--surface:#fff;--surface2:#faf8f4;--border:#ddd8cc;--border-dark:#c8c2b4;--ink:#1a1814;--ink2:#4a4540;--ink3:#8a8278;--accent:#2d6a4f;--accent-light:#d8ede3;--accent-dim:rgba(45,106,79,0.12);--amber:#b5610a;--amber-light:#fdecd5;--red:#c0392b;--red-light:#fce8e6;--blue:#1a4a7a;--blue-light:#e0eaf5;--gold:#8a6a1a;--gold-light:#f5edd5;--serif:'Lora',Georgia,serif;--sans:'DM Sans',sans-serif;--mono:'DM Mono',monospace;--radius:8px;--radius-lg:14px;--shadow:0 2px 12px rgba(0,0,0,0.08);--shadow-lg:0 8px 32px rgba(0,0,0,0.12)}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -113,18 +114,22 @@ textarea{resize:vertical;min-height:80px}
   <div class="onboard-wrap">
     <div class="onboard-card">
       <div class="onboard-logo">Med<em>Tutor</em></div>
-      <div class="onboard-sub">Your adaptive learning companion.<br>Enter your name to get started — you'll only need to do this once.</div>
-      <div class="field-group" style="text-align:left">
-        <label>Your Full Name</label>
-        <input type="text" id="onboardName" placeholder="e.g. Jane Smith" style="font-size:16px;padding:12px">
-      </div>
+      <div class="onboard-sub">Your CAPPS Tutor.<br>Sign in with your CWRU Google account to begin.</div>
+
+<div id="googleSignInBox" style="display:flex;justify-content:center;margin:20px 0;"></div>
+
+<div id="signedInBox" style="display:none;text-align:left;background:var(--accent-light);border:1px solid #a8d5be;border-radius:var(--radius);padding:14px;margin:16px 0;">
+  <div style="font-size:13px;color:var(--accent);font-weight:600;margin-bottom:4px;">Signed in</div>
+  <div id="signedInName" style="font-size:14px;color:var(--ink);"></div>
+  <div id="signedInEmail" style="font-size:12px;color:var(--ink3);font-family:var(--mono);"></div>
+</div>
       <div id="onboardImportSection" style="display:none">
         <div class="divider"></div>
         <div style="font-size:13px;color:var(--ink3);margin-bottom:8px">Returning on a new device? Import your backup file to restore all your progress.</div>
         <div class="import-zone" onclick="document.getElementById('importFileInput').click()">📁 Click to import backup file</div>
         <input type="file" id="importFileInput" accept=".json" style="display:none" onchange="handleImport(event)">
       </div>
-      <button class="btn btn-primary btn-lg" style="width:100%;margin-top:20px;justify-content:center" onclick="completeOnboarding()">Begin →</button>
+      <button class="btn btn-primary btn-lg" id="beginBtn" style="width:100%;margin-top:20px;justify-content:center" onclick="completeOnboarding()" disabled>Begin →</button>
       <div style="margin-top:16px"><button class="btn btn-ghost btn-sm" onclick="toggleImportSection()">Have a backup file?</button></div>
     </div>
   </div>
@@ -170,6 +175,7 @@ textarea{resize:vertical;min-height:80px}
 
 <script>
 const DEFAULT_QUESTION_SET='qset_01';
+const GOOGLE_OAUTH_CLIENT_ID='810734891861-imdji5n52hpdh715sbp2otqtsk867rr4.apps.googleusercontent.com';
 let COURSE_DATA=null;
 
 async function callClaude(system,messages){
@@ -179,14 +185,108 @@ async function callClaude(system,messages){
   return d.text||'';
 }
 
-let state={studentName:'',studentUUID:'',courseId:'',courseName:'',questions:[],currentPhase:null,selfConcepts:[],socraticHistory:[],masteredConcepts:{},essayText:'',essayCitations:{},reflectionText:'',reflectionLearned:'',exerciseStartTime:null,exerciseEndTime:null,completedExercises:[],leitnerCards:[],leitnerSession:null};
-
+let state={studentName:'',studentUUID:'',googleSub:'',googleEmail:'',googleName:'',googlePicture:'',googleHd:'',courseId:'',courseName:'',questions:[],currentPhase:null,selfConcepts:[],socraticHistory:[],masteredConcepts:{},essayText:'',essayCitations:{},reflectionText:'',reflectionLearned:'',exerciseStartTime:null,exerciseEndTime:null,completedExercises:[],leitnerCards:[],leitnerSession:null};
+  
 function generateUUID(){return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return(c==='x'?r:(r&0x3|0x8)).toString(16);});}
 
-async function init(){loadFromStorage();await loadCourse();if(!state.studentName||!state.studentUUID){showScreen('screen-onboard');}else{showScreen('screen-main');renderMainScreen();}}
+async function init(){
+  loadFromStorage();
+  await loadCourse();
+  if(!state.studentName||!state.studentUUID){
+    showScreen('screen-onboard');
+    renderGoogleSignIn();
+  }else{
+    showScreen('screen-main');
+    renderMainScreen();
+  }
+}
+async function completeOnboarding(){
+  if(!state.googleSub || !state.googleEmail){
+    toast('Please sign in with your CWRU Google account first.','error');
+    return;
+  }
 
-async function completeOnboarding(){const name=document.getElementById('onboardName').value.trim();if(!name){toast('Please enter your name','error');return;}state.studentName=name;state.studentUUID=generateUUID();saveToStorage();await loadCourse();showScreen('screen-main');renderMainScreen();}
+  if(!state.studentUUID){
+    state.studentUUID=generateUUID();
+  }
 
+  state.studentName=state.googleName || state.googleEmail;
+  saveToStorage();
+  await loadCourse();
+  showScreen('screen-main');
+  renderMainScreen();
+}
+function renderGoogleSignIn(){
+  const box=document.getElementById('googleSignInBox');
+  if(!box)return;
+
+  if(!window.google || !google.accounts || !google.accounts.id){
+    setTimeout(renderGoogleSignIn,200);
+    return;
+  }
+
+  google.accounts.id.initialize({
+    client_id: GOOGLE_OAUTH_CLIENT_ID,
+    callback: handleGoogleCredential
+  });
+
+  google.accounts.id.renderButton(box,{
+    theme:'outline',
+    size:'large',
+    type:'standard',
+    text:'signin_with',
+    shape:'rectangular'
+  });
+}
+
+async function handleGoogleCredential(response){
+  try{
+    const verified=await verifyGoogleCredential(response.credential);
+
+    state.googleSub=verified.googleSub;
+    state.googleEmail=verified.email;
+    state.googleName=verified.name || verified.email;
+    state.googlePicture=verified.picture || '';
+    state.googleHd=verified.hd || '';
+    state.studentName=state.googleName;
+
+    if(!state.studentUUID){
+      state.studentUUID=generateUUID();
+    }
+
+    const signedInBox=document.getElementById('signedInBox');
+    const signedInName=document.getElementById('signedInName');
+    const signedInEmail=document.getElementById('signedInEmail');
+    const beginBtn=document.getElementById('beginBtn');
+
+    if(signedInBox)signedInBox.style.display='block';
+    if(signedInName)signedInName.textContent=state.googleName;
+    if(signedInEmail)signedInEmail.textContent=state.googleEmail;
+    if(beginBtn)beginBtn.disabled=false;
+
+    saveToStorage();
+    toast('Google sign-in verified.','success');
+  }catch(err){
+    console.error(err);
+    toast(err.message || 'Google sign-in failed.','error');
+  }
+}
+
+async function verifyGoogleCredential(credential){
+  const response=await fetch('/.netlify/functions/verify-google-login',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({credential})
+  });
+
+  const data=await response.json().catch(()=>({}));
+
+  if(!response.ok || !data.ok){
+    throw new Error(data.error || 'Google sign-in verification failed.');
+  }
+
+  return data.user;
+}
 function toggleImportSection(){const s=document.getElementById('onboardImportSection');s.style.display=s.style.display==='none'?'block':'none';}
 
 async function loadCourse(){
@@ -265,12 +365,16 @@ submitPerformance(record)
 }
   async function submitPerformance(record) {
   const payload = {
-    studentName: state.studentName,
-    studentUUID: state.studentUUID,
-    courseId: state.courseId,
-    courseName: state.courseName,
-    ...record
-  };
+  studentName: state.studentName,
+  studentUUID: state.studentUUID,
+  googleSub: state.googleSub || '',
+  googleEmail: state.googleEmail || '',
+  googleName: state.googleName || '',
+  googleHd: state.googleHd || '',
+  courseId: state.courseId,
+  courseName: state.courseName,
+  ...record
+};
 
   const response = await fetch('/.netlify/functions/submit-performance', {
     method: 'POST',
