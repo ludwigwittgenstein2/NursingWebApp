@@ -264,6 +264,31 @@ submitPerformance(record)
     renderMainScreen();
   });
 }
+  async function submitPerformance(record) {
+  const payload = {
+    studentName: state.studentName,
+    studentUUID: state.studentUUID,
+    courseId: state.courseId,
+    courseName: state.courseName,
+    ...record
+  };
+
+  const response = await fetch('/.netlify/functions/submit-performance', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(payload)
+  });
+
+  const data = await response.json().catch(() => ({}));
+
+  if (!response.ok || !data.ok) {
+    throw new Error(data.error || JSON.stringify(data) || 'Google Sheet save failed');
+  }
+
+  return data;
+}
 
 function renderCompletedState(q){const record=state.completedExercises.find(e=>e.questionId===q.id);const el=document.getElementById('mainContent');el.innerHTML=`<div style="text-align:center;padding:40px 0 24px"><div style="font-size:48px;margin-bottom:12px">✓</div><div style="font-family:var(--serif);font-size:24px;margin-bottom:8px">${escHtml(q.topic)} — Complete</div><div style="font-size:14px;color:var(--ink3);margin-bottom:24px">${record?`Completed ${formatDeadline(record.completedAt)} · ${record.conceptsMastered}/${record.totalConcepts} concepts · ${record.timeMinutes}m · ${record.totalExchanges} exchanges`:''} ${record?.isLate?'· <span style="color:var(--red)">Late</span>':''}</div><div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><button class="btn btn-secondary" onclick="showScreen('screen-dashboard')">📊 My Progress</button><button class="btn btn-secondary" onclick="showScreen('screen-leitner')">🃏 Review Cards</button><button class="btn btn-primary" onclick="exportData()">⬇ Export</button></div></div>`;}
 
