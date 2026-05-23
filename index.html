@@ -174,7 +174,7 @@ let COURSE_DATA=null;
 
 const MODEL='claude-sonnet-4-20250514';
 async function callClaude(system,messages){
-  const r=await fetch('/.netlify/functions/claude-feedback',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:MODEL,max_tokens:1000,system,messages})});
+  const r=await fetch('/.netlify/functions/claude-feedback',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({max_tokens:1000,system,messages})});
   if(!r.ok){const e=await r.text();throw new Error(`API ${r.status}: ${e}`);}
   const d=await r.json();
   return d.text||'';
