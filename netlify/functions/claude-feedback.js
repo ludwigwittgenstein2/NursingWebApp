@@ -10,7 +10,7 @@ exports.handler = async function(event) {
   try {
     const body = JSON.parse(event.body || '{}');
     const payload = {
-      model: body.model || 'claude-sonnet-4-20250514',
+      model: body.model || process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-6',
       max_tokens: body.max_tokens || 1000,
       system: body.system || '',
       messages: body.messages || []
