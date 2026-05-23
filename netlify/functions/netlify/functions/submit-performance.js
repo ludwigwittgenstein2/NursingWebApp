@@ -11,10 +11,11 @@ exports.handler = async function(event) {
 
   for (const key of required) {
     if (!process.env[key]) {
-      return {
-        statusCode: 500,
-        body: JSON.stringify({ error: `Missing ${key} environment variable.` })
-      };
+      return return {
+  statusCode: 500,
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ error: `Missing ${key} environment variable.` })
+};
     }
   }
 
