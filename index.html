@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MedTutor</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f5f2eb;--bg2:#ede9e0;--surface:#fff;--surface2:#faf8f4;--border:#ddd8cc;--border-dark:#c8c2b4;--ink:#1a1814;--ink2:#4a4540;--ink3:#8a8278;--accent:#2d6a4f;--accent-light:#d8ede3;--accent-dim:rgba(45,106,79,0.12);--amber:#b5610a;--amber-light:#fdecd5;--red:#c0392b;--red-light:#fce8e6;--blue:#1a4a7a;--blue-light:#e0eaf5;--gold:#8a6a1a;--gold-light:#f5edd5;--serif:'Lora',Georgia,serif;--sans:'DM Sans',sans-serif;--mono:'DM Mono',monospace;--radius:8px;--radius-lg:14px;--shadow:0 2px 12px rgba(0,0,0,0.08);--shadow-lg:0 8px 32px rgba(0,0,0,0.12)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:100vh;font-size:15px;line-height:1.65}
+.screen{display:none;min-height:100vh}.screen.active{display:flex;flex-direction:column}
+.app-header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 28px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;box-shadow:0 1px 4px rgba(0,0,0,0.05)}
+.logo{font-family:var(--serif);font-size:19px;color:var(--ink)}.logo em{color:var(--accent);font-style:normal}
+.header-meta{font-family:var(--mono);font-size:11px;color:var(--ink3)}
+.header-actions{display:flex;gap:8px;align-items:center}
+.btn{font-family:var(--sans);font-size:13px;font-weight:500;border:none;border-radius:var(--radius);cursor:pointer;padding:8px 16px;transition:all 0.15s;display:inline-flex;align-items:center;gap:6px;line-height:1}
+.btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:#235840;transform:translateY(-1px)}
+.btn-secondary{background:var(--surface);color:var(--ink2);border:1px solid var(--border-dark)}.btn-secondary:hover{background:var(--bg2)}
+.btn-ghost{background:transparent;color:var(--ink3);border:1px solid var(--border)}.btn-ghost:hover{background:var(--bg2);color:var(--ink2)}
+.btn-amber{background:var(--amber);color:#fff}.btn-amber:hover{background:#9a520a}
+.btn-sm{padding:6px 12px;font-size:12px}.btn-lg{padding:12px 24px;font-size:15px;font-weight:600}
+.btn:disabled{opacity:0.4;cursor:not-allowed;transform:none!important}
+.content{flex:1;max-width:780px;width:100%;margin:0 auto;padding:32px 24px}
+.content-wide{flex:1;max-width:1100px;width:100%;margin:0 auto;padding:32px 24px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px;margin-bottom:16px;box-shadow:var(--shadow)}
+.card-title{font-family:var(--serif);font-size:17px;color:var(--ink);margin-bottom:4px}
+.card-subtitle{font-size:13px;color:var(--ink3);margin-bottom:16px}
+.phase-badge{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;font-weight:500;padding:3px 10px;border-radius:20px;letter-spacing:.5px;text-transform:uppercase;margin-bottom:12px}
+.phase-1{background:var(--blue-light);color:var(--blue)}.phase-2{background:var(--amber-light);color:var(--amber)}.phase-3{background:var(--accent-light);color:var(--accent)}.phase-4{background:var(--gold-light);color:var(--gold)}
+.question-box{background:var(--bg2);border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:var(--radius);padding:18px 20px;margin-bottom:20px;font-family:var(--serif);font-size:15px;line-height:1.75;color:var(--ink);white-space:pre-wrap}
+label{display:block;font-size:11px;font-weight:600;color:var(--ink3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:5px}
+input[type=text],textarea{font-family:var(--sans);font-size:14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);color:var(--ink);padding:10px 12px;width:100%;outline:none;transition:border-color .15s,box-shadow .15s;line-height:1.5}
+input:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim)}
+input::placeholder,textarea::placeholder{color:var(--ink3);opacity:.7}
+textarea{resize:vertical;min-height:80px}
+.field-group{margin-bottom:14px}.help-text{font-size:12px;color:var(--ink3);margin-top:4px;line-height:1.5}
+.concept-row{display:grid;grid-template-columns:1fr 2fr auto;gap:10px;align-items:start;margin-bottom:10px;padding:12px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius)}
+.chat-window{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;min-height:300px;max-height:420px;overflow-y:auto;margin-bottom:14px;display:flex;flex-direction:column;gap:12px}
+.msg{display:flex;flex-direction:column;gap:3px;animation:msgIn .2s ease}
+@keyframes msgIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.msg-label{font-family:var(--mono);font-size:10px;color:var(--ink3);letter-spacing:.3px}
+.msg-bubble{padding:12px 14px;border-radius:10px;font-size:14px;line-height:1.6;max-width:88%}
+.msg.tutor .msg-bubble{background:var(--surface);border:1px solid var(--border);border-bottom-left-radius:3px;color:var(--ink);align-self:flex-start}
+.msg.student .msg-label{text-align:right}.msg.student .msg-bubble{background:var(--accent);color:#fff;border-bottom-right-radius:3px;align-self:flex-end;margin-left:auto}
+.msg.system .msg-bubble{background:var(--gold-light);border:1px solid #e8d8a0;color:var(--gold);font-family:var(--mono);font-size:12px;align-self:center;text-align:center;width:100%;max-width:100%}
+.chat-input-row{display:flex;gap:8px;align-items:flex-end}.chat-input-row textarea{flex:1;min-height:52px;max-height:120px}
+.roadmap{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.roadmap-item{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface);transition:all .2s}
+.roadmap-item.active{border-color:var(--accent);background:var(--accent-light);box-shadow:0 2px 8px rgba(45,106,79,0.15)}
+.roadmap-item.done{border-color:var(--border);background:var(--surface2);opacity:.75}
+.ri-icon{font-size:16px;width:20px;text-align:center;flex-shrink:0}.ri-label{font-size:14px;color:var(--ink);flex:1}.ri-label.done{text-decoration:line-through;color:var(--ink3)}.ri-status{font-family:var(--mono);font-size:10px;color:var(--ink3)}
+.progress-bar-wrap{height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin-bottom:6px}
+.progress-bar-fill{height:100%;background:var(--accent);border-radius:3px;transition:width .4s ease}
+.progress-label{font-family:var(--mono);font-size:11px;color:var(--ink3);margin-bottom:16px}
+.reflection-comparison{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+.compare-col{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:16px}
+.compare-col h4{font-family:var(--mono);font-size:10px;color:var(--ink3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+.compare-col ul{list-style:none;display:flex;flex-direction:column;gap:6px}
+.compare-col li{font-size:13px;color:var(--ink2);padding:5px 8px;border-radius:5px;background:var(--surface);border:1px solid var(--border);line-height:1.4}
+.compare-col li.matched{border-color:#a8d5be;background:var(--accent-light)}
+.dashboard-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;margin-bottom:24px}
+.dash-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow)}
+.dash-card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+.dash-qid{font-family:var(--mono);font-size:11px;color:var(--accent);font-weight:500}
+.dash-topic{font-family:var(--serif);font-size:15px;color:var(--ink);margin-bottom:10px;line-height:1.4}
+.dash-stats{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.dash-stat{display:flex;flex-direction:column;gap:1px}
+.dash-stat-val{font-family:var(--mono);font-size:16px;font-weight:500;color:var(--ink)}
+.dash-stat-lbl{font-size:10px;color:var(--ink3);text-transform:uppercase;letter-spacing:.3px}
+.late-flag{font-family:var(--mono);font-size:10px;background:var(--red-light);color:var(--red);padding:2px 8px;border-radius:20px}
+.on-time-flag{font-family:var(--mono);font-size:10px;background:var(--accent-light);color:var(--accent);padding:2px 8px;border-radius:20px}
+.leitner-boxes{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:24px}
+.leitner-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;text-align:center;cursor:pointer;transition:all .15s}
+.leitner-box:hover{border-color:var(--accent);background:var(--accent-light)}
+.leitner-box .box-num{font-family:var(--mono);font-size:20px;color:var(--accent);font-weight:500}
+.leitner-box .box-count{font-size:12px;color:var(--ink3);margin-top:2px}.leitner-box .box-label{font-size:10px;color:var(--ink3);margin-top:4px}
+.flashcard{perspective:1000px;margin:0 auto 20px;max-width:500px;height:220px;cursor:pointer}
+.fc-inner{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .4s ease}
+.fc-inner.flipped{transform:rotateY(180deg)}
+.fc-face{position:absolute;inset:0;backface-visibility:hidden;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;box-shadow:var(--shadow-lg)}
+.fc-back{transform:rotateY(180deg)}
+.fc-label{font-family:var(--mono);font-size:10px;color:var(--ink3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px}
+.fc-concept{font-family:var(--serif);font-size:17px;color:var(--ink);line-height:1.5}.fc-answer{font-size:13px;color:var(--ink2);line-height:1.6}
+.typing-indicator{display:flex;gap:4px;align-items:center;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:10px;border-bottom-left-radius:3px;width:fit-content}
+.typing-dot{width:6px;height:6px;background:var(--ink3);border-radius:50%;animation:typing 1.2s infinite}
+.typing-dot:nth-child(2){animation-delay:.2s}.typing-dot:nth-child(3){animation-delay:.4s}
+@keyframes typing{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-4px);opacity:1}}
+.onboard-wrap{display:flex;align-items:center;justify-content:center;min-height:100vh;background:var(--bg);padding:24px}
+.onboard-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:40px;max-width:440px;width:100%;box-shadow:var(--shadow-lg);text-align:center}
+.onboard-logo{font-family:var(--serif);font-size:32px;color:var(--ink);margin-bottom:8px}
+.onboard-logo em{color:var(--accent);font-style:normal}
+.onboard-sub{font-size:14px;color:var(--ink3);margin-bottom:28px;line-height:1.6}
+.toast-wrap{position:fixed;bottom:20px;right:20px;display:flex;flex-direction:column;gap:8px;z-index:9000}
+.toast{background:var(--surface);border:1px solid var(--border-dark);border-radius:var(--radius);padding:10px 16px;font-size:13px;color:var(--ink);display:flex;align-items:center;gap:8px;box-shadow:var(--shadow-lg);animation:toastIn .2s ease;max-width:280px}
+.toast.success{border-color:var(--accent)}.toast.error{border-color:var(--red)}
+@keyframes toastIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.divider{height:1px;background:var(--border);margin:20px 0}
+.stat-row{display:flex;gap:20px;flex-wrap:wrap;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;margin-bottom:16px}
+.stat-item{display:flex;flex-direction:column;gap:1px}
+.stat-val{font-family:var(--mono);font-size:18px;color:var(--accent);font-weight:500}
+.stat-lbl{font-size:10px;color:var(--ink3);text-transform:uppercase;letter-spacing:.3px}
+.no-data{text-align:center;padding:48px 24px;color:var(--ink3);font-size:14px;line-height:1.7}
+.no-data-icon{font-size:40px;margin-bottom:12px;opacity:.5}
+.config-warn{background:var(--amber-light);border:1px solid #f0c080;border-radius:var(--radius);padding:14px 18px;font-size:13px;color:var(--amber);margin-bottom:16px;line-height:1.5}
+.import-zone{border:2px dashed var(--border-dark);border-radius:var(--radius);padding:20px;text-align:center;cursor:pointer;transition:all .15s;margin-top:12px}
+.import-zone:hover{border-color:var(--accent);background:var(--accent-dim)}
+</style>
+</head>
+<body>
+
+<div id="screen-onboard" class="screen active">
+  <div class="onboard-wrap">
+    <div class="onboard-card">
+      <div class="onboard-logo">Med<em>Tutor</em></div>
+      <div class="onboard-sub">Your adaptive learning companion.<br>Enter your name to get started — you'll only need to do this once.</div>
+      <div class="field-group" style="text-align:left">
+        <label>Your Full Name</label>
+        <input type="text" id="onboardName" placeholder="e.g. Jane Smith" style="font-size:16px;padding:12px">
+      </div>
+      <div id="onboardImportSection" style="display:none">
+        <div class="divider"></div>
+        <div style="font-size:13px;color:var(--ink3);margin-bottom:8px">Returning on a new device? Import your backup file to restore all your progress.</div>
+        <div class="import-zone" onclick="document.getElementById('importFileInput').click()">📁 Click to import backup file</div>
+        <input type="file" id="importFileInput" accept=".json" style="display:none" onchange="handleImport(event)">
+      </div>
+      <button class="btn btn-primary btn-lg" style="width:100%;margin-top:20px;justify-content:center" onclick="completeOnboarding()">Begin →</button>
+      <div style="margin-top:16px"><button class="btn btn-ghost btn-sm" onclick="toggleImportSection()">Have a backup file?</button></div>
+    </div>
+  </div>
+</div>
+
+<div id="screen-main" class="screen">
+  <div class="app-header">
+    <div class="logo">Med<em>Tutor</em></div>
+    <div class="header-meta" id="headerMeta"></div>
+    <div class="header-actions">
+      <button class="btn btn-ghost btn-sm" onclick="showScreen('screen-dashboard')">📊 My Progress</button>
+      <button class="btn btn-ghost btn-sm" onclick="showScreen('screen-leitner')">🃏 Review Cards</button>
+      <button class="btn btn-secondary btn-sm" onclick="exportData()">⬇ Export</button>
+    </div>
+  </div>
+  <div class="content" id="mainContent"></div>
+</div>
+
+<div id="screen-dashboard" class="screen">
+  <div class="app-header">
+    <div class="logo">Med<em>Tutor</em></div>
+    <div class="header-meta">My Progress</div>
+    <div class="header-actions">
+      <button class="btn btn-ghost btn-sm" onclick="showScreen('screen-main')">← Back</button>
+      <button class="btn btn-secondary btn-sm" onclick="exportData()">⬇ Export</button>
+    </div>
+  </div>
+  <div class="content-wide" id="dashboardContent"></div>
+</div>
+
+<div id="screen-leitner" class="screen">
+  <div class="app-header">
+    <div class="logo">Med<em>Tutor</em></div>
+    <div class="header-meta">Review Cards</div>
+    <div class="header-actions">
+      <button class="btn btn-ghost btn-sm" onclick="showScreen('screen-main')">← Back</button>
+    </div>
+  </div>
+  <div class="content" id="leitnerContent"></div>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+const DEFAULT_QUESTION_SET='qset_01';
+let COURSE_DATA=null;
+
+const MODEL='claude-sonnet-4-20250514';
+async function callClaude(system,messages){
+  const r=await fetch('/.netlify/functions/claude-feedback',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:MODEL,max_tokens:1000,system,messages})});
+  if(!r.ok){const e=await r.text();throw new Error(`API ${r.status}: ${e}`);}
+  const d=await r.json();
+  return d.text||'';
+}
+
+let state={studentName:'',studentUUID:'',courseId:'',courseName:'',questions:[],currentPhase:null,selfConcepts:[],socraticHistory:[],masteredConcepts:{},essayText:'',essayCitations:{},reflectionText:'',reflectionLearned:'',exerciseStartTime:null,exerciseEndTime:null,completedExercises:[],leitnerCards:[],leitnerSession:null};
+
+function generateUUID(){return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return(c==='x'?r:(r&0x3|0x8)).toString(16);});}
+
+async function init(){loadFromStorage();await loadCourse();if(!state.studentName||!state.studentUUID){showScreen('screen-onboard');}else{showScreen('screen-main');renderMainScreen();}}
+
+async function completeOnboarding(){const name=document.getElementById('onboardName').value.trim();if(!name){toast('Please enter your name','error');return;}state.studentName=name;state.studentUUID=generateUUID();saveToStorage();await loadCourse();showScreen('screen-main');renderMainScreen();}
+
+function toggleImportSection(){const s=document.getElementById('onboardImportSection');s.style.display=s.style.display==='none'?'block':'none';}
+
+async function loadCourse(){
+  const params=new URLSearchParams(window.location.search);
+  const qset=params.get('qset')||DEFAULT_QUESTION_SET;
+  try{
+    const response=await fetch(`/questions/${qset}.json`,{cache:'no-store'});
+    if(!response.ok)throw new Error(`Could not load /questions/${qset}.json`);
+    COURSE_DATA=await response.json();
+    state.courseId=COURSE_DATA.courseId;
+    state.courseName=COURSE_DATA.courseName;
+    state.questions=COURSE_DATA.questions||[];
+  }catch(e){
+    toast(`Question load error: ${e.message}`,'error');
+    state.courseId=state.courseId||'UNKNOWN';
+    state.courseName=state.courseName||'Course not loaded';
+    state.questions=[];
+  }
+  const m=document.getElementById('headerMeta');
+  if(m)m.textContent=`${state.courseId} · ${state.studentName}`;
+}
+
+function getActiveQuestion(){const today=new Date().toISOString().split('T')[0];let active=null;for(const q of state.questions){if(q.releaseDate<=today)active=q;}return active;}
+function isLate(q){if(!q.deadline)return false;return new Date()>new Date(q.deadline);}
+function isCompleted(qid){return state.completedExercises.some(e=>e.questionId===qid);}
+function countExchanges(){return Math.floor((state.socraticHistory||[]).length/2);}
+
+function renderMainScreen(){const q=getActiveQuestion();const el=document.getElementById('mainContent');if(!q){el.innerHTML='<div class="no-data"><div class="no-data-icon">📅</div><div>No questions available yet.</div></div>';return;}if(isCompleted(q.id)&&!['socratic','write','reflect'].includes(state.currentPhase)){renderCompletedState(q);return;}if(!state.currentPhase||state.currentPhase==='selfAssess'){state.currentPhase='selfAssess';renderSelfAssessPhase(q);}else if(state.currentPhase==='socratic'){renderSocraticPhase(q);}else if(state.currentPhase==='write'){renderWritePhase(q);}else if(state.currentPhase==='reflect'){renderReflectPhase(q);}else if(state.currentPhase==='complete'){renderCompletedState(q);}}
+
+function renderSelfAssessPhase(q){const late=isLate(q);const el=document.getElementById('mainContent');el.innerHTML=`<div class="phase-badge phase-1">Phase 1 of 3 · Self Assessment</div>${late?'<div class="config-warn">⚠ Past deadline — submission will be marked late.</div>':''}<div class="card"><div class="card-title">${escHtml(q.topic)}</div><div class="card-subtitle">${q.id} · Released ${formatDate(q.releaseDate)}${q.deadline?' · Due '+formatDeadline(q.deadline):''}</div><div class="question-box">${escHtml(q.question)}</div><div style="background:var(--blue-light);border:1px solid #b0c8e8;border-radius:var(--radius);padding:14px 16px;margin-bottom:20px;font-size:13px;color:var(--blue);line-height:1.6"><strong>Before engaging with the tutor</strong>, list the concepts you already know about this question and what you understand about each. This is not graded — it is a record of your starting knowledge. Do not use AI assistance for this step.</div><div id="selfConceptList">${(state.selfConcepts.length>0?state.selfConcepts:[{concept:'',knowledge:''}]).map((c,i)=>renderSelfConceptRow(i,c)).join('')}</div><button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="addSelfConcept()">+ Add concept</button></div><div style="display:flex;gap:10px;justify-content:flex-end"><button class="btn btn-primary btn-lg" onclick="submitSelfAssessment()">Submit & Begin Learning →</button></div>`;if(!state.exerciseStartTime)state.exerciseStartTime=new Date().toISOString();}
+
+function renderSelfConceptRow(i,c={}){return `<div class="concept-row" id="scrow_${i}"><div><label>Concept ${i+1}</label><input type="text" placeholder="e.g. Th1 vs Th2" value="${escHtml(c.concept||'')}" oninput="updateSelfConcept(${i},'concept',this.value)"></div><div><label>What you know</label><textarea rows="2" placeholder="Brief notes…" oninput="updateSelfConcept(${i},'knowledge',this.value)">${escHtml(c.knowledge||'')}</textarea></div><div style="padding-top:22px"><button class="btn btn-ghost btn-sm" onclick="removeSelfConcept(${i})" ${i===0?'disabled':''}>✕</button></div></div>`;}
+
+function addSelfConcept(){state.selfConcepts.push({concept:'',knowledge:''});const el=document.getElementById('selfConceptList');const i=state.selfConcepts.length-1;el.insertAdjacentHTML('beforeend',renderSelfConceptRow(i,state.selfConcepts[i]));saveToStorage();}
+function removeSelfConcept(i){state.selfConcepts.splice(i,1);renderSelfAssessPhase(getActiveQuestion());saveToStorage();}
+function updateSelfConcept(i,field,value){if(!state.selfConcepts[i])state.selfConcepts[i]={};state.selfConcepts[i][field]=value;saveToStorage();}
+
+function submitSelfAssessment(){const rows=document.querySelectorAll('[id^="scrow_"]');state.selfConcepts=[];rows.forEach(row=>{const inputs=row.querySelectorAll('input,textarea');state.selfConcepts.push({concept:inputs[0].value.trim(),knowledge:inputs[1].value.trim()});});const filled=state.selfConcepts.filter(c=>c.concept.trim());if(filled.length===0){toast('Please add at least one concept','error');return;}state.selfConcepts=filled;state.currentPhase='socratic';state.socraticHistory=[];state.masteredConcepts={};state.essayText='';state.essayCitations={};saveToStorage();renderMainScreen();}
+
+function renderSocraticPhase(q){const el=document.getElementById('mainContent');const total=q.concepts.length;const doneCount=Object.keys(state.masteredConcepts).length;const pct=Math.round((doneCount/total)*100);const allDone=doneCount>=total;el.innerHTML=`<div class="phase-badge phase-2">Phase 2 of 3 · Concept Mastery</div>${isLate(q)?'<div class="config-warn">⚠ Past deadline — submission will be marked late.</div>':''}<div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:${pct}%"></div></div><div class="progress-label">${doneCount} of ${total} concepts mastered</div><div class="roadmap" style="margin-bottom:20px">${q.concepts.map(c=>{const done=!!state.masteredConcepts[c.id];const summary=state.masteredConcepts[c.id]?.summary||'';return`<div class="roadmap-item ${done?'done':'active'}"><div class="ri-icon">${done?'✓':'○'}</div><div style="flex:1"><div class="ri-label ${done?'done':''}">${escHtml(c.label)}</div>${done&&summary?`<div style="font-size:11px;color:var(--accent);margin-top:2px;font-style:italic">${escHtml(summary)}</div>`:''}</div><div class="ri-status">${done?'Mastered':'Pending'}</div></div>`;}).join('')}</div>${allDone?`<div class="card" style="text-align:center;border-color:var(--accent);background:var(--accent-light)"><div style="font-size:32px;margin-bottom:8px">🎉</div><div style="font-family:var(--serif);font-size:20px;color:var(--accent);margin-bottom:8px">All concepts mastered!</div><div style="font-size:14px;color:var(--ink3);margin-bottom:20px">Now write your synthesis essay to complete the exercise.</div><button class="btn btn-primary btn-lg" onclick="startWritingPhase()">Write Synthesis Essay →</button></div>`:`<div class="card"><div class="card-title">Socratic Dialogue</div><div class="card-subtitle">Work through each concept with the tutor. Each concept is checked off automatically as you demonstrate mastery.</div><div class="chat-window" id="socraticChat">${(state.socraticHistory||[]).length===0?'<div style="text-align:center;padding:20px;color:var(--ink3);font-size:13px">Starting session…</div>':renderChatHistory(state.socraticHistory||[])}</div><div class="chat-input-row"><textarea id="socraticInput" placeholder="Respond to the tutor…" rows="2" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendSocraticMessage();}"></textarea><button class="btn btn-primary" onclick="sendSocraticMessage()">Send</button></div><div class="help-text">Press Enter to send · Shift+Enter for new line</div></div>`}`;if((state.socraticHistory||[]).length===0&&!allDone)startSocraticSession(q);scrollChat('socraticChat');}
+
+function buildSocraticSystemPrompt(q){const selfText=state.selfConcepts.map((c,i)=>`${i+1}. ${c.concept}: ${c.knowledge||'(no notes)'}`).join('\n');const conceptsText=q.concepts.map(c=>{const done=!!state.masteredConcepts[c.id];return`[${done?'MASTERED':'PENDING'}] ${c.id}: ${c.label}\n   Ideal understanding: ${c.idealAnswer}`;}).join('\n\n');const pending=q.concepts.filter(c=>!state.masteredConcepts[c.id]);const next=pending[0];return`You are a warm, knowledgeable Socratic medical tutor working through a clinical case with a student in one continuous conversation.\n\nCLINICAL QUESTION:\n${q.question}\n\nSTUDENT'S PRIOR KNOWLEDGE (start from here — do NOT re-ask things they already wrote):\n${selfText}\n\nCONCEPTS:\n${conceptsText}\n\nYOUR APPROACH:\n- Work through PENDING concepts one at a time in order\n- For each concept, acknowledge what the student already wrote in their self-assessment, then probe deeper with one focused question\n- Keep each concept to 3-5 exchanges — targeted and efficient\n- When the student demonstrates solid understanding, confirm warmly and emit EXACTLY this on its own line:\n  CONCEPT_MASTERED:[concept_id]:[one sentence summary of what they demonstrated]\n  Example: CONCEPT_MASTERED:C1:Demonstrated understanding of how immune tolerance breaks down in IBD leading to chronic mucosal injury.\n- Immediately move to the next PENDING concept\n- Never re-cover MASTERED concepts\n- This is one flowing tutorial — keep momentum\n\nTONE: Warm, encouraging, intellectually engaged. One focused question at a time.\n\nCURRENT CONCEPT: ${next?next.label:'All done — encourage the student to write their synthesis essay.'}`;}
+
+async function startSocraticSession(q){if(!state.socraticHistory)state.socraticHistory=[];const selfText=state.selfConcepts.map((c,i)=>`${i+1}. ${c.concept}: ${c.knowledge||'(no notes)'}`).join('\n');await sendToAPI('socraticChat','socraticInput',state.socraticHistory,buildSocraticSystemPrompt(q),`Here is what I already knew before starting:\n${selfText}\n\nI am ready to begin.`,false,(reply)=>checkConceptMastered(reply,q));}
+
+async function sendSocraticMessage(){const input=document.getElementById('socraticInput');const text=input.value.trim();if(!text)return;input.value='';const q=getActiveQuestion();if(!state.socraticHistory)state.socraticHistory=[];await sendToAPI('socraticChat',null,state.socraticHistory,buildSocraticSystemPrompt(q),text,true,(reply)=>checkConceptMastered(reply,q));}
+
+function checkConceptMastered(responseText,q){const regex=/CONCEPT_MASTERED:(\w+):(.+)/g;let match;let any=false;while((match=regex.exec(responseText))!==null){const id=match[1].trim();const summary=match[2].trim();const concept=q.concepts.find(c=>c.id===id);if(concept&&!state.masteredConcepts[id]){state.masteredConcepts[id]={label:concept.label,summary,completedAt:new Date().toISOString()};addLeitnerCard({conceptId:id,questionId:q.id,label:concept.label,paragraph:summary,citation:''});any=true;}}if(any){saveToStorage();setTimeout(()=>{const allDone=Object.keys(state.masteredConcepts).length>=q.concepts.length;renderSocraticPhase(q);if(!allDone)scrollChat('socraticChat');},800);}}
+
+function startWritingPhase(){state.currentPhase='write';saveToStorage();renderMainScreen();}
+
+function renderWritePhase(q){const el=document.getElementById('mainContent');const summaries=q.concepts.map((c,i)=>{const m=state.masteredConcepts[c.id];return`<div style="padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:var(--radius);margin-bottom:8px"><div style="font-size:11px;font-family:var(--mono);color:var(--accent);margin-bottom:3px">Concept ${i+1}</div><div style="font-size:13px;font-weight:500;color:var(--ink);margin-bottom:3px">${escHtml(c.label)}</div><div style="font-size:12px;color:var(--ink3);font-style:italic">${escHtml(m?.summary||'')}</div></div>`;}).join('');const citations=q.concepts.map((c,i)=>`<div class="field-group"><label>Citation ${i+1} — ${escHtml(c.label)}</label><input type="text" id="cit_${c.id}" placeholder="Author et al. Journal. Year;Vol:Pages." value="${escHtml((state.essayCitations||{})[c.id]||'')}" oninput="updateCitation('${c.id}',this.value)"></div>`).join('');el.innerHTML=`<div class="phase-badge phase-3">Phase 3 of 3 · Synthesis Essay</div><div class="card"><div class="card-title">Write Your Synthesis Essay</div><div class="card-subtitle">You have mastered all ${q.concepts.length} concepts. Now synthesize them into one integrated essay.</div><div style="background:var(--blue-light);border:1px solid #b0c8e8;border-radius:var(--radius);padding:14px 16px;margin-bottom:20px;font-size:13px;color:var(--blue);line-height:1.6"><strong>What to write:</strong> One integrated essay addressing the full clinical question. Weave all the concepts together — show how the immunology connects to the patient's presentation and treatment decisions. This is a cohesive clinical argument, not a list of paragraphs.</div><div style="margin-bottom:20px"><div style="font-size:11px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px">Your Mastered Concepts — use as your guide</div>${summaries}</div><div class="field-group"><label>Your Synthesis Essay</label><textarea id="essayText" rows="14" placeholder="Write your integrated essay here…" oninput="state.essayText=this.value;saveToStorage();">${escHtml(state.essayText||'')}</textarea><div class="help-text">Thorough and integrated — show clinical reasoning.</div></div><div style="margin-top:20px"><div style="font-size:11px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px">Citations</div><div style="font-size:12px;color:var(--ink3);margin-bottom:12px">At least one primary literature citation per concept.</div>${citations}</div><button class="btn btn-primary btn-lg" style="width:100%;justify-content:center;margin-top:8px" onclick="submitEssay()">Submit Essay & Reflect →</button></div>`;}
+
+function updateCitation(id,val){if(!state.essayCitations)state.essayCitations={};state.essayCitations[id]=val;saveToStorage();}
+
+function submitEssay(){const essay=document.getElementById('essayText').value.trim();if(essay.length<150){toast('Please write a more complete essay','error');return;}const q=getActiveQuestion();const cits=state.essayCitations||{};if(q.concepts.filter(c=>cits[c.id]?.trim()).length===0){toast('Please provide at least one citation','error');return;}q.concepts.forEach(c=>{const i=state.leitnerCards.findIndex(lc=>lc.conceptId===c.id&&lc.questionId===q.id);if(i>=0)state.leitnerCards[i].citation=cits[c.id]||'';if(state.masteredConcepts[c.id])state.masteredConcepts[c.id].citation=cits[c.id]||'';});state.essayText=essay;state.currentPhase='reflect';saveToStorage();renderMainScreen();}
+
+function renderReflectPhase(q){const el=document.getElementById('mainContent');const initList=state.selfConcepts.map(c=>`<li>${escHtml(c.concept)}${c.knowledge?': '+escHtml(c.knowledge.substring(0,80))+'…':''}</li>`).join('');const mastList=q.concepts.map(c=>`<li class="matched">${escHtml(c.label)}${state.masteredConcepts[c.id]?.summary?`<div style="font-size:11px;color:var(--ink3);font-style:italic;margin-top:2px">${escHtml(state.masteredConcepts[c.id].summary)}</div>`:''}</li>`).join('');el.innerHTML=`<div class="phase-badge phase-4">Reflection</div><div class="card"><div class="card-title">Look Back — Reflect on Your Learning</div><div class="card-subtitle">Compare where you started to where you ended up.</div><div class="reflection-comparison"><div class="compare-col"><h4>Your Initial List</h4><ul>${initList}</ul></div><div class="compare-col"><h4>Concepts Mastered</h4><ul>${mastList}</ul></div></div><div class="field-group"><label>How does your initial list compare to what you learned?</label><textarea id="reflectionText" rows="4" placeholder="What did you already know? What was missing?" oninput="state.reflectionText=this.value;saveToStorage();">${escHtml(state.reflectionText||'')}</textarea></div><div class="field-group"><label>What are the most important things you learned that you did NOT already know?</label><textarea id="reflectionLearned" rows="4" placeholder="Be specific — which concepts surprised you?" oninput="state.reflectionLearned=this.value;saveToStorage();">${escHtml(state.reflectionLearned||'')}</textarea></div><button class="btn btn-primary btn-lg" style="width:100%;justify-content:center" id="completeBtn">Complete Exercise & Export →</button></div>`;document.getElementById('completeBtn').onclick=()=>completeExercise(q);}
+
+function completeExercise(q){const rt=document.getElementById('reflectionText').value.trim();const rl=document.getElementById('reflectionLearned').value.trim();if(rt.length<40||rl.length<40){toast('Please write a more complete reflection','error');return;}state.reflectionText=rt;state.reflectionLearned=rl;state.exerciseEndTime=new Date().toISOString();const record={questionId:q.id,topic:q.topic,question:q.question,releaseDate:q.releaseDate,deadline:q.deadline||null,startedAt:state.exerciseStartTime,completedAt:state.exerciseEndTime,isLate:isLate(q),selfConcepts:[...state.selfConcepts],confirmedRoadmap:q.concepts.map(c=>({id:c.id,label:c.label})),masteredConcepts:{...state.masteredConcepts},essayText:state.essayText||'',essayCitations:{...(state.essayCitations||{})},totalConcepts:q.concepts.length,conceptsMastered:Object.keys(state.masteredConcepts).length,totalExchanges:countExchanges(),timeMinutes:Math.round((new Date(state.exerciseEndTime)-new Date(state.exerciseStartTime))/60000),reflectionText:state.reflectionText,reflectionLearned:state.reflectionLearned};state.completedExercises.push(record);state.currentPhase='complete';saveToStorage();exportData();renderMainScreen();toast('Exercise complete! Data exported.','success');}
+
+function renderCompletedState(q){const record=state.completedExercises.find(e=>e.questionId===q.id);const el=document.getElementById('mainContent');el.innerHTML=`<div style="text-align:center;padding:40px 0 24px"><div style="font-size:48px;margin-bottom:12px">✓</div><div style="font-family:var(--serif);font-size:24px;margin-bottom:8px">${escHtml(q.topic)} — Complete</div><div style="font-size:14px;color:var(--ink3);margin-bottom:24px">${record?`Completed ${formatDeadline(record.completedAt)} · ${record.conceptsMastered}/${record.totalConcepts} concepts · ${record.timeMinutes}m · ${record.totalExchanges} exchanges`:''} ${record?.isLate?'· <span style="color:var(--red)">Late</span>':''}</div><div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><button class="btn btn-secondary" onclick="showScreen('screen-dashboard')">📊 My Progress</button><button class="btn btn-secondary" onclick="showScreen('screen-leitner')">🃏 Review Cards</button><button class="btn btn-primary" onclick="exportData()">⬇ Export</button></div></div>`;}
+
+function renderDashboard(){const el=document.getElementById('dashboardContent');const q=getActiveQuestion();const ipm=Object.keys(state.masteredConcepts).length;const ipt=q?q.concepts.length:0;const hasActive=state.currentPhase&&state.currentPhase!=='complete'&&q&&!isCompleted(q?.id);const cm=state.completedExercises.reduce((n,e)=>n+e.conceptsMastered,0);const tm=cm+ipm;const tt=state.completedExercises.reduce((n,e)=>n+(e.timeMinutes||0),0);const te=state.completedExercises.reduce((n,e)=>n+(e.totalExchanges||0),0);const elapsed=state.exerciseStartTime?Math.round((Date.now()-new Date(state.exerciseStartTime))/60000):0;const ipc=hasActive?`<div class="dash-card" style="border-color:var(--amber);border-width:2px"><div class="dash-card-header"><div><div class="dash-qid">${q.id}</div><div class="dash-topic">${escHtml(q.topic)}</div></div><span style="font-family:var(--mono);font-size:10px;background:var(--amber-light);color:var(--amber);padding:2px 8px;border-radius:20px">In Progress</span></div><div class="dash-stats"><div class="dash-stat"><div class="dash-stat-val">${ipm}/${ipt}</div><div class="dash-stat-lbl">Concepts</div></div><div class="dash-stat"><div class="dash-stat-val">${elapsed}m</div><div class="dash-stat-lbl">Time</div></div><div class="dash-stat"><div class="dash-stat-val">${countExchanges()}</div><div class="dash-stat-lbl">Exchanges</div></div></div><div style="font-size:11px;color:var(--ink3);margin-bottom:10px;font-family:var(--mono)">Phase: ${{selfAssess:'Self Assessment',socratic:'Concept Mastery',write:'Synthesis Essay',reflect:'Reflection'}[state.currentPhase]||state.currentPhase}</div>${ipm>0?`<details style="font-size:13px"><summary style="cursor:pointer;color:var(--accent);font-size:12px;font-weight:500;margin-bottom:8px">Mastered so far</summary><div style="margin-top:8px">${Object.entries(state.masteredConcepts).map(([id,m])=>`<div style="margin-bottom:8px;padding:8px;background:var(--surface2);border-radius:var(--radius);border:1px solid var(--border)"><div style="font-size:11px;color:var(--accent);font-family:var(--mono)">${escHtml(m.label||id)}</div><div style="font-size:12px;color:var(--ink3);font-style:italic;margin-top:2px">${escHtml(m.summary||'')}</div></div>`).join('')}</div></details>`:''}<button class="btn btn-amber btn-sm" style="margin-top:8px" onclick="showScreen('screen-main')">Resume →</button></div>`:'';el.innerHTML=`<div style="margin-bottom:24px"><div style="font-family:var(--serif);font-size:26px;margin-bottom:4px">${escHtml(state.studentName)}</div><div style="font-family:var(--mono);font-size:11px;color:var(--ink3);margin-bottom:16px">${state.courseId} · ID: ${state.studentUUID}</div><div class="stat-row"><div class="stat-item"><div class="stat-val">${state.completedExercises.length}</div><div class="stat-lbl">Completed</div></div><div class="stat-item"><div class="stat-val">${tm}</div><div class="stat-lbl">Concepts</div></div><div class="stat-item"><div class="stat-val">${tt+elapsed}m</div><div class="stat-lbl">Time</div></div><div class="stat-item"><div class="stat-val">${te+countExchanges()}</div><div class="stat-lbl">Exchanges</div></div><div class="stat-item"><div class="stat-val">${state.leitnerCards.length}</div><div class="stat-lbl">Cards</div></div></div></div><div class="dashboard-grid">${ipc}${state.completedExercises.map(e=>renderDashCard(e)).join('')}</div>${!hasActive&&state.completedExercises.length===0?'<div class="no-data"><div class="no-data-icon">📚</div>No data yet.</div>':''}<div style="margin-top:32px;padding-top:20px;border-top:1px solid var(--border)"><div style="font-size:12px;color:var(--ink3);margin-bottom:8px">Portfolio view for advisor sharing and annual review.</div><button class="btn btn-secondary btn-sm" onclick="exportData()">⬇ Export</button></div>`;}
+
+function renderDashCard(e){return `<div class="dash-card"><div class="dash-card-header"><div><div class="dash-qid">${e.questionId}</div><div class="dash-topic">${escHtml(e.topic)}</div></div>${e.isLate?'<span class="late-flag">Late</span>':'<span class="on-time-flag">On Time</span>'}</div><div class="dash-stats"><div class="dash-stat"><div class="dash-stat-val">${e.conceptsMastered}/${e.totalConcepts}</div><div class="dash-stat-lbl">Concepts</div></div><div class="dash-stat"><div class="dash-stat-val">${e.timeMinutes||'—'}m</div><div class="dash-stat-lbl">Time</div></div><div class="dash-stat"><div class="dash-stat-val">${e.totalExchanges||'—'}</div><div class="dash-stat-lbl">Exchanges</div></div></div><div style="font-size:11px;color:var(--ink3);margin-bottom:10px;font-family:var(--mono)">Completed ${formatDeadline(e.completedAt)}</div><details style="font-size:13px"><summary style="cursor:pointer;color:var(--accent);font-size:12px;font-weight:500;margin-bottom:8px">View details</summary><div style="margin-top:8px">${Object.entries(e.masteredConcepts||{}).map(([id,m])=>`<div style="margin-bottom:10px;padding:10px;background:var(--surface2);border-radius:var(--radius);border:1px solid var(--border)"><div style="font-size:11px;color:var(--accent);font-family:var(--mono);margin-bottom:3px">${escHtml(m.label||id)}</div><div style="font-size:12px;color:var(--ink3);font-style:italic">${escHtml(m.summary||'')}</div>${m.citation?`<div style="font-size:11px;color:var(--ink3);margin-top:3px">${escHtml(m.citation)}</div>`:''}</div>`).join('')}${e.reflectionText?`<div style="margin-top:10px"><div style="font-size:10px;color:var(--ink3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px">Reflection</div><div style="font-size:12px;color:var(--ink2);line-height:1.6">${escHtml(e.reflectionText)}</div></div>`:''}</div></details></div>`;}
+
+function addLeitnerCard(data){const i=state.leitnerCards.findIndex(c=>c.conceptId===data.conceptId&&c.questionId===data.questionId);if(i>=0){state.leitnerCards[i]={...state.leitnerCards[i],...data};}else{state.leitnerCards.push({...data,box:1,nextReview:new Date().toISOString(),addedAt:new Date().toISOString()});}saveToStorage();}
+
+function renderLeitner(){const el=document.getElementById('leitnerContent');const boxes=[1,2,3,4,5];const today=new Date().toISOString();const due=state.leitnerCards.filter(c=>c.nextReview<=today);const bc=boxes.map(b=>state.leitnerCards.filter(c=>c.box===b).length);if(state.leitnerSession){renderLeitnerSession(el);return;}el.innerHTML=`<div style="margin-bottom:24px"><div style="font-family:var(--serif);font-size:24px;margin-bottom:4px">Spaced Review</div><div style="font-size:13px;color:var(--ink3)">Leitner System · ${state.leitnerCards.length} cards · ${due.length} due today</div></div><div class="leitner-boxes">${boxes.map((b,i)=>`<div class="leitner-box"><div class="box-num">${b}</div><div class="box-count">${bc[i]}</div><div class="box-label">${['Daily','Every 2d','Every 4d','Weekly','Retired'][i]}</div></div>`).join('')}</div>${state.leitnerCards.length===0?'<div class="no-data"><div class="no-data-icon">🃏</div>Complete exercises to earn review cards.</div>':due.length===0?'<div class="card" style="text-align:center;padding:32px"><div style="font-size:32px;margin-bottom:12px">✓</div><div style="font-family:var(--serif);font-size:18px">All caught up!</div></div>':`<div class="card" style="text-align:center;padding:24px"><div style="font-family:var(--serif);font-size:18px;margin-bottom:8px">${due.length} card${due.length!==1?'s':''} due</div><button class="btn btn-primary btn-lg" onclick="startLeitnerSession()">Start Review →</button></div>`}<div class="card" style="margin-top:16px"><div class="card-title" style="margin-bottom:12px">All Cards</div>${state.leitnerCards.map(c=>`<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)"><div style="font-family:var(--mono);font-size:11px;color:var(--accent);width:16px;text-align:center">${c.box}</div><div style="flex:1"><div style="font-size:13px;color:var(--ink)">${escHtml(c.label)}</div><div style="font-size:11px;color:var(--ink3)">${c.questionId}</div></div><div style="font-size:11px;color:var(--ink3);font-family:var(--mono)">Due ${formatDate(c.nextReview)}</div></div>`).join('')}</div>`;}
+
+function startLeitnerSession(){const today=new Date().toISOString();const due=state.leitnerCards.filter(c=>c.nextReview<=today);state.leitnerSession={cards:[...due],index:0,flipped:false,results:[]};renderLeitner();}
+
+function renderLeitnerSession(el){const s=state.leitnerSession;if(s.index>=s.cards.length){const correct=s.results.filter(r=>r).length;el.innerHTML=`<div style="text-align:center;padding:60px 0"><div style="font-size:48px;margin-bottom:16px">🎉</div><div style="font-family:var(--serif);font-size:24px;margin-bottom:8px">Session Complete</div><div style="font-size:14px;color:var(--ink3);margin-bottom:24px">${correct} of ${s.cards.length} correct</div><button class="btn btn-primary" onclick="endLeitnerSession()">Back to Deck</button></div>`;return;}const card=s.cards[s.index];el.innerHTML=`<div style="margin-bottom:16px"><div style="font-size:13px;color:var(--ink3)">Card ${s.index+1} of ${s.cards.length} · Box ${card.box}</div><div class="progress-bar-wrap" style="margin:8px 0 0"><div class="progress-bar-fill" style="width:${(s.index/s.cards.length)*100}%"></div></div></div><div class="flashcard" onclick="flipCard()"><div class="fc-inner ${s.flipped?'flipped':''}" id="fcInner"><div class="fc-face fc-front"><div class="fc-label">Concept — tap to reveal</div><div class="fc-concept">${escHtml(card.label)}</div></div><div class="fc-face fc-back"><div class="fc-label">What you demonstrated</div><div class="fc-answer">${escHtml((card.paragraph||'').substring(0,200))}…</div></div></div></div>${s.flipped?`<div style="display:flex;gap:10px;justify-content:center;margin-top:12px"><button class="btn btn-secondary" onclick="leitnerAnswer(false)">✕ Missed it</button><button class="btn btn-primary" onclick="leitnerAnswer(true)">✓ Got it</button></div>`:`<div style="text-align:center"><button class="btn btn-secondary" onclick="flipCard()">Reveal Answer</button></div>`}`;}
+
+function flipCard(){state.leitnerSession.flipped=true;document.getElementById('fcInner')?.classList.add('flipped');renderLeitner();}
+
+function leitnerAnswer(correct){const s=state.leitnerSession;const i=state.leitnerCards.findIndex(c=>c.conceptId===s.cards[s.index].conceptId);if(i>=0){const card=state.leitnerCards[i];const intervals=[1,2,4,7,30];card.box=correct?Math.min(card.box+1,5):1;const next=new Date();next.setDate(next.getDate()+intervals[card.box-1]);card.nextReview=next.toISOString();saveToStorage();}s.results.push(correct);s.index++;s.flipped=false;renderLeitner();}
+
+function endLeitnerSession(){state.leitnerSession=null;renderLeitner();}
+
+async function sendToAPI(chatId,inputId,history,systemPrompt,userMessage,addUserMsg=true,callback=null){if(addUserMsg&&userMessage){history.push({role:'user',content:userMessage});const chatEl=document.getElementById(chatId);if(chatEl){chatEl.insertAdjacentHTML('beforeend',`<div class="msg student"><div class="msg-label">You</div><div class="msg-bubble">${escHtml(userMessage)}</div></div>`);scrollChat(chatId);}saveToStorage();}const chatEl=document.getElementById(chatId);if(chatEl){chatEl.insertAdjacentHTML('beforeend','<div id="typingIndicator"><div class="msg tutor"><div class="msg-label">Tutor</div><div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div></div>');scrollChat(chatId);}try{let messages=history.slice(-20).map(m=>({role:m.role,content:m.content}));if(messages.length===0)messages=[{role:'user',content:userMessage||'Please begin.'}];if(messages[messages.length-1].role!=='user')messages.push({role:'user',content:'Please continue.'});const reply=await callClaude(systemPrompt,messages);document.getElementById('typingIndicator')?.remove();history.push({role:'assistant',content:reply});saveToStorage();if(chatEl){const disp=reply.replace(/CONCEPT_MASTERED:\w+:[^\n]*/g,'').replace(/ROADMAP_CONFIRMED/g,'').trim();chatEl.insertAdjacentHTML('beforeend',`<div class="msg tutor"><div class="msg-label">Tutor</div><div class="msg-bubble">${formatMessage(disp)}</div></div>`);scrollChat(chatId);}if(callback)callback(reply);}catch(e){document.getElementById('typingIndicator')?.remove();if(chatEl)chatEl.insertAdjacentHTML('beforeend',`<div class="msg system"><div class="msg-bubble">Error: ${e.message}</div></div>`);toast(`Error: ${e.message}`,'error');}if(inputId){const inp=document.getElementById(inputId);if(inp){inp.value='';inp.focus();}}}
+
+function renderChatHistory(history){return history.map(m=>`<div class="msg ${m.role==='user'?'student':'tutor'}"><div class="msg-label">${m.role==='user'?'You':'Tutor'}</div><div class="msg-bubble">${formatMessage(m.content.replace(/CONCEPT_MASTERED:\w+:[^\n]*/g,'').trim())}</div></div>`).join('');}
+
+function exportData(){const q=getActiveQuestion();const elapsed=state.exerciseStartTime?Math.round((Date.now()-new Date(state.exerciseStartTime))/60000):null;const obj={exportedAt:new Date().toISOString(),version:'1.0',student:{name:state.studentName,uuid:state.studentUUID,courseId:state.courseId,courseName:state.courseName},completedExercises:state.completedExercises,currentSession:{questionId:q?.id||null,topic:q?.topic||null,phase:state.currentPhase,selfConcepts:state.selfConcepts,socraticHistory:state.socraticHistory,masteredConcepts:state.masteredConcepts,essayText:state.essayText||'',essayCitations:state.essayCitations||{},totalConcepts:q?q.concepts.length:0,conceptsMastered:Object.keys(state.masteredConcepts).length,reflectionText:state.reflectionText,reflectionLearned:state.reflectionLearned,exerciseStartTime:state.exerciseStartTime,exportedAt:new Date().toISOString(),timeMinutes:elapsed,totalExchanges:countExchanges(),isLate:q?isLate(q):false},leitnerCards:state.leitnerCards};const json=JSON.stringify(obj,null,2);const dateStr=new Date().toISOString().split('T')[0];const fn=`${state.courseId}_${state.studentName.replace(/\s+/g,'_')}_${state.studentUUID.substring(0,8)}_${dateStr}.json`;const ex=document.getElementById('exportModal');if(ex)ex.remove();const modal=document.createElement('div');modal.id='exportModal';modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px';modal.innerHTML=`<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:28px;max-width:600px;width:100%;max-height:80vh;display:flex;flex-direction:column;gap:16px;box-shadow:var(--shadow-lg)"><div style="display:flex;justify-content:space-between;align-items:flex-start"><div><div style="font-family:var(--serif);font-size:18px;margin-bottom:4px">Export Your Data</div><div style="font-size:12px;color:var(--ink3);font-family:var(--mono)">${fn}</div></div><button class="btn btn-ghost btn-sm" onclick="document.getElementById('exportModal').remove()">✕</button></div><div style="background:var(--blue-light);border:1px solid #b0c8e8;border-radius:var(--radius);padding:12px 14px;font-size:13px;color:var(--blue);line-height:1.6"><strong>How to save:</strong> Copy to clipboard, paste into a text file, save as <code style="font-family:var(--mono);font-size:11px">${fn}</code>, email to faculty.</div><textarea id="exportTextarea" readonly style="flex:1;min-height:240px;font-family:var(--mono);font-size:11px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px;color:var(--ink2);resize:none" onclick="this.select()">${json}</textarea><div style="display:flex;gap:10px"><button class="btn btn-primary" style="flex:1;justify-content:center" onclick="copyExport()">📋 Copy to Clipboard</button><button class="btn btn-ghost" onclick="document.getElementById('exportModal').remove()">Close</button></div></div>`;document.body.appendChild(modal);}
+
+function copyExport(){const ta=document.getElementById('exportTextarea');if(!ta)return;ta.select();navigator.clipboard.writeText(ta.value).then(()=>toast('Copied — paste into a text file and save as .json','success')).catch(()=>{document.execCommand('copy');toast('Copied','success');});}
+
+function handleImport(event){const file=event.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=e=>{try{const data=JSON.parse(e.target.result);if(!data.student?.uuid)throw new Error('Invalid');state.studentName=data.student.name;state.studentUUID=data.student.uuid;state.courseId=data.student.courseId||'';state.courseName=data.student.courseName||'';state.completedExercises=data.completedExercises||[];state.leitnerCards=data.leitnerCards||[];if(data.currentSession){state.currentPhase=data.currentSession.phase;state.selfConcepts=data.currentSession.selfConcepts||[];state.socraticHistory=data.currentSession.socraticHistory||[];state.masteredConcepts=data.currentSession.masteredConcepts||{};state.essayText=data.currentSession.essayText||'';state.essayCitations=data.currentSession.essayCitations||{};state.reflectionText=data.currentSession.reflectionText||'';state.reflectionLearned=data.currentSession.reflectionLearned||'';state.exerciseStartTime=data.currentSession.exerciseStartTime||null;}saveToStorage();document.getElementById('onboardName').value=state.studentName;toast('Backup restored!','success');}catch(err){toast('Invalid backup file','error');}};reader.readAsText(file);}
+
+function saveToStorage(){try{localStorage.setItem(`medtutor_student_${state.courseId||'default'}`,JSON.stringify(state));}catch(e){}}
+function loadFromStorage(){try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith('medtutor_student_')){const s=JSON.parse(localStorage.getItem(k));if(s?.studentUUID){Object.assign(state,s);state.questions=[];return;}}}}catch(e){}}
+
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');if(id==='screen-main')renderMainScreen();if(id==='screen-dashboard')renderDashboard();if(id==='screen-leitner')renderLeitner();}
+
+function scrollChat(id){const el=document.getElementById(id);if(el)setTimeout(()=>{el.scrollTop=el.scrollHeight;},50);}
+function formatMessage(text){return escHtml(text).replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\*(.*?)\*/g,'<em>$1</em>').replace(/\n\n/g,'</p><p>').replace(/\n/g,'<br>').replace(/^/,'<p>').replace(/$/,'</p>');}
+function escHtml(str){return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function formatDate(iso){if(!iso)return'—';try{return new Date(iso).toLocaleDateString('en-US',{month:'short',day:'numeric'});}catch(e){return'—';}}
+function formatDeadline(iso){if(!iso)return'—';try{return new Date(iso).toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});}catch(e){return'—';}}
+function toast(msg,type='info'){const wrap=document.getElementById('toastWrap');const el=document.createElement('div');el.className=`toast ${type}`;const icon=type==='success'?'✓':type==='error'?'✕':'ℹ';el.innerHTML=`<span style="color:${type==='success'?'var(--accent)':type==='error'?'var(--red)':'var(--blue)'}">${icon}</span> ${msg}`;wrap.appendChild(el);setTimeout(()=>el.remove(),3500);}
+
+init();
+</script>
+</body>
+</html>

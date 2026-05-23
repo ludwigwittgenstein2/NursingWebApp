@@ -1,0 +1,9 @@
+{
+  "scripts": {
+    "start": "netlify dev",
+    "build": "echo \"No build step required\""
+  },
+  "devDependencies": {
+    "netlify-cli": "^17.0.0"
+  }
+}

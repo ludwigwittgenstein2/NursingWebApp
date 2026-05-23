@@ -1,0 +1,40 @@
+{
+  "courseId": "GI2",
+  "courseName": "GI Year 2",
+  "questions": [
+    {
+      "id": "Q1",
+      "topic": "Week 1 — IBD & Infliximab",
+      "releaseDate": "2026-05-21",
+      "deadline": "2026-09-30T23:59:00",
+      "question": "A 26-year-old woman comes to your office for an evaluation. She was diagnosed with ulcerative colitis two years ago involving her entire colon. She asks to transfer her care over to you because of insurance issues. Her course with ulcerative colitis has been rocky over the past 8 months. She has 10–15 bloody bowel movements daily that are completely liquid. She has urgency to defecate and frequently is incontinent. She reports decreased energy and weight loss of 40 lbs. Her chart shows that she has tried 5-ASAs, corticosteroids, azathioprine, and methotrexate. She says to you, \"My friends who have Crohn's disease used infliximab and now they have their lives back! I do not want surgery. Why can't you give me this medication?\"\n\nHow does the immune response in Crohn's disease differ from ulcerative colitis?\nPlease explain the cytokines and T-helper cells involved in the pathophysiology of the two diseases.\n\nHow does infliximab work?\n\nDo you think infliximab will work for this patient?",
+      "concepts": [
+        {
+          "id": "C1",
+          "label": "IBD arises from loss of immune homeostasis",
+          "idealAnswer": "IBD arises from a loss of normal immune homeostasis in the GI tract. In a healthy gut, the immune system tolerates commensal bacteria and food antigens. In IBD this tolerance breaks down and a dysregulated adaptive immune response causes chronic mucosal injury."
+        },
+        {
+          "id": "C2",
+          "label": "Crohn's disease immunology — Th1 response",
+          "idealAnswer": "Crohn's disease is characterized by a Th1-dominant response. APCs release IL-12 driving naive CD4+ T cells to Th1 cells that produce IL-2 (T cell proliferation), IFN-γ (macrophage activation), and TNF-α (tissue damage, granulomas, fistulas). This transmural granulomatous inflammation explains Crohn's full-thickness involvement and complications like strictures and fistulas."
+        },
+        {
+          "id": "C3",
+          "label": "Ulcerative colitis immunology — atypical Th2 response",
+          "idealAnswer": "UC has features of an atypical Th2 response. Key cytokines: IL-13 from NKT cells disrupts tight junctions and the epithelial barrier; IL-5 promotes eosinophil recruitment; IL-4 is present but less prominent. Inflammation is confined to the mucosal layer of the colon and rectum explaining bloody diarrhea, urgency, and mucosal friability."
+        },
+        {
+          "id": "C4",
+          "label": "Infliximab mechanism of action",
+          "idealAnswer": "Infliximab is a chimeric monoclonal antibody (murine variable + human constant region) that binds both soluble and membrane-bound TNF-α. By neutralizing TNF-α it blocks receptor binding, reduces pro-inflammatory signaling, decreases adhesion molecules and cytokines, promotes mucosal healing, and closes fistulas in Crohn's disease."
+        },
+        {
+          "id": "C5",
+          "label": "Will infliximab work for this patient?",
+          "idealAnswer": "Yes. Despite UC being Th2-dominant, infliximab is FDA-approved for moderate-to-severe UC (ACT 1 and ACT 2 trials). TNF-α is elevated in UC mucosa and contributes to inflammation. This patient has failed 5-ASAs, corticosteroids, azathioprine, and methotrexate — refractory moderate-to-severe UC is precisely the indication. A trial before colectomy is appropriate."
+        }
+      ]
+    }
+  ]
+}

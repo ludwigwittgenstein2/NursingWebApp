@@ -1,0 +1,8 @@
+[build]
+  publish = "."
+  functions = "netlify/functions"
+
+[[headers]]
+  for = "/questions/*.json"
+  [headers.values]
+    Content-Type = "application/json; charset=utf-8"
