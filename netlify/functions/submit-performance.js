@@ -1,6 +1,11 @@
+const crypto = require('crypto');
+
 exports.handler = async function(event) {
   if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, body: 'Method Not Allowed' };
+    return {
+      statusCode: 405,
+      body: 'Method Not Allowed'
+    };
   }
 
   const required = [
@@ -11,17 +16,14 @@ exports.handler = async function(event) {
 
   for (const key of required) {
     if (!process.env[key]) {
-      return return {
-  statusCode: 500,
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ error: `Missing ${key} environment variable.` })
-};
+      return jsonResponse(500, {
+        error: `Missing ${key} environment variable.`
+      });
     }
   }
 
   try {
     const record = JSON.parse(event.body || '{}');
-
     const accessToken = await getGoogleAccessToken();
 
     const row = [
@@ -52,42 +54,25 @@ exports.handler = async function(event) {
           Authorization: `Bearer ${accessToken}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-          values: [row]
-        })
+        body: JSON.stringify({ values: [row] })
       }
     );
 
     const text = await response.text();
-    let data;
-    try {
-      data = JSON.parse(text);
-    } catch {
-      data = { raw: text };
-    }
+    const data = safeJson(text);
 
     if (!response.ok) {
-      return {
-        statusCode: response.status,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      };
+      return jsonResponse(response.status, data);
     }
 
-    return {
-      statusCode: 200,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        ok: true,
-        updatedRange: data.updates?.updatedRange || null
-      })
-    };
+    return jsonResponse(200, {
+      ok: true,
+      updatedRange: data.updates?.updatedRange || null
+    });
   } catch (error) {
-    return {
-      statusCode: 500,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ error: error.message || 'Server error' })
-    };
+    return jsonResponse(500, {
+      error: error.message || 'Server error'
+    });
   }
 };
 
@@ -113,7 +98,6 @@ async function getGoogleAccessToken() {
 
   const privateKey = process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n');
 
-  const crypto = require('crypto');
   const signature = crypto
     .createSign('RSA-SHA256')
     .update(unsignedToken)
@@ -133,12 +117,7 @@ async function getGoogleAccessToken() {
   });
 
   const text = await response.text();
-  let data;
-  try {
-    data = JSON.parse(text);
-  } catch {
-    data = { raw: text };
-  }
+  const data = safeJson(text);
 
   if (!response.ok) {
     throw new Error(`Google token error: ${JSON.stringify(data)}`);
@@ -156,4 +135,20 @@ function base64UrlFromBase64(base64) {
     .replace(/\+/g, '-')
     .replace(/\//g, '_')
     .replace(/=+$/g, '');
+}
+
+function safeJson(text) {
+  try {
+    return JSON.parse(text);
+  } catch {
+    return { raw: text };
+  }
+}
+
+function jsonResponse(statusCode, body) {
+  return {
+    statusCode,
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  };
 }
