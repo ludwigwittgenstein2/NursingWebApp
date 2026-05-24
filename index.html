@@ -116,6 +116,12 @@ textarea{resize:vertical;min-height:80px}
       <div class="onboard-logo">Med<em>Tutor</em></div>
       <div class="onboard-sub">Your CAPPS Tutor.<br>Sign in with your CWRU Google account to begin.</div>
 
+<div id="returningUserBox" style="display:none;text-align:left;background:var(--accent-light);border:1px solid #a8d5be;border-radius:var(--radius);padding:14px;margin:16px 0;">
+  <div style="font-size:13px;color:var(--accent);font-weight:600;margin-bottom:4px;">Returning user</div>
+  <div id="returningUserName" style="font-size:14px;color:var(--ink);"></div>
+  <div id="returningUserEmail" style="font-size:12px;color:var(--ink3);font-family:var(--mono);"></div>
+</div>
+
 <div id="googleSignInBox" style="display:flex;justify-content:center;margin:20px 0;"></div>
 
 <div id="signedInBox" style="display:none;text-align:left;background:var(--accent-light);border:1px solid #a8d5be;border-radius:var(--radius);padding:14px;margin:16px 0;">
@@ -130,6 +136,10 @@ textarea{resize:vertical;min-height:80px}
         <input type="file" id="importFileInput" accept=".json" style="display:none" onchange="handleImport(event)">
       </div>
       <button class="btn btn-primary btn-lg" id="beginBtn" style="width:100%;margin-top:20px;justify-content:center" onclick="completeOnboarding()" disabled>Begin →</button>
+
+<button class="btn btn-secondary btn-lg" id="continueBtn" style="display:none;width:100%;margin-top:12px;justify-content:center" onclick="continueExistingUser()">Continue →</button>
+
+<button class="btn btn-ghost btn-sm" id="signOutBtn" style="display:none;width:100%;margin-top:12px;justify-content:center" onclick="signOutAndReset()">Sign out / switch account</button>
       <div style="margin-top:16px"><button class="btn btn-ghost btn-sm" onclick="toggleImportSection()">Have a backup file?</button></div>
     </div>
   </div>
@@ -140,10 +150,11 @@ textarea{resize:vertical;min-height:80px}
     <div class="logo">Med<em>Tutor</em></div>
     <div class="header-meta" id="headerMeta"></div>
     <div class="header-actions">
-      <button class="btn btn-ghost btn-sm" onclick="showScreen('screen-dashboard')">📊 My Progress</button>
-      <button class="btn btn-ghost btn-sm" onclick="showScreen('screen-leitner')">🃏 Review Cards</button>
-      <button class="btn btn-secondary btn-sm" onclick="exportData()">⬇ Export</button>
-    </div>
+  <button class="btn btn-ghost btn-sm" onclick="showScreen('screen-dashboard')">📊 My Progress</button>
+  <button class="btn btn-ghost btn-sm" onclick="showScreen('screen-leitner')">🃏 Review Cards</button>
+  <button class="btn btn-secondary btn-sm" onclick="exportData()">⬇ Export</button>
+  <button class="btn btn-ghost btn-sm" onclick="signOutAndReset()">Sign out</button>
+</div>
   </div>
   <div class="content" id="mainContent"></div>
 </div>
@@ -193,12 +204,13 @@ async function init(){
   loadFromStorage();
   await loadPublicConfig();
   await loadCourse();
-  if(!state.studentName||!state.studentUUID){
+
+  if(state.studentName && state.studentUUID && state.googleSub && state.googleEmail){
+    showScreen('screen-onboard');
+    renderReturningUser();
+  }else{
     showScreen('screen-onboard');
     renderGoogleSignIn();
-  }else{
-    showScreen('screen-main');
-    renderMainScreen();
   }
 }
 async function completeOnboarding(){
@@ -216,6 +228,86 @@ async function completeOnboarding(){
   await loadCourse();
   showScreen('screen-main');
   renderMainScreen();
+}
+function renderReturningUser(){
+  const returningUserBox=document.getElementById('returningUserBox');
+  const returningUserName=document.getElementById('returningUserName');
+  const returningUserEmail=document.getElementById('returningUserEmail');
+  const googleSignInBox=document.getElementById('googleSignInBox');
+  const signedInBox=document.getElementById('signedInBox');
+  const beginBtn=document.getElementById('beginBtn');
+  const continueBtn=document.getElementById('continueBtn');
+  const signOutBtn=document.getElementById('signOutBtn');
+
+  if(returningUserBox)returningUserBox.style.display='block';
+  if(returningUserName)returningUserName.textContent=state.googleName || state.studentName || 'Previous user';
+  if(returningUserEmail)returningUserEmail.textContent=state.googleEmail || '';
+
+  if(googleSignInBox)googleSignInBox.style.display='none';
+  if(signedInBox)signedInBox.style.display='none';
+  if(beginBtn)beginBtn.style.display='none';
+  if(continueBtn)continueBtn.style.display='inline-flex';
+  if(signOutBtn)signOutBtn.style.display='inline-flex';
+}
+
+async function continueExistingUser(){
+  await loadCourse();
+  showScreen('screen-main');
+  renderMainScreen();
+}
+
+function signOutAndReset(){
+  const ok=confirm('Sign out and clear local progress on this device? Make sure you have exported or saved your work if needed.');
+  if(!ok)return;
+
+  try{
+    if(window.google && google.accounts && google.accounts.id){
+      google.accounts.id.disableAutoSelect();
+    }
+  }catch(e){}
+
+  clearMedTutorLocalStorage();
+
+  state={
+    studentName:'',
+    studentUUID:'',
+    googleSub:'',
+    googleEmail:'',
+    googleName:'',
+    googlePicture:'',
+    googleHd:'',
+    courseId:'',
+    courseName:'',
+    questions:[],
+    currentPhase:null,
+    selfConcepts:[],
+    socraticHistory:[],
+    masteredConcepts:{},
+    essayText:'',
+    essayCitations:{},
+    reflectionText:'',
+    reflectionLearned:'',
+    exerciseStartTime:null,
+    exerciseEndTime:null,
+    completedExercises:[],
+    leitnerCards:[],
+    leitnerSession:null
+  };
+
+  location.reload();
+}
+
+function clearMedTutorLocalStorage(){
+  try{
+    const keys=[];
+    for(let i=0;i<localStorage.length;i++){
+      const key=localStorage.key(i);
+      if(key && key.startsWith('medtutor_student_')){
+        keys.push(key);
+      }
+    }
+    keys.forEach(key=>localStorage.removeItem(key));
+  }catch(e){}
 }
 async function loadPublicConfig(){
   try{
@@ -269,14 +361,23 @@ async function handleGoogleCredential(response){
     }
 
     const signedInBox=document.getElementById('signedInBox');
-    const signedInName=document.getElementById('signedInName');
-    const signedInEmail=document.getElementById('signedInEmail');
-    const beginBtn=document.getElementById('beginBtn');
+const signedInName=document.getElementById('signedInName');
+const signedInEmail=document.getElementById('signedInEmail');
+const beginBtn=document.getElementById('beginBtn');
+const googleSignInBox=document.getElementById('googleSignInBox');
 
     if(signedInBox)signedInBox.style.display='block';
     if(signedInName)signedInName.textContent=state.googleName;
     if(signedInEmail)signedInEmail.textContent=state.googleEmail;
     if(beginBtn)beginBtn.disabled=false;
+if(googleSignInBox)googleSignInBox.style.display='none';
+    const continueBtn=document.getElementById('continueBtn');
+    const signOutBtn=document.getElementById('signOutBtn');
+    const returningUserBox=document.getElementById('returningUserBox');
+
+    if(continueBtn)continueBtn.style.display='none';
+    if(signOutBtn)signOutBtn.style.display='inline-flex';
+    if(returningUserBox)returningUserBox.style.display='none';
 
     saveToStorage();
     toast('Google sign-in verified.','success');
@@ -320,7 +421,10 @@ async function loadCourse(){
     state.questions=[];
   }
   const m=document.getElementById('headerMeta');
-  if(m)m.textContent=`${state.courseId} · ${state.studentName}`;
+  if(m){
+  const identity=state.googleEmail || state.studentName || '';
+  m.textContent=`${state.courseId} · ${identity}`;
+}
 }
 
 function getActiveQuestion(){const today=new Date().toISOString().split('T')[0];let active=null;for(const q of state.questions){if(q.releaseDate<=today)active=q;}return active;}
@@ -435,7 +539,46 @@ function exportData(){const q=getActiveQuestion();const elapsed=state.exerciseSt
 
 function copyExport(){const ta=document.getElementById('exportTextarea');if(!ta)return;ta.select();navigator.clipboard.writeText(ta.value).then(()=>toast('Copied — paste into a text file and save as .json','success')).catch(()=>{document.execCommand('copy');toast('Copied','success');});}
 
-function handleImport(event){const file=event.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=e=>{try{const data=JSON.parse(e.target.result);if(!data.student?.uuid)throw new Error('Invalid');state.studentName=data.student.name;state.studentUUID=data.student.uuid;state.courseId=data.student.courseId||'';state.courseName=data.student.courseName||'';state.completedExercises=data.completedExercises||[];state.leitnerCards=data.leitnerCards||[];if(data.currentSession){state.currentPhase=data.currentSession.phase;state.selfConcepts=data.currentSession.selfConcepts||[];state.socraticHistory=data.currentSession.socraticHistory||[];state.masteredConcepts=data.currentSession.masteredConcepts||{};state.essayText=data.currentSession.essayText||'';state.essayCitations=data.currentSession.essayCitations||{};state.reflectionText=data.currentSession.reflectionText||'';state.reflectionLearned=data.currentSession.reflectionLearned||'';state.exerciseStartTime=data.currentSession.exerciseStartTime||null;}saveToStorage();document.getElementById('onboardName').value=state.studentName;toast('Backup restored!','success');}catch(err){toast('Invalid backup file','error');}};reader.readAsText(file);}
+function handleImport(event){
+  const file=event.target.files[0];
+  if(!file)return;
+
+  const reader=new FileReader();
+
+  reader.onload=e=>{
+    try{
+      const data=JSON.parse(e.target.result);
+      if(!data.student?.uuid)throw new Error('Invalid');
+
+      state.studentName=data.student.name;
+      state.studentUUID=data.student.uuid;
+      state.courseId=data.student.courseId||'';
+      state.courseName=data.student.courseName||'';
+      state.completedExercises=data.completedExercises||[];
+      state.leitnerCards=data.leitnerCards||[];
+
+      if(data.currentSession){
+        state.currentPhase=data.currentSession.phase;
+        state.selfConcepts=data.currentSession.selfConcepts||[];
+        state.socraticHistory=data.currentSession.socraticHistory||[];
+        state.masteredConcepts=data.currentSession.masteredConcepts||{};
+        state.essayText=data.currentSession.essayText||'';
+        state.essayCitations=data.currentSession.essayCitations||{};
+        state.reflectionText=data.currentSession.reflectionText||'';
+        state.reflectionLearned=data.currentSession.reflectionLearned||'';
+        state.exerciseStartTime=data.currentSession.exerciseStartTime||null;
+      }
+
+            saveToStorage();
+      toast('Backup restored. Please sign in with Google to continue.','success');
+      setTimeout(()=>location.reload(),800);
+    }catch(err){
+      toast('Invalid backup file','error');
+    }
+  };
+
+  reader.readAsText(file);
+}
 
 function saveToStorage(){try{localStorage.setItem(`medtutor_student_${state.courseId||'default'}`,JSON.stringify(state));}catch(e){}}
 function loadFromStorage(){try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith('medtutor_student_')){const s=JSON.parse(localStorage.getItem(k));if(s?.studentUUID){Object.assign(state,s);state.questions=[];return;}}}}catch(e){}}
