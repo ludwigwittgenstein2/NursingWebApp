@@ -69,6 +69,27 @@ textarea{resize:vertical;min-height:80px}
 .dash-stat{display:flex;flex-direction:column;gap:1px}
 .dash-stat-val{font-family:var(--mono);font-size:16px;font-weight:500;color:var(--ink)}
 .dash-stat-lbl{font-size:10px;color:var(--ink3);text-transform:uppercase;letter-spacing:.3px}
+.exercise-course-title{font-family:var(--serif);font-size:22px;color:var(--ink);margin-bottom:4px}
+.exercise-course-sub{font-size:13px;color:var(--ink3);font-family:var(--mono);margin-bottom:18px}
+.week-group{margin-bottom:18px}
+.week-title{font-family:var(--mono);font-size:12px;color:var(--ink3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+.exercise-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;margin-bottom:10px;box-shadow:var(--shadow);display:flex;justify-content:space-between;gap:16px;align-items:flex-start}
+.exercise-card.locked{opacity:.65}
+.exercise-main{flex:1}
+.exercise-id{font-family:var(--mono);font-size:11px;color:var(--accent);font-weight:500;margin-bottom:3px}
+.exercise-topic{font-family:var(--serif);font-size:16px;color:var(--ink);line-height:1.35;margin-bottom:6px}
+.exercise-meta{font-size:12px;color:var(--ink3);line-height:1.45}
+.status-pill{font-family:var(--mono);font-size:10px;padding:3px 8px;border-radius:999px;white-space:nowrap;text-transform:uppercase;letter-spacing:.3px}
+.status-pill.green{background:var(--accent-light);color:var(--accent)}
+.status-pill.blue{background:var(--blue-light);color:var(--blue)}
+.status-pill.amber{background:var(--amber-light);color:var(--amber)}
+.status-pill.red{background:var(--red-light);color:var(--red)}
+.status-pill.gray{background:var(--bg2);color:var(--ink3)}
+.exercise-actions{display:flex;flex-direction:column;gap:8px;align-items:flex-end}
+.completed-detail-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin:16px 0}
+.completed-detail-item{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px}
+.completed-detail-val{font-family:var(--mono);font-size:17px;color:var(--accent)}
+.completed-detail-lbl{font-size:10px;color:var(--ink3);text-transform:uppercase;letter-spacing:.3px}
 .late-flag{font-family:var(--mono);font-size:10px;background:var(--red-light);color:var(--red);padding:2px 8px;border-radius:20px}
 .on-time-flag{font-family:var(--mono);font-size:10px;background:var(--accent-light);color:var(--accent);padding:2px 8px;border-radius:20px}
 .leitner-boxes{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:24px}
@@ -196,7 +217,33 @@ async function callClaude(system,messages){
   return d.text||'';
 }
 
-let state={studentName:'',studentUUID:'',googleSub:'',googleEmail:'',googleName:'',googlePicture:'',googleHd:'',courseId:'',courseName:'',questions:[],currentPhase:null,selfConcepts:[],socraticHistory:[],masteredConcepts:{},essayText:'',essayCitations:{},reflectionText:'',reflectionLearned:'',exerciseStartTime:null,exerciseEndTime:null,completedExercises:[],leitnerCards:[],leitnerSession:null};
+let state={
+  studentName:'',
+  studentUUID:'',
+  googleSub:'',
+  googleEmail:'',
+  googleName:'',
+  googlePicture:'',
+  googleHd:'',
+  courseId:'',
+  courseName:'',
+  questions:[],
+  selectedQuestionId:'',
+  activeQuestionId:'',
+  currentPhase:null,
+  selfConcepts:[],
+  socraticHistory:[],
+  masteredConcepts:{},
+  essayText:'',
+  essayCitations:{},
+  reflectionText:'',
+  reflectionLearned:'',
+  exerciseStartTime:null,
+  exerciseEndTime:null,
+  completedExercises:[],
+  leitnerCards:[],
+  leitnerSession:null
+};
   
 function generateUUID(){return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return(c==='x'?r:(r&0x3|0x8)).toString(16);});}
 
@@ -224,10 +271,11 @@ async function completeOnboarding(){
   }
 
   state.studentName=state.googleName || state.googleEmail;
-  saveToStorage();
   await loadCourse();
+  state.selectedQuestionId='';
+  saveToStorage();
   showScreen('screen-main');
-  renderMainScreen();
+  renderExerciseNavigator();
 }
 function renderReturningUser(){
   const returningUserBox=document.getElementById('returningUserBox');
@@ -252,8 +300,10 @@ function renderReturningUser(){
 
 async function continueExistingUser(){
   await loadCourse();
+  state.selectedQuestionId='';
+  saveToStorage();
   showScreen('screen-main');
-  renderMainScreen();
+  renderExerciseNavigator();
 }
 
 function signOutAndReset(){
@@ -279,6 +329,8 @@ function signOutAndReset(){
     courseId:'',
     courseName:'',
     questions:[],
+    selectedQuestionId:'',
+    activeQuestionId:'',
     currentPhase:null,
     selfConcepts:[],
     socraticHistory:[],
@@ -431,18 +483,346 @@ function getActiveQuestion(){const today=new Date().toISOString().split('T')[0];
 function isLate(q){if(!q.deadline)return false;return new Date()>new Date(q.deadline);}
 function isCompleted(qid){return state.completedExercises.some(e=>e.questionId===qid);}
 function countExchanges(){return Math.floor((state.socraticHistory||[]).length/2);}
+function getQuestionById(questionId){
+  return state.questions.find(q=>q.id===questionId)||null;
+}
 
-function renderMainScreen(){const q=getActiveQuestion();const el=document.getElementById('mainContent');if(!q){el.innerHTML='<div class="no-data"><div class="no-data-icon">📅</div><div>No questions available yet.</div></div>';return;}if(isCompleted(q.id)&&!['socratic','write','reflect'].includes(state.currentPhase)){renderCompletedState(q);return;}if(!state.currentPhase||state.currentPhase==='selfAssess'){state.currentPhase='selfAssess';renderSelfAssessPhase(q);}else if(state.currentPhase==='socratic'){renderSocraticPhase(q);}else if(state.currentPhase==='write'){renderWritePhase(q);}else if(state.currentPhase==='reflect'){renderReflectPhase(q);}else if(state.currentPhase==='complete'){renderCompletedState(q);}}
+function getSelectedQuestion(){
+  if(state.selectedQuestionId){
+    return getQuestionById(state.selectedQuestionId);
+  }
+  if(state.activeQuestionId){
+    return getQuestionById(state.activeQuestionId);
+  }
+  return null;
+}
 
+function hasInProgressAttempt(){
+  return !!(state.activeQuestionId && state.currentPhase && state.currentPhase!=='complete');
+}
+
+function getQuestionStatus(q){
+  const completed=isCompleted(q.id);
+  const inProgress=hasInProgressAttempt() && state.activeQuestionId===q.id;
+  const today=new Date();
+  const released=!q.releaseDate || new Date(q.releaseDate+'T00:00:00')<=today;
+  const late=isLate(q);
+
+  if(inProgress)return 'in-progress';
+  if(completed)return 'complete';
+  if(!released)return 'locked';
+  if(late)return 'late';
+  return 'available';
+}
+
+function statusLabel(status){
+  return {
+    'in-progress':'In progress',
+    complete:'Complete',
+    locked:'Locked',
+    late:'Late',
+    available:'Available'
+  }[status]||status;
+}
+
+function statusClass(status){
+  return {
+    'in-progress':'amber',
+    complete:'green',
+    locked:'gray',
+    late:'red',
+    available:'blue'
+  }[status]||'gray';
+}
+
+function groupQuestionsByWeek(){
+  const groups={};
+  for(const q of state.questions){
+    const week=q.week || 'Unspecified';
+    if(!groups[week])groups[week]=[];
+    groups[week].push(q);
+  }
+  return Object.entries(groups)
+    .sort((a,b)=>Number(a[0])-Number(b[0]))
+    .map(([week,questions])=>({
+      week,
+      weekLabel:questions[0].weekLabel || `Week ${week}`,
+      questions:questions.sort((a,b)=>(Number(a.questionNumber||1)-Number(b.questionNumber||1)) || String(a.id).localeCompare(String(b.id)))
+    }));
+}
+
+function clearActiveAttemptFields(){
+  state.currentPhase=null;
+  state.selfConcepts=[];
+  state.socraticHistory=[];
+  state.masteredConcepts={};
+  state.essayText='';
+  state.essayCitations={};
+  state.reflectionText='';
+  state.reflectionLearned='';
+  state.exerciseStartTime=null;
+  state.exerciseEndTime=null;
+}
+  function renderExerciseNavigator(){
+  const el=document.getElementById('mainContent');
+
+  if(!state.questions || state.questions.length===0){
+    el.innerHTML='<div class="no-data"><div class="no-data-icon">📅</div><div>No questions available yet.</div></div>';
+    return;
+  }
+
+  const groups=groupQuestionsByWeek();
+
+  el.innerHTML=`
+    <div class="exercise-course-title">${escHtml(state.courseName || 'Course')}</div>
+    <div class="exercise-course-sub">${escHtml(state.courseId || '')} · ${escHtml(state.googleEmail || state.studentName || '')}</div>
+
+    ${hasInProgressAttempt()?`
+      <div class="config-warn">
+        You have an exercise in progress. Continue it before starting another exercise.
+      </div>
+    `:''}
+
+    ${groups.map(group=>`
+      <div class="week-group">
+        <div class="week-title">${escHtml(group.weekLabel)}</div>
+        ${group.questions.map(q=>renderExerciseCard(q)).join('')}
+      </div>
+    `).join('')}
+  `;
+}
+
+function renderExerciseCard(q){
+  const status=getQuestionStatus(q);
+  const cls=statusClass(status);
+  const locked=status==='locked';
+  const completed=status==='complete';
+  const inProgress=status==='in-progress';
+  const available=status==='available' || status==='late';
+
+  let action='';
+
+  if(locked){
+    action=`<button class="btn btn-ghost btn-sm" disabled>Locked</button>`;
+  }else if(completed){
+    action=`<button class="btn btn-secondary btn-sm" onclick="openQuestion('${escJs(q.id)}')">View</button>`;
+  }else if(inProgress){
+    action=`<button class="btn btn-amber btn-sm" onclick="openQuestion('${escJs(q.id)}')">Resume</button>`;
+  }else if(available){
+    action=`<button class="btn btn-primary btn-sm" onclick="openQuestion('${escJs(q.id)}')">Start</button>`;
+  }
+
+  return `
+    <div class="exercise-card ${locked?'locked':''}">
+      <div class="exercise-main">
+        <div class="exercise-id">${escHtml(q.id)} · Q${escHtml(q.questionNumber || 1)}</div>
+        <div class="exercise-topic">${escHtml(q.topic || 'Untitled question')}</div>
+        <div class="exercise-meta">
+          Released ${formatDate(q.releaseDate)}
+          ${q.deadline?' · Due '+formatDeadline(q.deadline):''}
+        </div>
+      </div>
+      <div class="exercise-actions">
+        <span class="status-pill ${cls}">${statusLabel(status)}</span>
+        ${action}
+      </div>
+    </div>
+  `;
+}
+
+function openQuestion(questionId){
+  const q=getQuestionById(questionId);
+  if(!q){
+    toast('Question not found.','error');
+    return;
+  }
+
+  const status=getQuestionStatus(q);
+
+  if(status==='locked'){
+    toast('This question is not released yet.','error');
+    return;
+  }
+
+  if(status==='complete'){
+    state.selectedQuestionId=q.id;
+    saveToStorage();
+    renderCompletedQuestionDetail(q.id);
+    return;
+  }
+
+  if(hasInProgressAttempt() && state.activeQuestionId!==q.id){
+    toast('You already have an exercise in progress. Please continue or complete it before starting another.','error');
+    return;
+  }
+
+  state.selectedQuestionId=q.id;
+
+  if(!state.activeQuestionId){
+    state.activeQuestionId=q.id;
+  }
+
+  if(!state.currentPhase){
+    state.currentPhase='selfAssess';
+  }
+
+  saveToStorage();
+  renderMainScreen();
+}
+
+function escJs(str){
+  return String(str||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+}
+function renderMainScreen(){
+  const q=getSelectedQuestion();
+
+  if(!q){
+    renderExerciseNavigator();
+    return;
+  }
+
+    if(isCompleted(q.id) && state.activeQuestionId!==q.id){
+    renderCompletedQuestionDetail(q.id);
+    return;
+  }
+
+  if(!state.currentPhase || state.currentPhase==='selfAssess'){
+    state.currentPhase='selfAssess';
+    renderSelfAssessPhase(q);
+  }else if(state.currentPhase==='socratic'){
+    renderSocraticPhase(q);
+  }else if(state.currentPhase==='write'){
+    renderWritePhase(q);
+  }else if(state.currentPhase==='reflect'){
+    renderReflectPhase(q);
+  }else if(state.currentPhase==='complete'){
+    renderCompletedQuestionDetail(q.id);
+  }else{
+    renderExerciseNavigator();
+  }
+}
+function getLatestCompletedRecord(questionId){
+  const records=(state.completedExercises||[]).filter(e=>e.questionId===questionId);
+  return records.length ? records[records.length-1] : null;
+}
+
+function renderCompletedQuestionDetail(questionId){
+  const q=getQuestionById(questionId);
+  const record=getLatestCompletedRecord(questionId);
+  const el=document.getElementById('mainContent');
+
+  if(!q){
+    renderExerciseNavigator();
+    return;
+  }
+
+  if(!record){
+    state.selectedQuestionId=q.id;
+    saveToStorage();
+    renderMainScreen();
+    return;
+  }
+
+  const mastered=record.masteredConcepts || {};
+  const conceptsHtml=Object.entries(mastered).map(([id,m])=>`
+    <div style="margin-bottom:10px;padding:10px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius)">
+      <div style="font-family:var(--mono);font-size:11px;color:var(--accent);margin-bottom:3px">${escHtml(m.label || id)}</div>
+      <div style="font-size:12px;color:var(--ink2);line-height:1.6">${escHtml(m.summary || '')}</div>
+      ${m.citation?`<div style="font-size:11px;color:var(--ink3);margin-top:4px">${escHtml(m.citation)}</div>`:''}
+    </div>
+  `).join('');
+
+  el.innerHTML=`
+    <div class="phase-badge phase-3">Completed</div>
+    <div class="card">
+      <div class="card-title">${escHtml(q.topic || record.topic || 'Completed question')}</div>
+      <div class="card-subtitle">
+        ${escHtml(q.id)} · ${escHtml(q.weekLabel || ('Week '+(q.week||'')))} · Q${escHtml(q.questionNumber || 1)}
+      </div>
+
+      <div class="completed-detail-grid">
+        <div class="completed-detail-item">
+          <div class="completed-detail-val">${record.conceptsMastered || 0}/${record.totalConcepts || q.concepts?.length || 0}</div>
+          <div class="completed-detail-lbl">Concepts</div>
+        </div>
+        <div class="completed-detail-item">
+          <div class="completed-detail-val">${record.timeMinutes || '—'}m</div>
+          <div class="completed-detail-lbl">Time</div>
+        </div>
+        <div class="completed-detail-item">
+          <div class="completed-detail-val">${record.totalExchanges || '—'}</div>
+          <div class="completed-detail-lbl">Exchanges</div>
+        </div>
+        <div class="completed-detail-item">
+          <div class="completed-detail-val">${record.isLate?'Late':'On time'}</div>
+          <div class="completed-detail-lbl">Status</div>
+        </div>
+      </div>
+
+      <details open style="margin-top:12px">
+        <summary style="cursor:pointer;color:var(--accent);font-weight:600;margin-bottom:10px">Mastered concepts</summary>
+        <div style="margin-top:10px">${conceptsHtml || '<div class="help-text">No concept details saved.</div>'}</div>
+      </details>
+
+      ${record.essayText?`
+        <details style="margin-top:14px">
+          <summary style="cursor:pointer;color:var(--accent);font-weight:600;margin-bottom:10px">Essay</summary>
+          <div style="white-space:pre-wrap;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px;font-size:13px;line-height:1.7;margin-top:10px">${escHtml(record.essayText)}</div>
+        </details>
+      `:''}
+
+      ${record.reflectionText || record.reflectionLearned?`
+        <details style="margin-top:14px">
+          <summary style="cursor:pointer;color:var(--accent);font-weight:600;margin-bottom:10px">Reflection</summary>
+          <div style="white-space:pre-wrap;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px;font-size:13px;line-height:1.7;margin-top:10px">
+            ${escHtml(record.reflectionText || '')}
+            ${record.reflectionLearned?'\n\n'+escHtml(record.reflectionLearned):''}
+          </div>
+        </details>
+      `:''}
+
+      <div style="display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;margin-top:22px">
+        <button class="btn btn-ghost" onclick="state.selectedQuestionId='';saveToStorage();renderExerciseNavigator()">← Back to exercises</button>
+        <button class="btn btn-secondary" onclick="exportData()">⬇ Export</button>
+        <button class="btn btn-amber" onclick="resetQuestionAttempt('${escJs(q.id)}')">Reset and do again</button>
+      </div>
+    </div>
+  `;
+}
+
+function resetQuestionAttempt(questionId){
+  const q=getQuestionById(questionId);
+  if(!q){
+    toast('Question not found.','error');
+    return;
+  }
+
+  if(hasInProgressAttempt() && state.activeQuestionId!==questionId){
+    toast('You already have a different exercise in progress. Please complete it before resetting another question.','error');
+    return;
+  }
+
+  const ok=confirm('This will clear your current local work for this question and start it again. Your previous completed record will remain in your local history/export. Continue?');
+  if(!ok)return;
+
+  clearActiveAttemptFields();
+  state.selectedQuestionId=questionId;
+  state.activeQuestionId=questionId;
+  state.currentPhase='selfAssess';
+  saveToStorage();
+  renderMainScreen();
+}
 function renderSelfAssessPhase(q){const late=isLate(q);const el=document.getElementById('mainContent');el.innerHTML=`<div class="phase-badge phase-1">Phase 1 of 3 · Self Assessment</div>${late?'<div class="config-warn">⚠ Past deadline — submission will be marked late.</div>':''}<div class="card"><div class="card-title">${escHtml(q.topic)}</div><div class="card-subtitle">${q.id} · Released ${formatDate(q.releaseDate)}${q.deadline?' · Due '+formatDeadline(q.deadline):''}</div><div class="question-box">${escHtml(q.question)}</div><div style="background:var(--blue-light);border:1px solid #b0c8e8;border-radius:var(--radius);padding:14px 16px;margin-bottom:20px;font-size:13px;color:var(--blue);line-height:1.6"><strong>Before engaging with the tutor</strong>, list the concepts you already know about this question and what you understand about each. This is not graded — it is a record of your starting knowledge. Do not use AI assistance for this step.</div><div id="selfConceptList">${(state.selfConcepts.length>0?state.selfConcepts:[{concept:'',knowledge:''}]).map((c,i)=>renderSelfConceptRow(i,c)).join('')}</div><button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="addSelfConcept()">+ Add concept</button></div><div style="display:flex;gap:10px;justify-content:flex-end"><button class="btn btn-primary btn-lg" onclick="submitSelfAssessment()">Submit & Begin Learning →</button></div>`;if(!state.exerciseStartTime)state.exerciseStartTime=new Date().toISOString();}
 
 function renderSelfConceptRow(i,c={}){return `<div class="concept-row" id="scrow_${i}"><div><label>Concept ${i+1}</label><input type="text" placeholder="e.g. Th1 vs Th2" value="${escHtml(c.concept||'')}" oninput="updateSelfConcept(${i},'concept',this.value)"></div><div><label>What you know</label><textarea rows="2" placeholder="Brief notes…" oninput="updateSelfConcept(${i},'knowledge',this.value)">${escHtml(c.knowledge||'')}</textarea></div><div style="padding-top:22px"><button class="btn btn-ghost btn-sm" onclick="removeSelfConcept(${i})" ${i===0?'disabled':''}>✕</button></div></div>`;}
 
 function addSelfConcept(){state.selfConcepts.push({concept:'',knowledge:''});const el=document.getElementById('selfConceptList');const i=state.selfConcepts.length-1;el.insertAdjacentHTML('beforeend',renderSelfConceptRow(i,state.selfConcepts[i]));saveToStorage();}
-function removeSelfConcept(i){state.selfConcepts.splice(i,1);renderSelfAssessPhase(getActiveQuestion());saveToStorage();}
+function removeSelfConcept(i){state.selfConcepts.splice(i,1);renderSelfAssessPhase(getSelectedQuestion());saveToStorage();}
 function updateSelfConcept(i,field,value){if(!state.selfConcepts[i])state.selfConcepts[i]={};state.selfConcepts[i][field]=value;saveToStorage();}
 
-function submitSelfAssessment(){const rows=document.querySelectorAll('[id^="scrow_"]');state.selfConcepts=[];rows.forEach(row=>{const inputs=row.querySelectorAll('input,textarea');state.selfConcepts.push({concept:inputs[0].value.trim(),knowledge:inputs[1].value.trim()});});const filled=state.selfConcepts.filter(c=>c.concept.trim());if(filled.length===0){toast('Please add at least one concept','error');return;}state.selfConcepts=filled;state.currentPhase='socratic';state.socraticHistory=[];state.masteredConcepts={};state.essayText='';state.essayCitations={};saveToStorage();renderMainScreen();}
+function submitSelfAssessment(){const rows=document.querySelectorAll('[id^="scrow_"]');state.selfConcepts=[];rows.forEach(row=>{const inputs=row.querySelectorAll('input,textarea');state.selfConcepts.push({concept:inputs[0].value.trim(),knowledge:inputs[1].value.trim()});});const filled=state.selfConcepts.filter(c=>c.concept.trim());if(filled.length===0){toast('Please add at least one concept','error');return;}state.selfConcepts=filled;state.currentPhase='socratic';if(state.selectedQuestionId){
+  state.activeQuestionId=state.selectedQuestionId;
+}state.socraticHistory=[];state.masteredConcepts={};state.essayText='';state.essayCitations={};saveToStorage();renderMainScreen();}
 
 function renderSocraticPhase(q){const el=document.getElementById('mainContent');const total=q.concepts.length;const doneCount=Object.keys(state.masteredConcepts).length;const pct=Math.round((doneCount/total)*100);const allDone=doneCount>=total;el.innerHTML=`<div class="phase-badge phase-2">Phase 2 of 3 · Concept Mastery</div>${isLate(q)?'<div class="config-warn">⚠ Past deadline — submission will be marked late.</div>':''}<div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:${pct}%"></div></div><div class="progress-label">${doneCount} of ${total} concepts mastered</div><div class="roadmap" style="margin-bottom:20px">${q.concepts.map(c=>{const done=!!state.masteredConcepts[c.id];const summary=state.masteredConcepts[c.id]?.summary||'';return`<div class="roadmap-item ${done?'done':'active'}"><div class="ri-icon">${done?'✓':'○'}</div><div style="flex:1"><div class="ri-label ${done?'done':''}">${escHtml(c.label)}</div>${done&&summary?`<div style="font-size:11px;color:var(--accent);margin-top:2px;font-style:italic">${escHtml(summary)}</div>`:''}</div><div class="ri-status">${done?'Mastered':'Pending'}</div></div>`;}).join('')}</div>${allDone?`<div class="card" style="text-align:center;border-color:var(--accent);background:var(--accent-light)"><div style="font-size:32px;margin-bottom:8px">🎉</div><div style="font-family:var(--serif);font-size:20px;color:var(--accent);margin-bottom:8px">All concepts mastered!</div><div style="font-size:14px;color:var(--ink3);margin-bottom:20px">Now write your synthesis essay to complete the exercise.</div><button class="btn btn-primary btn-lg" onclick="startWritingPhase()">Write Synthesis Essay →</button></div>`:`<div class="card"><div class="card-title">Socratic Dialogue</div><div class="card-subtitle">Work through each concept with the tutor. Each concept is checked off automatically as you demonstrate mastery.</div><div class="chat-window" id="socraticChat">${(state.socraticHistory||[]).length===0?'<div style="text-align:center;padding:20px;color:var(--ink3);font-size:13px">Starting session…</div>':renderChatHistory(state.socraticHistory||[])}</div><div class="chat-input-row"><textarea id="socraticInput" placeholder="Respond to the tutor…" rows="2" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendSocraticMessage();}"></textarea><button class="btn btn-primary" onclick="sendSocraticMessage()">Send</button></div><div class="help-text">Press Enter to send · Shift+Enter for new line</div></div>`}`;if((state.socraticHistory||[]).length===0&&!allDone)startSocraticSession(q);scrollChat('socraticChat');}
 
@@ -450,7 +830,7 @@ function buildSocraticSystemPrompt(q){const selfText=state.selfConcepts.map((c,i
 
 async function startSocraticSession(q){if(!state.socraticHistory)state.socraticHistory=[];const selfText=state.selfConcepts.map((c,i)=>`${i+1}. ${c.concept}: ${c.knowledge||'(no notes)'}`).join('\n');await sendToAPI('socraticChat','socraticInput',state.socraticHistory,buildSocraticSystemPrompt(q),`Here is what I already knew before starting:\n${selfText}\n\nI am ready to begin.`,false,(reply)=>checkConceptMastered(reply,q));}
 
-async function sendSocraticMessage(){const input=document.getElementById('socraticInput');const text=input.value.trim();if(!text)return;input.value='';const q=getActiveQuestion();if(!state.socraticHistory)state.socraticHistory=[];await sendToAPI('socraticChat',null,state.socraticHistory,buildSocraticSystemPrompt(q),text,true,(reply)=>checkConceptMastered(reply,q));}
+async function sendSocraticMessage(){const input=document.getElementById('socraticInput');const text=input.value.trim();if(!text)return;input.value='';const q=getSelectedQuestion();if(!state.socraticHistory)state.socraticHistory=[];await sendToAPI('socraticChat',null,state.socraticHistory,buildSocraticSystemPrompt(q),text,true,(reply)=>checkConceptMastered(reply,q));}
 
 function checkConceptMastered(responseText,q){const regex=/CONCEPT_MASTERED:(\w+):(.+)/g;let match;let any=false;while((match=regex.exec(responseText))!==null){const id=match[1].trim();const summary=match[2].trim();const concept=q.concepts.find(c=>c.id===id);if(concept&&!state.masteredConcepts[id]){state.masteredConcepts[id]={label:concept.label,summary,completedAt:new Date().toISOString()};addLeitnerCard({conceptId:id,questionId:q.id,label:concept.label,paragraph:summary,citation:''});any=true;}}if(any){saveToStorage();setTimeout(()=>{const allDone=Object.keys(state.masteredConcepts).length>=q.concepts.length;renderSocraticPhase(q);if(!allDone)scrollChat('socraticChat');},800);}}
 
@@ -460,12 +840,14 @@ function renderWritePhase(q){const el=document.getElementById('mainContent');con
 
 function updateCitation(id,val){if(!state.essayCitations)state.essayCitations={};state.essayCitations[id]=val;saveToStorage();}
 
-function submitEssay(){const essay=document.getElementById('essayText').value.trim();if(essay.length<150){toast('Please write a more complete essay','error');return;}const q=getActiveQuestion();const cits=state.essayCitations||{};if(q.concepts.filter(c=>cits[c.id]?.trim()).length===0){toast('Please provide at least one citation','error');return;}q.concepts.forEach(c=>{const i=state.leitnerCards.findIndex(lc=>lc.conceptId===c.id&&lc.questionId===q.id);if(i>=0)state.leitnerCards[i].citation=cits[c.id]||'';if(state.masteredConcepts[c.id])state.masteredConcepts[c.id].citation=cits[c.id]||'';});state.essayText=essay;state.currentPhase='reflect';saveToStorage();renderMainScreen();}
+function submitEssay(){const essay=document.getElementById('essayText').value.trim();if(essay.length<150){toast('Please write a more complete essay','error');return;}const q=getSelectedQuestion();const cits=state.essayCitations||{};if(q.concepts.filter(c=>cits[c.id]?.trim()).length===0){toast('Please provide at least one citation','error');return;}q.concepts.forEach(c=>{const i=state.leitnerCards.findIndex(lc=>lc.conceptId===c.id&&lc.questionId===q.id);if(i>=0)state.leitnerCards[i].citation=cits[c.id]||'';if(state.masteredConcepts[c.id])state.masteredConcepts[c.id].citation=cits[c.id]||'';});state.essayText=essay;state.currentPhase='reflect';saveToStorage();renderMainScreen();}
 
 function renderReflectPhase(q){const el=document.getElementById('mainContent');const initList=state.selfConcepts.map(c=>`<li>${escHtml(c.concept)}${c.knowledge?': '+escHtml(c.knowledge.substring(0,80))+'…':''}</li>`).join('');const mastList=q.concepts.map(c=>`<li class="matched">${escHtml(c.label)}${state.masteredConcepts[c.id]?.summary?`<div style="font-size:11px;color:var(--ink3);font-style:italic;margin-top:2px">${escHtml(state.masteredConcepts[c.id].summary)}</div>`:''}</li>`).join('');el.innerHTML=`<div class="phase-badge phase-4">Reflection</div><div class="card"><div class="card-title">Look Back — Reflect on Your Learning</div><div class="card-subtitle">Compare where you started to where you ended up.</div><div class="reflection-comparison"><div class="compare-col"><h4>Your Initial List</h4><ul>${initList}</ul></div><div class="compare-col"><h4>Concepts Mastered</h4><ul>${mastList}</ul></div></div><div class="field-group"><label>How does your initial list compare to what you learned?</label><textarea id="reflectionText" rows="4" placeholder="What did you already know? What was missing?" oninput="state.reflectionText=this.value;saveToStorage();">${escHtml(state.reflectionText||'')}</textarea></div><div class="field-group"><label>What are the most important things you learned that you did NOT already know?</label><textarea id="reflectionLearned" rows="4" placeholder="Be specific — which concepts surprised you?" oninput="state.reflectionLearned=this.value;saveToStorage();">${escHtml(state.reflectionLearned||'')}</textarea></div><button class="btn btn-primary btn-lg" style="width:100%;justify-content:center" id="completeBtn">Complete Exercise & Export →</button></div>`;document.getElementById('completeBtn').onclick=()=>completeExercise(q);}
 
 function completeExercise(q){const rt=document.getElementById('reflectionText').value.trim();const rl=document.getElementById('reflectionLearned').value.trim();if(rt.length<40||rl.length<40){toast('Please write a more complete reflection','error');return;}state.reflectionText=rt;state.reflectionLearned=rl;state.exerciseEndTime=new Date().toISOString();const record={questionId:q.id,topic:q.topic,question:q.question,releaseDate:q.releaseDate,deadline:q.deadline||null,startedAt:state.exerciseStartTime,completedAt:state.exerciseEndTime,isLate:isLate(q),selfConcepts:[...state.selfConcepts],confirmedRoadmap:q.concepts.map(c=>({id:c.id,label:c.label})),masteredConcepts:{...state.masteredConcepts},essayText:state.essayText||'',essayCitations:{...(state.essayCitations||{})},totalConcepts:q.concepts.length,conceptsMastered:Object.keys(state.masteredConcepts).length,totalExchanges:countExchanges(),timeMinutes:Math.round((new Date(state.exerciseEndTime)-new Date(state.exerciseStartTime))/60000),reflectionText:state.reflectionText,reflectionLearned:state.reflectionLearned};state.completedExercises.push(record);
 state.currentPhase='complete';
+state.selectedQuestionId=q.id;
+state.activeQuestionId='';
 saveToStorage();
 
 submitPerformance(record)
@@ -513,7 +895,7 @@ submitPerformance(record)
 
 function renderCompletedState(q){const record=state.completedExercises.find(e=>e.questionId===q.id);const el=document.getElementById('mainContent');el.innerHTML=`<div style="text-align:center;padding:40px 0 24px"><div style="font-size:48px;margin-bottom:12px">✓</div><div style="font-family:var(--serif);font-size:24px;margin-bottom:8px">${escHtml(q.topic)} — Complete</div><div style="font-size:14px;color:var(--ink3);margin-bottom:24px">${record?`Completed ${formatDeadline(record.completedAt)} · ${record.conceptsMastered}/${record.totalConcepts} concepts · ${record.timeMinutes}m · ${record.totalExchanges} exchanges`:''} ${record?.isLate?'· <span style="color:var(--red)">Late</span>':''}</div><div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><button class="btn btn-secondary" onclick="showScreen('screen-dashboard')">📊 My Progress</button><button class="btn btn-secondary" onclick="showScreen('screen-leitner')">🃏 Review Cards</button><button class="btn btn-primary" onclick="exportData()">⬇ Export</button></div></div>`;}
 
-function renderDashboard(){const el=document.getElementById('dashboardContent');const q=getActiveQuestion();const ipm=Object.keys(state.masteredConcepts).length;const ipt=q?q.concepts.length:0;const hasActive=state.currentPhase&&state.currentPhase!=='complete'&&q&&!isCompleted(q?.id);const cm=state.completedExercises.reduce((n,e)=>n+e.conceptsMastered,0);const tm=cm+ipm;const tt=state.completedExercises.reduce((n,e)=>n+(e.timeMinutes||0),0);const te=state.completedExercises.reduce((n,e)=>n+(e.totalExchanges||0),0);const elapsed=state.exerciseStartTime?Math.round((Date.now()-new Date(state.exerciseStartTime))/60000):0;const ipc=hasActive?`<div class="dash-card" style="border-color:var(--amber);border-width:2px"><div class="dash-card-header"><div><div class="dash-qid">${q.id}</div><div class="dash-topic">${escHtml(q.topic)}</div></div><span style="font-family:var(--mono);font-size:10px;background:var(--amber-light);color:var(--amber);padding:2px 8px;border-radius:20px">In Progress</span></div><div class="dash-stats"><div class="dash-stat"><div class="dash-stat-val">${ipm}/${ipt}</div><div class="dash-stat-lbl">Concepts</div></div><div class="dash-stat"><div class="dash-stat-val">${elapsed}m</div><div class="dash-stat-lbl">Time</div></div><div class="dash-stat"><div class="dash-stat-val">${countExchanges()}</div><div class="dash-stat-lbl">Exchanges</div></div></div><div style="font-size:11px;color:var(--ink3);margin-bottom:10px;font-family:var(--mono)">Phase: ${{selfAssess:'Self Assessment',socratic:'Concept Mastery',write:'Synthesis Essay',reflect:'Reflection'}[state.currentPhase]||state.currentPhase}</div>${ipm>0?`<details style="font-size:13px"><summary style="cursor:pointer;color:var(--accent);font-size:12px;font-weight:500;margin-bottom:8px">Mastered so far</summary><div style="margin-top:8px">${Object.entries(state.masteredConcepts).map(([id,m])=>`<div style="margin-bottom:8px;padding:8px;background:var(--surface2);border-radius:var(--radius);border:1px solid var(--border)"><div style="font-size:11px;color:var(--accent);font-family:var(--mono)">${escHtml(m.label||id)}</div><div style="font-size:12px;color:var(--ink3);font-style:italic;margin-top:2px">${escHtml(m.summary||'')}</div></div>`).join('')}</div></details>`:''}<button class="btn btn-amber btn-sm" style="margin-top:8px" onclick="showScreen('screen-main')">Resume →</button></div>`:'';el.innerHTML=`<div style="margin-bottom:24px"><div style="font-family:var(--serif);font-size:26px;margin-bottom:4px">${escHtml(state.studentName)}</div><div style="font-family:var(--mono);font-size:11px;color:var(--ink3);margin-bottom:16px">${state.courseId} · ID: ${state.studentUUID}</div><div class="stat-row"><div class="stat-item"><div class="stat-val">${state.completedExercises.length}</div><div class="stat-lbl">Completed</div></div><div class="stat-item"><div class="stat-val">${tm}</div><div class="stat-lbl">Concepts</div></div><div class="stat-item"><div class="stat-val">${tt+elapsed}m</div><div class="stat-lbl">Time</div></div><div class="stat-item"><div class="stat-val">${te+countExchanges()}</div><div class="stat-lbl">Exchanges</div></div><div class="stat-item"><div class="stat-val">${state.leitnerCards.length}</div><div class="stat-lbl">Cards</div></div></div></div><div class="dashboard-grid">${ipc}${state.completedExercises.map(e=>renderDashCard(e)).join('')}</div>${!hasActive&&state.completedExercises.length===0?'<div class="no-data"><div class="no-data-icon">📚</div>No data yet.</div>':''}<div style="margin-top:32px;padding-top:20px;border-top:1px solid var(--border)"><div style="font-size:12px;color:var(--ink3);margin-bottom:8px">Portfolio view for advisor sharing and annual review.</div><button class="btn btn-secondary btn-sm" onclick="exportData()">⬇ Export</button></div>`;}
+function renderDashboard(){const el=document.getElementById('dashboardContent');const q=getSelectedQuestion() || getActiveQuestion();const ipm=Object.keys(state.masteredConcepts).length;const ipt=q?q.concepts.length:0;const hasActive=state.currentPhase&&state.currentPhase!=='complete'&&q&&!isCompleted(q?.id);const cm=state.completedExercises.reduce((n,e)=>n+e.conceptsMastered,0);const tm=cm+ipm;const tt=state.completedExercises.reduce((n,e)=>n+(e.timeMinutes||0),0);const te=state.completedExercises.reduce((n,e)=>n+(e.totalExchanges||0),0);const elapsed=state.exerciseStartTime?Math.round((Date.now()-new Date(state.exerciseStartTime))/60000):0;const ipc=hasActive?`<div class="dash-card" style="border-color:var(--amber);border-width:2px"><div class="dash-card-header"><div><div class="dash-qid">${q.id}</div><div class="dash-topic">${escHtml(q.topic)}</div></div><span style="font-family:var(--mono);font-size:10px;background:var(--amber-light);color:var(--amber);padding:2px 8px;border-radius:20px">In Progress</span></div><div class="dash-stats"><div class="dash-stat"><div class="dash-stat-val">${ipm}/${ipt}</div><div class="dash-stat-lbl">Concepts</div></div><div class="dash-stat"><div class="dash-stat-val">${elapsed}m</div><div class="dash-stat-lbl">Time</div></div><div class="dash-stat"><div class="dash-stat-val">${countExchanges()}</div><div class="dash-stat-lbl">Exchanges</div></div></div><div style="font-size:11px;color:var(--ink3);margin-bottom:10px;font-family:var(--mono)">Phase: ${{selfAssess:'Self Assessment',socratic:'Concept Mastery',write:'Synthesis Essay',reflect:'Reflection'}[state.currentPhase]||state.currentPhase}</div>${ipm>0?`<details style="font-size:13px"><summary style="cursor:pointer;color:var(--accent);font-size:12px;font-weight:500;margin-bottom:8px">Mastered so far</summary><div style="margin-top:8px">${Object.entries(state.masteredConcepts).map(([id,m])=>`<div style="margin-bottom:8px;padding:8px;background:var(--surface2);border-radius:var(--radius);border:1px solid var(--border)"><div style="font-size:11px;color:var(--accent);font-family:var(--mono)">${escHtml(m.label||id)}</div><div style="font-size:12px;color:var(--ink3);font-style:italic;margin-top:2px">${escHtml(m.summary||'')}</div></div>`).join('')}</div></details>`:''}<button class="btn btn-amber btn-sm" style="margin-top:8px" onclick="showScreen('screen-main')">Resume →</button></div>`:'';el.innerHTML=`<div style="margin-bottom:24px"><div style="font-family:var(--serif);font-size:26px;margin-bottom:4px">${escHtml(state.studentName)}</div><div style="font-family:var(--mono);font-size:11px;color:var(--ink3);margin-bottom:16px">${state.courseId} · ID: ${state.studentUUID}</div><div class="stat-row"><div class="stat-item"><div class="stat-val">${state.completedExercises.length}</div><div class="stat-lbl">Completed</div></div><div class="stat-item"><div class="stat-val">${tm}</div><div class="stat-lbl">Concepts</div></div><div class="stat-item"><div class="stat-val">${tt+elapsed}m</div><div class="stat-lbl">Time</div></div><div class="stat-item"><div class="stat-val">${te+countExchanges()}</div><div class="stat-lbl">Exchanges</div></div><div class="stat-item"><div class="stat-val">${state.leitnerCards.length}</div><div class="stat-lbl">Cards</div></div></div></div><div class="dashboard-grid">${ipc}${state.completedExercises.map(e=>renderDashCard(e)).join('')}</div>${!hasActive&&state.completedExercises.length===0?'<div class="no-data"><div class="no-data-icon">📚</div>No data yet.</div>':''}<div style="margin-top:32px;padding-top:20px;border-top:1px solid var(--border)"><div style="font-size:12px;color:var(--ink3);margin-bottom:8px">Portfolio view for advisor sharing and annual review.</div><button class="btn btn-secondary btn-sm" onclick="exportData()">⬇ Export</button></div>`;}
 
 function renderDashCard(e){return `<div class="dash-card"><div class="dash-card-header"><div><div class="dash-qid">${e.questionId}</div><div class="dash-topic">${escHtml(e.topic)}</div></div>${e.isLate?'<span class="late-flag">Late</span>':'<span class="on-time-flag">On Time</span>'}</div><div class="dash-stats"><div class="dash-stat"><div class="dash-stat-val">${e.conceptsMastered}/${e.totalConcepts}</div><div class="dash-stat-lbl">Concepts</div></div><div class="dash-stat"><div class="dash-stat-val">${e.timeMinutes||'—'}m</div><div class="dash-stat-lbl">Time</div></div><div class="dash-stat"><div class="dash-stat-val">${e.totalExchanges||'—'}</div><div class="dash-stat-lbl">Exchanges</div></div></div><div style="font-size:11px;color:var(--ink3);margin-bottom:10px;font-family:var(--mono)">Completed ${formatDeadline(e.completedAt)}</div><details style="font-size:13px"><summary style="cursor:pointer;color:var(--accent);font-size:12px;font-weight:500;margin-bottom:8px">View details</summary><div style="margin-top:8px">${Object.entries(e.masteredConcepts||{}).map(([id,m])=>`<div style="margin-bottom:10px;padding:10px;background:var(--surface2);border-radius:var(--radius);border:1px solid var(--border)"><div style="font-size:11px;color:var(--accent);font-family:var(--mono);margin-bottom:3px">${escHtml(m.label||id)}</div><div style="font-size:12px;color:var(--ink3);font-style:italic">${escHtml(m.summary||'')}</div>${m.citation?`<div style="font-size:11px;color:var(--ink3);margin-top:3px">${escHtml(m.citation)}</div>`:''}</div>`).join('')}${e.reflectionText?`<div style="margin-top:10px"><div style="font-size:10px;color:var(--ink3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px">Reflection</div><div style="font-size:12px;color:var(--ink2);line-height:1.6">${escHtml(e.reflectionText)}</div></div>`:''}</div></details></div>`;}
 
@@ -535,7 +917,7 @@ async function sendToAPI(chatId,inputId,history,systemPrompt,userMessage,addUser
 
 function renderChatHistory(history){return history.map(m=>`<div class="msg ${m.role==='user'?'student':'tutor'}"><div class="msg-label">${m.role==='user'?'You':'Tutor'}</div><div class="msg-bubble">${formatMessage(m.content.replace(/CONCEPT_MASTERED:\w+:[^\n]*/g,'').trim())}</div></div>`).join('');}
 
-function exportData(){const q=getActiveQuestion();const elapsed=state.exerciseStartTime?Math.round((Date.now()-new Date(state.exerciseStartTime))/60000):null;const obj={exportedAt:new Date().toISOString(),version:'1.0',student:{name:state.studentName,uuid:state.studentUUID,courseId:state.courseId,courseName:state.courseName},completedExercises:state.completedExercises,currentSession:{questionId:q?.id||null,topic:q?.topic||null,phase:state.currentPhase,selfConcepts:state.selfConcepts,socraticHistory:state.socraticHistory,masteredConcepts:state.masteredConcepts,essayText:state.essayText||'',essayCitations:state.essayCitations||{},totalConcepts:q?q.concepts.length:0,conceptsMastered:Object.keys(state.masteredConcepts).length,reflectionText:state.reflectionText,reflectionLearned:state.reflectionLearned,exerciseStartTime:state.exerciseStartTime,exportedAt:new Date().toISOString(),timeMinutes:elapsed,totalExchanges:countExchanges(),isLate:q?isLate(q):false},leitnerCards:state.leitnerCards};const json=JSON.stringify(obj,null,2);const dateStr=new Date().toISOString().split('T')[0];const fn=`${state.courseId}_${state.studentName.replace(/\s+/g,'_')}_${state.studentUUID.substring(0,8)}_${dateStr}.json`;const ex=document.getElementById('exportModal');if(ex)ex.remove();const modal=document.createElement('div');modal.id='exportModal';modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px';modal.innerHTML=`<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:28px;max-width:600px;width:100%;max-height:80vh;display:flex;flex-direction:column;gap:16px;box-shadow:var(--shadow-lg)"><div style="display:flex;justify-content:space-between;align-items:flex-start"><div><div style="font-family:var(--serif);font-size:18px;margin-bottom:4px">Export Your Data</div><div style="font-size:12px;color:var(--ink3);font-family:var(--mono)">${fn}</div></div><button class="btn btn-ghost btn-sm" onclick="document.getElementById('exportModal').remove()">✕</button></div><div style="background:var(--blue-light);border:1px solid #b0c8e8;border-radius:var(--radius);padding:12px 14px;font-size:13px;color:var(--blue);line-height:1.6"><strong>How to save:</strong> Copy to clipboard, paste into a text file, save as <code style="font-family:var(--mono);font-size:11px">${fn}</code>, email to faculty.</div><textarea id="exportTextarea" readonly style="flex:1;min-height:240px;font-family:var(--mono);font-size:11px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px;color:var(--ink2);resize:none" onclick="this.select()">${json}</textarea><div style="display:flex;gap:10px"><button class="btn btn-primary" style="flex:1;justify-content:center" onclick="copyExport()">📋 Copy to Clipboard</button><button class="btn btn-ghost" onclick="document.getElementById('exportModal').remove()">Close</button></div></div>`;document.body.appendChild(modal);}
+function exportData(){const q=getSelectedQuestion() || getActiveQuestion();const elapsed=state.exerciseStartTime?Math.round((Date.now()-new Date(state.exerciseStartTime))/60000):null;const obj={exportedAt:new Date().toISOString(),version:'1.0',student:{name:state.studentName,uuid:state.studentUUID,courseId:state.courseId,courseName:state.courseName},completedExercises:state.completedExercises,currentSession:{questionId:q?.id||null,topic:q?.topic||null,phase:state.currentPhase,selfConcepts:state.selfConcepts,socraticHistory:state.socraticHistory,masteredConcepts:state.masteredConcepts,essayText:state.essayText||'',essayCitations:state.essayCitations||{},totalConcepts:q?q.concepts.length:0,conceptsMastered:Object.keys(state.masteredConcepts).length,reflectionText:state.reflectionText,reflectionLearned:state.reflectionLearned,exerciseStartTime:state.exerciseStartTime,exportedAt:new Date().toISOString(),timeMinutes:elapsed,totalExchanges:countExchanges(),isLate:q?isLate(q):false},leitnerCards:state.leitnerCards};const json=JSON.stringify(obj,null,2);const dateStr=new Date().toISOString().split('T')[0];const fn=`${state.courseId}_${state.studentName.replace(/\s+/g,'_')}_${state.studentUUID.substring(0,8)}_${dateStr}.json`;const ex=document.getElementById('exportModal');if(ex)ex.remove();const modal=document.createElement('div');modal.id='exportModal';modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px';modal.innerHTML=`<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:28px;max-width:600px;width:100%;max-height:80vh;display:flex;flex-direction:column;gap:16px;box-shadow:var(--shadow-lg)"><div style="display:flex;justify-content:space-between;align-items:flex-start"><div><div style="font-family:var(--serif);font-size:18px;margin-bottom:4px">Export Your Data</div><div style="font-size:12px;color:var(--ink3);font-family:var(--mono)">${fn}</div></div><button class="btn btn-ghost btn-sm" onclick="document.getElementById('exportModal').remove()">✕</button></div><div style="background:var(--blue-light);border:1px solid #b0c8e8;border-radius:var(--radius);padding:12px 14px;font-size:13px;color:var(--blue);line-height:1.6"><strong>How to save:</strong> Copy to clipboard, paste into a text file, save as <code style="font-family:var(--mono);font-size:11px">${fn}</code>, email to faculty.</div><textarea id="exportTextarea" readonly style="flex:1;min-height:240px;font-family:var(--mono);font-size:11px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px;color:var(--ink2);resize:none" onclick="this.select()">${json}</textarea><div style="display:flex;gap:10px"><button class="btn btn-primary" style="flex:1;justify-content:center" onclick="copyExport()">📋 Copy to Clipboard</button><button class="btn btn-ghost" onclick="document.getElementById('exportModal').remove()">Close</button></div></div>`;document.body.appendChild(modal);}
 
 function copyExport(){const ta=document.getElementById('exportTextarea');if(!ta)return;ta.select();navigator.clipboard.writeText(ta.value).then(()=>toast('Copied — paste into a text file and save as .json','success')).catch(()=>{document.execCommand('copy');toast('Copied','success');});}
 
@@ -583,7 +965,21 @@ function handleImport(event){
 function saveToStorage(){try{localStorage.setItem(`medtutor_student_${state.courseId||'default'}`,JSON.stringify(state));}catch(e){}}
 function loadFromStorage(){try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith('medtutor_student_')){const s=JSON.parse(localStorage.getItem(k));if(s?.studentUUID){Object.assign(state,s);state.questions=[];return;}}}}catch(e){}}
 
-function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');if(id==='screen-main')renderMainScreen();if(id==='screen-dashboard')renderDashboard();if(id==='screen-leitner')renderLeitner();}
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+
+  if(id==='screen-main'){
+    if(state.selectedQuestionId || state.activeQuestionId){
+      renderMainScreen();
+    }else{
+      renderExerciseNavigator();
+    }
+  }
+
+  if(id==='screen-dashboard')renderDashboard();
+  if(id==='screen-leitner')renderLeitner();
+}
 
 function scrollChat(id){const el=document.getElementById(id);if(el)setTimeout(()=>{el.scrollTop=el.scrollHeight;},50);}
 function formatMessage(text){return escHtml(text).replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\*(.*?)\*/g,'<em>$1</em>').replace(/\n\n/g,'</p><p>').replace(/\n/g,'<br>').replace(/^/,'<p>').replace(/$/,'</p>');}
