@@ -1,1 +1,105 @@
-
+{
+  "questionSetId": "capps-y2-gi2",
+  "classId": "capps-y2",
+  "courseId": "GI2",
+  "courseName": "GI year 2",
+  "academicYear": "2026-2027",
+  "questions": [
+    {
+      "id": "GI2-W01-Q01",
+      "week": 1,
+      "weekLabel": "Week 1",
+      "questionNumber": 1,
+      "topic": "GI 1 Week 1",
+      "releaseDate": "2026-05-22",
+      "deadline": "2026-05-25T08:00:00-04:00",
+      "question": "A 26-year-old woman comes to your office for an evaluation.  She was diagnosed with ulcerative colitis two years ago involving her entire colon. She asks to transfer her care over to you because of insurance issues. Her course with ulcerative colitis has been rocky over the past 8 months. She has 10 – 15 bloody bowel movements daily that are completely liquid. She has urgency to defecate and frequently is incontinent.  She reports decreased energy and weight loss of 40 lbs. Her chart shows that she has tried 5-ASAs, corticosteroids, azathioprine, and methotrexate. She says to you, “My friends who have Crohn’s disease used inflixamab and now they have their lives back! I do not want surgery. Why can’t you give me this medication?”\n\nHow does the immune response in Crohn’s disease differ from ulcerative colitis?\nPlease explain the cytokines and T-helper cells involved in the pathophysiology of the two diseases.\n\nHow does infliximab work?\n\nDo you think infliximab will work for this patient?",
+      "concepts": [
+        {
+          "id": "C1",
+          "label": "Identify the IBD results from a loss of homeostasis in the host immune response",
+          "idealAnswer": "Inflammatory bowel disease (IBD) — which includes both Crohn's disease and ulcerative colitis (UC) — arises from a loss of normal immune homeostasis in the gastrointestinal tract. In a healthy gut, the immune system tolerates commensal bacteria and food antigens without mounting a destructive response. In IBD, this tolerance breaks down, and a dysregulated adaptive immune response causes chronic mucosal injury."
+        },
+        {
+          "id": "C2",
+          "label": "Crohn's disease immunology",
+          "idealAnswer": "Crohn's disease is characterized by a T helper 1 (Th1)-dominant response. When antigen-presenting cells (APCs) in the gut lamina propria encounter microbial antigens in a susceptible host, they release IL-12, which drives naïve CD4+ T cells to differentiate into Th1 cells. These Th1 cells then produce:\n\nIL-2 — promotes T cell proliferation and sustains the inflammatory response\nInterferon-gamma (IFN-γ) — activates macrophages, which further amplify inflammation\nTNF-alpha (TNF-α) — a central pro-inflammatory cytokine that promotes tissue damage, granuloma formation, and fistula development\n\nThis Th1-driven, granulomatous inflammation explains why Crohn's disease can affect any part of the GI tract transmurally (full thickness) and is associated with complications like strictures and fistulas."
+        },
+        {
+          "id": "C3",
+          "label": "Ulcerative colitis immunology",
+          "idealAnswer": "Ulcerative colitis, by contrast, has features more consistent with a T helper 2 (Th2)-like response, though it is sometimes referred to as an \"atypical Th2\" response because classical IL-4 production is less prominent. The key cytokines in UC include:\n\nIL-13 — produced largely by NKT cells; disrupts the epithelial barrier by impairing tight junctions, contributing to the mucosal damage seen in UC\nIL-5 — promotes eosinophil recruitment and activation\nIL-4 — present but plays a less dominant role than in classic Th2 responses\n\nThis pattern of inflammation is confined to the mucosal layer of the colon and rectum, which explains why UC presents with bloody diarrhea, urgency, and mucosal friability — as seen in this patient."
+        },
+        {
+          "id": "C4",
+          "label": "Infliximab",
+          "idealAnswer": "Infliximab is a chimeric monoclonal antibody — meaning it is composed of both mouse (murine) and human immunoglobulin sequences. Specifically, the antigen-binding (variable) region is derived from mouse antibodies, while the constant region is human, which reduces immunogenicity compared to a fully murine antibody.\nInfliximab works by binding specifically to TNF-alpha, both the soluble form circulating in blood and the membrane-bound form on cells. By neutralizing TNF-α, infliximab:\n\nBlocks TNF-α from binding to its receptor on target cells\nReduces downstream pro-inflammatory signaling\nDecreases production of other inflammatory cytokines and adhesion molecules\nPromotes mucosal healing in Crohn's disease\nHas been shown to be effective in closing enterocutaneous and perianal fistulas in Crohn's disease — a complication driven largely by transmural TNF-α-mediated inflammation"
+        },
+        {
+          "id": "C5",
+          "label": "Infliximab in IBD (Crohn's / Ulcerative Colitis?)",
+          "idealAnswer": "This is a critical reasoning question. Based on the immunopathology above, one might initially conclude that infliximab — an anti-TNF-α agent targeting a Th1 cytokine — would not work in UC, since UC is a Th2-dominant disease. However, this reasoning, while logical, is incomplete.\nThe correct answer is: Yes, infliximab is likely to benefit this patient, for the following reasons:\n\nInfliximab is FDA-approved for moderate-to-severe ulcerative colitis. Clinical trials (ACT 1 and ACT 2) demonstrated that infliximab induces and maintains clinical remission, improves mucosal healing, and reduces colectomy rates in UC patients who have failed conventional therapy.\nTNF-α plays a role in UC as well. While TNF-α is not the dominant cytokine in UC the way it is in Crohn's, it is still elevated in UC mucosal tissue and contributes to inflammation. Blocking it has meaningful therapeutic benefit.\nThis patient has failed multiple prior therapies — including 5-ASAs, corticosteroids, azathioprine, and methotrexate — which qualifies her as having refractory, moderate-to-severe UC. This is precisely the population in which infliximab is indicated.\nHer symptoms are severe (10–15 liquid bloody bowel movements daily, incontinence, 40 lb weight loss) and consistent with a serious disease flare requiring escalation of therapy.\n\nIn summary, the patient's request is medically reasonable. The physician should explain that while the underlying immunology of her disease differs from her friends' Crohn's disease, infliximab targets a cytokine pathway that is also relevant in UC and has strong evidence for efficacy in refractory cases like hers. Surgery remains an option if biologic therapy fails, but a trial of infliximab is appropriate before pursuing colectomy."
+        }
+      ]
+    },
+    {
+      "id": "GI2-W02-Q02",
+      "week": 2,
+      "weekLabel": "Week 2",
+      "questionNumber": 2,
+      "topic": "CRS 2 Week 2",
+      "releaseDate": "2026-05-23",
+      "deadline": "2026-09-07T08:00:00-04:00",
+      "question": "Your apparently healthy 75-year-old family member (BMI 32) was visiting while you were home for winter break. Over dinner, he shared stories about his childhood, and about his work as an accountant. Dinner was accompanied by several bottles of red wine, and part way through the meal, he complained of shortness of breath. As a responsible family member (and a CCLCM student!), you checked his pulse and blood pressure. His pulse was quite irregular and rapid (~130 bpm), making it difficult to get a good blood pressure reading. After he stepped outside for a while, he felt better and his pulse was slower (75 beats/minute) and regular with an elevated blood pressure (160/90). As he did not want to disrupt the evening, he did not let you perform a more detailed workup at the time.   \n\nYou expressed concern that he may have atrial fibrillation (AF) and be at risk for stroke and he agreed to an exam the following day.",
+      "concepts": [
+        {
+          "id": "C1",
+          "label": "A.\tAt the cellular level, how do episodes of atrial fibrillation begin?  ",
+          "idealAnswer": "AF episodes typically begin with ectopic electrical activity, such as a premature atrial contraction. This can be caused by autonomic activity (strong vagal or sympathetic stimulation), changes in intrathoracic pressure (as during sleep apnea or exercise), or by hypoxia or ischemia. Ectopic activity is often related to abnormal release of calcium from intracellular stores within a cardiac myocyte. "
+        },
+        {
+          "id": "C2",
+          "label": "B.\tWhat factors influence how long an AF episode persists?  ",
+          "idealAnswer": "The duration of arrhythmia episodes depends on the frequency of ectopic activity, the size of the cardiac chambers, and the wavelength of electrical activity (product of refractory period x conduction velocity). Reentry is favored when the wavelength is abbreviated or the heart (or relevant cardiac chamber) is enlarged"
+        },
+        {
+          "id": "C3",
+          "label": "C.\tComment on 3 potential mechanisms linking obesity to risk for AF in your family member. ",
+          "idealAnswer": ". 1) Obesity promotes hypertension, resulting in increased vascular and atrial pressures, cardiac enlargement and interstitial fibrosis (accumulation of collagen between cardiac myocytes). \n2) Obesity increases the abundance of adipocytes and changes in the balance of circulating cytokines (IL-1, IL-6, TNF) and adipokines, leptin and adiponectin. These adipokines can alter the electrical activity of cardiac muscle cells via activation of the inflammasome and as a result of increased adipose deposits. \n3) Obesity increases sympathetic nerve activity, leading to increased heart rate and increased risk of obstructive sleep apnea.  \nCombined, these factors increase the risk of atrial ectopy and re-entrant electrical activity and increase the duration of episodes of AF.  Additional risk factors for AF include advanced age (>65), male gender, fitness level, family history (genetic factors), presence of coronary artery disease, valvular heart disease or heart failure, and poor renal function.   \n"
+        },
+        {
+          "id": "C4",
+          "label": "D.\tAt the molecular signaling level, how might alcohol consumption impact risk of atrial fibrillation in this individual? ",
+          "idealAnswer": "Acute episodes of AF are sometimes triggered by alcohol consumption (holiday heart syndrome).  The mechanisms linking acute alcohol ingestion to arrhythmia are complex, likely including several of the following factors (from PMID: 29598867): \n- Oxidative stress that promotes JNK2 activation, promoting CaMKII phosphorylation of the calcium channel, RyR2 channel and increasing spontaneous calcium release from intracellular stores (PMID 39395657) \n- Slowing of cardiac conduction and shortening of atrial refractory period, facilitating re-entry \n- Increased autonomic nerve activity (increasing heart rate, blood pressure) \n- Injury of atrial myocytes, leading to inflammation and replacement fibrosis \n"
+        },
+        {
+          "id": "C5",
+          "label": "E.\tIf you were assessing your family member in clinic, what would you want to look for on physical exam, and why?  ",
+          "idealAnswer": "In clinic, you would want to assess for signs of AF and complications of AF. On auscultation of the heart, you may hear tachycardia and irregular beats. On palpation of pulses, you may feel variable pulse strength, or an irregular pulse rate. The loss of an atrial kick can contribute to signs of heart failure and fluids overload such as elevated JVD, crackles in lungs, or peripheral edema.  "
+        },
+        {
+          "id": "C6",
+          "label": "F.\tHe has an ECHO done the same day in clinic showing an EF of 60% and no valvular disease. He has a prior diagnosis of hypertension, but otherwise has been healthy. Do you want to start treatment with anticoagulation? Explain your reasoning. ",
+          "idealAnswer": "To determine the need for anticoagulation in non-valvular AF, you can use the CHA2DS2-VASC score. For this patient, the scoring is as follows: \n-          Age: 75 (+2) \n-          Sex: Male (0) \n-          CHF History: No (0) \n-          Hypertension History: Yes (1) \n-          Stroke/TIA/Thromboembolism History: No (0) \n-          Vascular disease history: No (0) \n-          Diabetes history: No (0) \n-          Total score: 3 points \nThe score of 3 points corresponds to a stroke risk of 3.2% in a year. A score > 2 is considered moderate-high risk for men, and anticoagulation should be recommended, in the absence of contraindications.  \n"
+        }
+      ]
+    },
+    {
+      "week": 3,
+      "weekLabel": "Week 3",
+      "questionNumber": 1,
+      "topic": "Neuro-ophthalmology 3N",
+      "releaseDate": "2026-05-25",
+      "deadline": "2026-09-07",
+      "question": "A 62-year-old patient with long-standing type 2 diabetes develops acute binocular diplopia and right ptosis. Exam shows impaired right eye adduction, elevation, and depression, but the right pupil is equal in size to the left and reacts normally to light.\n\nExplain why a diabetic third nerve palsy can spare the pupil, and state one clinical caveat about relying on pupil sparing.",
+      "concepts": [
+        {
+          "id": "C1",
+          "label": "Microvascular third nerve palsy and pupil sparing",
+          "idealAnswer": "The somatic motor fibers of CN III that control extraocular muscles and the levator can be affected by ischemia of the nerve’s internal vasa nervorum in diabetes, producing ptosis and ophthalmoplegia. The parasympathetic pupillomotor fibers are relatively superficial/peripheral on CN III and may be spared in microvascular ischemia, so the pupil can remain normal. In contrast, external compression, classically from a posterior communicating artery aneurysm, is more likely to affect superficial pupillomotor fibers. However, pupil sparing is not an absolute rule: compressive lesions can occasionally present without obvious pupil involvement, and microvascular palsies can sometimes have pupil findings, so acute third nerve palsy still requires appropriate clinical evaluation and imaging when indicated."
+        }
+      ],
+      "id": "GI2-W03-Q01"
+    }
+  ]
+}
