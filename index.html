@@ -598,9 +598,17 @@ function renderExerciseCard(q){
   const locked=status==='locked';
   const completed=status==='complete';
   const inProgress=status==='in-progress';
-  const available=status==='available' || status==='late';
+  const otherInProgress=hasInProgressAttempt() && state.activeQuestionId!==q.id;
+  const available=(status==='available' || status==='late') && !otherInProgress;
 
   let action='';
+  let displayStatus=status;
+  let displayCls=cls;
+
+  if(otherInProgress && !completed && !locked){
+    displayStatus='blocked';
+    displayCls='gray';
+  }
 
   if(locked){
     action=`<button class="btn btn-ghost btn-sm" disabled>Locked</button>`;
@@ -608,12 +616,14 @@ function renderExerciseCard(q){
     action=`<button class="btn btn-secondary btn-sm" onclick="openQuestion('${escJs(q.id)}')">View</button>`;
   }else if(inProgress){
     action=`<button class="btn btn-amber btn-sm" onclick="openQuestion('${escJs(q.id)}')">Resume</button>`;
+  }else if(otherInProgress){
+    action=`<button class="btn btn-ghost btn-sm" disabled>Blocked</button>`;
   }else if(available){
     action=`<button class="btn btn-primary btn-sm" onclick="openQuestion('${escJs(q.id)}')">Start</button>`;
   }
 
   return `
-    <div class="exercise-card ${locked?'locked':''}">
+    <div class="exercise-card ${locked||otherInProgress?'locked':''}">
       <div class="exercise-main">
         <div class="exercise-id">${escHtml(q.id)} · Q${escHtml(q.questionNumber || 1)}</div>
         <div class="exercise-topic">${escHtml(q.topic || 'Untitled question')}</div>
@@ -623,7 +633,7 @@ function renderExerciseCard(q){
         </div>
       </div>
       <div class="exercise-actions">
-        <span class="status-pill ${cls}">${statusLabel(status)}</span>
+        <span class="status-pill ${displayCls}">${displayStatus==='blocked'?'Blocked':statusLabel(displayStatus)}</span>
         ${action}
       </div>
     </div>
@@ -812,10 +822,38 @@ function resetQuestionAttempt(questionId){
   saveToStorage();
   renderMainScreen();
 }
-function renderSelfAssessPhase(q){const late=isLate(q);const el=document.getElementById('mainContent');el.innerHTML=`<div class="phase-badge phase-1">Phase 1 of 3 · Self Assessment</div>${late?'<div class="config-warn">⚠ Past deadline — submission will be marked late.</div>':''}<div class="card"><div class="card-title">${escHtml(q.topic)}</div><div class="card-subtitle">${q.id} · Released ${formatDate(q.releaseDate)}${q.deadline?' · Due '+formatDeadline(q.deadline):''}</div><div class="question-box">${escHtml(q.question)}</div><div style="background:var(--blue-light);border:1px solid #b0c8e8;border-radius:var(--radius);padding:14px 16px;margin-bottom:20px;font-size:13px;color:var(--blue);line-height:1.6"><strong>Before engaging with the tutor</strong>, list the concepts you already know about this question and what you understand about each. This is not graded — it is a record of your starting knowledge. Do not use AI assistance for this step.</div><div id="selfConceptList">${(state.selfConcepts.length>0?state.selfConcepts:[{concept:'',knowledge:''}]).map((c,i)=>renderSelfConceptRow(i,c)).join('')}</div><button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="addSelfConcept()">+ Add concept</button></div><div style="display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap">
-  <button class="btn btn-ghost" onclick="state.selectedQuestionId='';saveToStorage();renderExerciseNavigator()">← Back to exercises</button>
-  <button class="btn btn-primary btn-lg" onclick="submitSelfAssessment()">Submit & Begin Learning →</button>
-</div>`;if(!state.exerciseStartTime)state.exerciseStartTime=new Date().toISOString();}
+function renderSelfAssessPhase(q){
+  const late=isLate(q);
+  const el=document.getElementById('mainContent');
+
+  el.innerHTML=`
+    <div class="phase-badge phase-1">Phase 1 of 3 · Self Assessment</div>
+    ${late?'<div class="config-warn">⚠ Past deadline — submission will be marked late.</div>':''}
+
+    <div class="card">
+      <div class="card-title">${escHtml(q.topic)}</div>
+      <div class="card-subtitle">${q.id} · Released ${formatDate(q.releaseDate)}${q.deadline?' · Due '+formatDeadline(q.deadline):''}</div>
+      <div class="question-box">${escHtml(q.question)}</div>
+
+      <div style="background:var(--blue-light);border:1px solid #b0c8e8;border-radius:var(--radius);padding:14px 16px;margin-bottom:20px;font-size:13px;color:var(--blue);line-height:1.6">
+        <strong>Before engaging with the tutor</strong>, list the concepts you already know about this question and what you understand about each. This is not graded — it is a record of your starting knowledge. Do not use AI assistance for this step.
+      </div>
+
+      <div id="selfConceptList">
+        ${(state.selfConcepts.length>0?state.selfConcepts:[{concept:'',knowledge:''}]).map((c,i)=>renderSelfConceptRow(i,c)).join('')}
+      </div>
+
+      <button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="addSelfConcept()">+ Add concept</button>
+    </div>
+
+    <div style="display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap">
+      <button class="btn btn-ghost" onclick="state.selectedQuestionId='';saveToStorage();renderExerciseNavigator()">← Back to exercises</button>
+      <button class="btn btn-primary btn-lg" onclick="submitSelfAssessment()">Submit & Begin Learning →</button>
+    </div>
+  `;
+
+  if(!state.exerciseStartTime)state.exerciseStartTime=new Date().toISOString();
+}
 
 function renderSelfConceptRow(i,c={}){return `<div class="concept-row" id="scrow_${i}"><div><label>Concept ${i+1}</label><input type="text" placeholder="e.g. Th1 vs Th2" value="${escHtml(c.concept||'')}" oninput="updateSelfConcept(${i},'concept',this.value)"></div><div><label>What you know</label><textarea rows="2" placeholder="Brief notes…" oninput="updateSelfConcept(${i},'knowledge',this.value)">${escHtml(c.knowledge||'')}</textarea></div><div style="padding-top:22px"><button class="btn btn-ghost btn-sm" onclick="removeSelfConcept(${i})" ${i===0?'disabled':''}>✕</button></div></div>`;}
 
