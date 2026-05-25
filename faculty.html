@@ -242,7 +242,7 @@ async function loadDashboard() {
     }
 
     document.getElementById('dashboard').style.display = 'block';
-    renderDashboard(data.rows || []);
+    renderDashboard(data.performance?.rows || [], data.students?.rows || [], data.pas?.rows || []);
   } catch (err) {
     if (loginError) loginError.textContent = err.message || 'Dashboard load failed.';
   } finally {
@@ -250,10 +250,10 @@ async function loadDashboard() {
   }
 }
 
-function renderDashboard(rows) {
-  const students = new Set(rows.map(r => r.student_uuid || r.student_name).filter(Boolean));
-  const questions = new Set(rows.map(r => r.question_id).filter(Boolean));
-  const lateRows = rows.filter(r => String(r.is_late).toLowerCase() === 'true');
+function renderDashboard(rows, studentsRoster = [], pasRoster = []) {
+  const students = new Set(rows.map(r => r.studentUUID || r.googleEmail || r.studentName).filter(Boolean));
+  const questions = new Set(rows.map(r => r.questionId).filter(Boolean));
+  const lateRows = rows.filter(r => String(r.isLate).toLowerCase() === 'true');
 
   document.getElementById('statRows').textContent = rows.length;
   document.getElementById('statStudents').textContent = students.size;
@@ -261,35 +261,43 @@ function renderDashboard(rows) {
   document.getElementById('statLate').textContent = lateRows.length;
 
   const sorted = [...rows].sort((a, b) => {
-    return String(b.completed_at || b.timestamp || '').localeCompare(String(a.completed_at || a.timestamp || ''));
-  });
+  return String(b.completedAt || b.submittedAt || '').localeCompare(String(a.completedAt || a.submittedAt || ''));
+});
 
   const tableRows = sorted.map(row => {
-    const payload = parsePayload(row.payload_json);
-    const status = row.completed_at ? 'Complete' : 'In progress';
-    const late = String(row.is_late).toLowerCase() === 'true';
+  const payload = parsePayload(row.fullRecordJson);
+  const status = row.completedAt ? 'Complete' : 'In progress';
+  const late = String(row.isLate).toLowerCase() === 'true';
 
-    return `
-      <tr>
-        <td>${esc(row.student_name)}</td>
-        <td class="mono">${esc(row.student_uuid)}</td>
-        <td>${esc(row.course_id)}</td>
-        <td>${esc(row.question_id)}</td>
-        <td>${esc(row.topic)}</td>
-        <td><span class="pill complete">${esc(status)}</span>${late ? ' <span class="pill late">Late</span>' : ''}</td>
-        <td>${esc(row.concepts_mastered)} / ${esc(row.total_concepts)}</td>
-        <td>${esc(row.time_minutes)}m</td>
-        <td>${formatDate(row.completed_at || row.timestamp)}</td>
-        <td>
-          <details>
-            <summary>View JSON</summary>
-            <pre>${esc(JSON.stringify(payload || row, null, 2))}</pre>
-          </details>
-        </td>
-      </tr>
-    `;
-  }).join('');
-
+  return `
+    <tr>
+      <td>
+        ${esc(row.studentName)}
+        <div class="mono">${esc(row.googleEmail)}</div>
+      </td>
+      <td class="mono">${esc(row.studentUUID)}</td>
+      <td>
+        ${esc(row.courseId)}
+        <div class="mono">${esc(row.classId)} · ${esc(row.academicYear)}</div>
+      </td>
+      <td>
+        ${esc(row.weekLabel)} · Q${esc(row.questionNumber)}
+        <div class="mono">${esc(row.questionId)}</div>
+      </td>
+      <td>${esc(row.topic)}</td>
+      <td><span class="pill complete">${esc(status)}</span>${late ? ' <span class="pill late">Late</span>' : ''}</td>
+      <td>${esc(row.conceptsMastered)} / ${esc(row.totalConcepts)}</td>
+      <td>${esc(row.timeMinutes)}m</td>
+      <td>${formatDate(row.completedAt || row.submittedAt)}</td>
+      <td>
+        <details>
+          <summary>View JSON</summary>
+          <pre>${esc(JSON.stringify(payload || row, null, 2))}</pre>
+        </details>
+      </td>
+    </tr>
+  `;
+}).join('');
   document.getElementById('tableWrap').innerHTML = `
     <table>
       <thead>
