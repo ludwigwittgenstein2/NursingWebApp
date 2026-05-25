@@ -262,7 +262,12 @@ function renderDashboard(rows, studentsRoster = [], pasRoster = []) {
   const students = new Set(rows.map(r => r.studentUUID || r.googleEmail || r.studentName).filter(Boolean));
   const questions = new Set(rows.map(r => r.questionId).filter(Boolean));
   const lateRows = rows.filter(r => String(r.isLate).toLowerCase() === 'true');
-
+const studentByEmail = {};
+studentsRoster.forEach(s => {
+  if (s.googleEmail) {
+    studentByEmail[String(s.googleEmail).toLowerCase()] = s;
+  }
+});
   document.getElementById('statRows').textContent = rows.length;
   document.getElementById('statStudents').textContent = students.size;
   document.getElementById('statQuestions').textContent = questions.size;
@@ -277,13 +282,15 @@ document.getElementById('statPAs').textContent = pasRoster.length;
   const payload = parsePayload(row.fullRecordJson);
   const status = row.completedAt ? 'Complete' : 'In progress';
   const late = String(row.isLate).toLowerCase() === 'true';
-
+const rosterMatch = studentByEmail[String(row.googleEmail || '').toLowerCase()] || {};
+const assignedPA = rosterMatch.assignedPAEmail || '';
   return `
     <tr>
       <td>
-        ${esc(row.studentName)}
-        <div class="mono">${esc(row.googleEmail)}</div>
-      </td>
+  ${esc(row.studentName)}
+  <div class="mono">${esc(row.googleEmail)}</div>
+  ${assignedPA ? `<div class="mono">PA: ${esc(assignedPA)}</div>` : ''}
+</td>
       <td class="mono">${esc(row.studentUUID)}</td>
       <td>
         ${esc(row.courseId)}
