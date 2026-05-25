@@ -27,24 +27,49 @@ exports.handler = async function(event) {
     const accessToken = await getGoogleAccessToken();
 
     const row = [
-      new Date().toISOString(),
-      record.studentName || '',
-      record.studentUUID || '',
-      record.courseId || '',
-      record.courseName || '',
-      record.questionId || '',
-      record.topic || '',
-      record.completedAt || '',
-      String(record.isLate ?? ''),
-      String(record.conceptsMastered ?? ''),
-      String(record.totalConcepts ?? ''),
-      String(record.timeMinutes ?? ''),
-      String(record.totalExchanges ?? ''),
-      JSON.stringify(record)
-    ];
+  new Date().toISOString(),
 
-    const sheetId = process.env.GOOGLE_SHEET_ID;
-    const range = 'PerformanceLog!A:N';
+  record.studentName || '',
+  record.studentUUID || '',
+  record.googleSub || '',
+  record.googleEmail || '',
+  record.googleName || '',
+  record.googleHd || '',
+
+  record.classId || '',
+  record.academicYear || '',
+  record.questionSetId || '',
+  record.courseId || '',
+  record.courseName || '',
+
+  record.questionId || '',
+  String(record.week ?? ''),
+  record.weekLabel || '',
+  String(record.questionNumber ?? ''),
+  record.topic || '',
+  record.releaseDate || '',
+  record.deadline || '',
+
+  record.startedAt || '',
+  record.completedAt || '',
+  String(record.isLate ?? ''),
+  String(record.totalConcepts ?? ''),
+  String(record.conceptsMastered ?? ''),
+  String(record.totalExchanges ?? ''),
+  String(record.timeMinutes ?? ''),
+
+  JSON.stringify(record.selfConcepts || []),
+  JSON.stringify(record.masteredConcepts || {}),
+  record.essayText || '',
+  JSON.stringify(record.essayCitations || {}),
+  record.reflectionText || '',
+  record.reflectionLearned || '',
+
+  JSON.stringify(record)
+];
+
+const sheetId = process.env.GOOGLE_SHEET_ID;
+const range = 'PerformanceLog!A:AG';
 
     const response = await fetch(
       `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${encodeURIComponent(range)}:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS`,
