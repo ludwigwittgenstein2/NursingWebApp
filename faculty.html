@@ -264,9 +264,8 @@ function renderDashboard(rows, studentsRoster = [], pasRoster = []) {
   const lateRows = rows.filter(r => String(r.isLate).toLowerCase() === 'true');
 const studentByEmail = {};
 studentsRoster.forEach(s => {
-  if (s.googleEmail) {
-    studentByEmail[String(s.googleEmail).toLowerCase()] = s;
-  }
+  const email = String(s.googleEmail || '').trim().toLowerCase();
+  if (email) studentByEmail[email] = s;
 });
   document.getElementById('statRows').textContent = rows.length;
   document.getElementById('statStudents').textContent = students.size;
@@ -282,7 +281,8 @@ document.getElementById('statPAs').textContent = pasRoster.length;
   const payload = parsePayload(row.fullRecordJson);
   const status = row.completedAt ? 'Complete' : 'In progress';
   const late = String(row.isLate).toLowerCase() === 'true';
-const rosterMatch = studentByEmail[String(row.googleEmail || '').toLowerCase()] || {};
+const rowEmail = String(row.googleEmail || '').trim().toLowerCase();
+const rosterMatch = studentByEmail[rowEmail] || {};
 const assignedPA = rosterMatch.assignedPAEmail || '';
   return `
     <tr>
