@@ -290,23 +290,27 @@ function populatePAFilter(pasRoster = []) {
 }
 
 function applyFilters() {
-  const paEmail = String(document.getElementById('paFilter')?.value || '').trim().toLowerCase();
-
-  if (!paEmail) {
-    renderDashboard(dashboardRows, dashboardStudents, dashboardPAs);
-    return;
-  }
+  const selectedPA = String(document.getElementById('paFilter')?.value || '').trim().toLowerCase();
 
   const studentByEmail = {};
   dashboardStudents.forEach(s => {
-    const email = String(s.googleEmail || '').trim().toLowerCase();
-    if (email) studentByEmail[email] = s;
+    const studentEmail = String(s.googleEmail || '').trim().toLowerCase();
+    if (studentEmail) {
+      studentByEmail[studentEmail] = s;
+    }
   });
 
   const filtered = dashboardRows.filter(row => {
+    if (!selectedPA) return true;
+
     const rowEmail = String(row.googleEmail || '').trim().toLowerCase();
-    const rosterMatch = studentByEmail[rowEmail] || {};
-    return String(rosterMatch.assignedPAEmail || '').trim().toLowerCase() === paEmail;
+    const rosterMatch = studentByEmail[rowEmail];
+
+    if (!rosterMatch) return false;
+
+    const assignedPA = String(rosterMatch.assignedPAEmail || '').trim().toLowerCase();
+
+    return assignedPA === selectedPA;
   });
 
   renderDashboard(filtered, dashboardStudents, dashboardPAs);
