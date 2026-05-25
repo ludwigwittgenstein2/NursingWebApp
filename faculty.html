@@ -200,6 +200,14 @@
         <div class="num" id="statLate">0</div>
         <div class="lbl">Late</div>
       </div>
+      <div class="stat">
+  <div class="num" id="statRosterStudents">0</div>
+  <div class="lbl">Roster Students</div>
+</div>
+<div class="stat">
+  <div class="num" id="statPAs">0</div>
+  <div class="lbl">PAs</div>
+</div>
     </div>
 
     <div class="card">
@@ -259,7 +267,8 @@ function renderDashboard(rows, studentsRoster = [], pasRoster = []) {
   document.getElementById('statStudents').textContent = students.size;
   document.getElementById('statQuestions').textContent = questions.size;
   document.getElementById('statLate').textContent = lateRows.length;
-
+document.getElementById('statRosterStudents').textContent = studentsRoster.length;
+document.getElementById('statPAs').textContent = pasRoster.length;
   const sorted = [...rows].sort((a, b) => {
   return String(b.completedAt || b.submittedAt || '').localeCompare(String(a.completedAt || a.submittedAt || ''));
 });
