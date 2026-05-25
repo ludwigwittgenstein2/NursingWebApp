@@ -1,9 +1,15 @@
 {
+  "questionSetId": "capps-y2-gi2",
+  "classId": "capps-y2",
   "courseId": "GI2",
   "courseName": "GI year 2",
+  "academicYear": "2026-2027",
   "questions": [
     {
-      "id": "Q1",
+      "id": "GI2-W01-Q01",
+      "week": 1,
+      "weekLabel": "Week 1",
+      "questionNumber": 1,
       "topic": "GI 1 Week 1",
       "releaseDate": "2026-05-22",
       "deadline": "2026-05-25T08:00:00-04:00",
@@ -37,10 +43,13 @@
       ]
     },
     {
-      "id": "Q2",
+      "id": "GI2-W02-Q02",
+      "week": 2,
+      "weekLabel": "Week 2",
+      "questionNumber": 2,
       "topic": "CRS 2 Week 2",
       "releaseDate": "2026-05-23",
-      "deadline": "2026-05-25T08:00:00-04:00",
+      "deadline": "2026-09-07T08:00:00-04:00",
       "question": "Your apparently healthy 75-year-old family member (BMI 32) was visiting while you were home for winter break. Over dinner, he shared stories about his childhood, and about his work as an accountant. Dinner was accompanied by several bottles of red wine, and part way through the meal, he complained of shortness of breath. As a responsible family member (and a CCLCM student!), you checked his pulse and blood pressure. His pulse was quite irregular and rapid (~130 bpm), making it difficult to get a good blood pressure reading. After he stepped outside for a while, he felt better and his pulse was slower (75 beats/minute) and regular with an elevated blood pressure (160/90). As he did not want to disrupt the evening, he did not let you perform a more detailed workup at the time.   \n\nYou expressed concern that he may have atrial fibrillation (AF) and be at risk for stroke and he agreed to an exam the following day.",
       "concepts": [
         {
@@ -74,6 +83,23 @@
           "idealAnswer": "To determine the need for anticoagulation in non-valvular AF, you can use the CHA2DS2-VASC score. For this patient, the scoring is as follows: \n-          Age: 75 (+2) \n-          Sex: Male (0) \n-          CHF History: No (0) \n-          Hypertension History: Yes (1) \n-          Stroke/TIA/Thromboembolism History: No (0) \n-          Vascular disease history: No (0) \n-          Diabetes history: No (0) \n-          Total score: 3 points \nThe score of 3 points corresponds to a stroke risk of 3.2% in a year. A score > 2 is considered moderate-high risk for men, and anticoagulation should be recommended, in the absence of contraindications.  \n"
         }
       ]
+    },
+    {
+      "week": 3,
+      "weekLabel": "Week 3",
+      "questionNumber": 1,
+      "topic": "Neuro-ophthalmology 3N",
+      "releaseDate": "2026-05-25",
+      "deadline": "2026-09-07",
+      "question": "A 62-year-old patient with long-standing type 2 diabetes develops acute binocular diplopia and right ptosis. Exam shows impaired right eye adduction, elevation, and depression, but the right pupil is equal in size to the left and reacts normally to light.\n\nExplain why a diabetic third nerve palsy can spare the pupil, and state one clinical caveat about relying on pupil sparing.",
+      "concepts": [
+        {
+          "id": "C1",
+          "label": "Microvascular third nerve palsy and pupil sparing",
+          "idealAnswer": "The somatic motor fibers of CN III that control extraocular muscles and the levator can be affected by ischemia of the nerve’s internal vasa nervorum in diabetes, producing ptosis and ophthalmoplegia. The parasympathetic pupillomotor fibers are relatively superficial/peripheral on CN III and may be spared in microvascular ischemia, so the pupil can remain normal. In contrast, external compression, classically from a posterior communicating artery aneurysm, is more likely to affect superficial pupillomotor fibers. However, pupil sparing is not an absolute rule: compressive lesions can occasionally present without obvious pupil involvement, and microvascular palsies can sometimes have pupil findings, so acute third nerve palsy still requires appropriate clinical evaluation and imaging when indicated."
+        }
+      ],
+      "id": "GI2-W03-Q01"
     }
   ]
 }
