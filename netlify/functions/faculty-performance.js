@@ -26,20 +26,20 @@ exports.handler = async function(event) {
     }
 
     const accessToken = await getGoogleAccessToken();
-const sheetId = process.env.GOOGLE_SHEET_ID;
+    const sheetId = process.env.GOOGLE_SHEET_ID;
 
-const [performance, students, pas] = await Promise.all([
-  readSheetRange(sheetId, accessToken, 'PerformanceLog!A:AG'),
-  readSheetRange(sheetId, accessToken, 'Students!A:H'),
-  readSheetRange(sheetId, accessToken, 'PAs!A:F')
-]);
+    const [performance, students, pas] = await Promise.all([
+      readSheetRange(sheetId, accessToken, 'PerformanceLog!A:AG'),
+      readSheetRange(sheetId, accessToken, 'Students!A:H'),
+      readSheetRange(sheetId, accessToken, 'PAs!A:F')
+    ]);
 
-return jsonResponse(200, {
-  ok: true,
-  performance,
-  students,
-  pas
-});
+    return jsonResponse(200, {
+      ok: true,
+      performance,
+      students,
+      pas
+    });
   } catch (error) {
     return jsonResponse(500, {
       error: error.message || 'Server error'
@@ -97,9 +97,6 @@ async function getGoogleAccessToken() {
   return data.access_token;
 }
 
-function base64UrlEncode(input) {
-  return base64UrlFromBase64(Buffer.from(input).toString('base64'));
-}
 async function readSheetRange(sheetId, accessToken, range) {
   const response = await fetch(
     `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${encodeURIComponent(range)}`,
@@ -119,6 +116,7 @@ async function readSheetRange(sheetId, accessToken, range) {
   }
 
   const values = data.values || [];
+
   if (values.length === 0) {
     return {
       range,
@@ -142,6 +140,11 @@ async function readSheetRange(sheetId, accessToken, range) {
     rows
   };
 }
+
+function base64UrlEncode(input) {
+  return base64UrlFromBase64(Buffer.from(input).toString('base64'));
+}
+
 function base64UrlFromBase64(base64) {
   return base64
     .replace(/\+/g, '-')
