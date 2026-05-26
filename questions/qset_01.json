@@ -98,8 +98,45 @@
           "label": "Microvascular third nerve palsy and pupil sparing",
           "idealAnswer": "The somatic motor fibers of CN III that control extraocular muscles and the levator can be affected by ischemia of the nerve’s internal vasa nervorum in diabetes, producing ptosis and ophthalmoplegia. The parasympathetic pupillomotor fibers are relatively superficial/peripheral on CN III and may be spared in microvascular ischemia, so the pupil can remain normal. In contrast, external compression, classically from a posterior communicating artery aneurysm, is more likely to affect superficial pupillomotor fibers. However, pupil sparing is not an absolute rule: compressive lesions can occasionally present without obvious pupil involvement, and microvascular palsies can sometimes have pupil findings, so acute third nerve palsy still requires appropriate clinical evaluation and imaging when indicated."
         }
-      ],
+            ],
       "id": "GI2-W03-Q01"
+    },
+    {
+      "id": "GI2-W04-Q01",
+      "week": 4,
+      "weekLabel": "Week 4",
+      "questionNumber": 1,
+      "topic": "Psoriasis and the IL-23/Th17 pathway",
+      "releaseDate": "2026-05-25",
+      "deadline": "2026-09-07T08:00:00-04:00",
+      "question": "A 22-year-old man comes to clinic because of a chronic rash on his elbows and knees. The lesions are well-demarcated erythematous plaques with overlying silvery scale. He says the rash worsens during stressful periods. He has no fever and otherwise feels well.\n\nA skin biopsy shows epidermal thickening, parakeratosis, and inflammatory cells in the dermis and epidermis.\n\nExplain the immunologic mechanism that drives psoriasis.\n\nIn your answer, discuss the roles of dendritic cells, IL-23, Th17 cells, IL-17, keratinocytes, and neutrophils.\n\nWhy do psoriatic plaques become thick and scaly?",
+      "concepts": [
+        {
+          "id": "C1",
+          "label": "Recognize psoriasis as an immune-mediated inflammatory skin disease",
+          "idealAnswer": "Psoriasis is a chronic immune-mediated inflammatory disease of the skin. It is not simply a disorder of dry skin or excess keratin production. The characteristic plaques result from dysregulated immune activation in the skin, especially involving dendritic cells, T cells, inflammatory cytokines, and keratinocytes. The immune system drives keratinocyte proliferation and abnormal differentiation, producing thick, scaly plaques."
+        },
+        {
+          "id": "C2",
+          "label": "Dendritic cells and IL-23 initiate and sustain the inflammatory pathway",
+          "idealAnswer": "In psoriasis, activated dendritic cells in the skin produce cytokines including IL-23. IL-23 is important because it promotes the survival, expansion, and inflammatory activity of Th17 cells. This creates a self-sustaining inflammatory loop in which innate immune activation drives adaptive T-cell responses in the skin."
+        },
+        {
+          "id": "C3",
+          "label": "Th17 cells and IL-17 are central drivers of psoriasis",
+          "idealAnswer": "Th17 cells are CD4+ helper T cells that produce IL-17 and related inflammatory cytokines. In psoriasis, IL-23 supports Th17 activity, and Th17 cells release IL-17. IL-17 acts on keratinocytes and other skin cells to amplify inflammation. This pathway is central to psoriasis pathophysiology and explains why therapies targeting IL-23 or IL-17 can improve psoriasis."
+        },
+        {
+          "id": "C4",
+          "label": "Keratinocyte activation causes epidermal thickening and scale",
+          "idealAnswer": "IL-17 and other inflammatory cytokines stimulate keratinocytes to proliferate more rapidly and to produce additional chemokines and inflammatory mediators. The accelerated keratinocyte turnover leads to epidermal thickening, called acanthosis, and abnormal retention of nuclei in the stratum corneum, called parakeratosis. These changes explain the thick, silvery scale seen on psoriatic plaques."
+        },
+        {
+          "id": "C5",
+          "label": "Neutrophils contribute to microscopic and clinical findings",
+          "idealAnswer": "Inflammatory signals from activated keratinocytes recruit neutrophils into the epidermis. Collections of neutrophils in the stratum corneum are called Munro microabscesses, a classic histologic feature of psoriasis. Neutrophil recruitment is part of the feed-forward inflammatory loop that helps sustain plaque inflammation."
+        }
+      ]
     }
   ]
 }
