@@ -902,7 +902,10 @@ function completeExercise(q){const rt=document.getElementById('reflectionText').
   weekLabel:q.weekLabel||'',
   questionNumber:q.questionNumber||'',
   topic:q.topic,
-  question:q.question,releaseDate:q.releaseDate,deadline:q.deadline||null,startedAt:state.exerciseStartTime,completedAt:state.exerciseEndTime,isLate:isLate(q),selfConcepts:[...state.selfConcepts],confirmedRoadmap:q.concepts.map(c=>({id:c.id,label:c.label})),masteredConcepts:{...state.masteredConcepts},essayText:state.essayText||'',essayCitations:{...(state.essayCitations||{})},totalConcepts:q.concepts.length,conceptsMastered:Object.keys(state.masteredConcepts).length,totalExchanges:countExchanges(),timeMinutes:Math.round((new Date(state.exerciseEndTime)-new Date(state.exerciseStartTime))/60000),reflectionText:state.reflectionText,reflectionLearned:state.reflectionLearned};state.completedExercises.push(record);
+  question:q.question,releaseDate:q.releaseDate,deadline:q.deadline||null,startedAt:state.exerciseStartTime,completedAt:state.exerciseEndTime,isLate:isLate(q),selfConcepts:[...state.selfConcepts],
+socraticHistory:[...(state.socraticHistory||[])],
+confirmedRoadmap:q.concepts.map(c=>({id:c.id,label:c.label})),
+masteredConcepts:{...state.masteredConcepts},{...state.masteredConcepts},essayText:state.essayText||'',essayCitations:{...(state.essayCitations||{})},totalConcepts:q.concepts.length,conceptsMastered:Object.keys(state.masteredConcepts).length,totalExchanges:countExchanges(),timeMinutes:Math.round((new Date(state.exerciseEndTime)-new Date(state.exerciseStartTime))/60000),reflectionText:state.reflectionText,reflectionLearned:state.reflectionLearned};state.completedExercises.push(record);
 state.currentPhase='complete';
 state.selectedQuestionId=q.id;
 state.activeQuestionId='';
