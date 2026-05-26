@@ -196,6 +196,43 @@ select {
     max-height: 300px;
     overflow: auto;
   }
+  .detail-section {
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #eee8dc;
+}
+
+.detail-section:last-child {
+  border-bottom: 0;
+}
+
+.detail-title {
+  font-size: 12px;
+  color: #6f675f;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  margin-bottom: 6px;
+  font-weight: 700;
+}
+
+.detail-box {
+  background: #faf8f4;
+  border: 1px solid #ddd8cc;
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 13px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+}
+
+.chat-line {
+  margin-bottom: 8px;
+}
+
+.chat-role {
+  font-weight: 700;
+  color: #2d6a4f;
+}
 </style>
 </head>
 <body>
@@ -491,11 +528,8 @@ function renderDashboard(rows, studentsRoster = [], pasRoster = []) {
         <td>${esc(row.timeMinutes)}m</td>
         <td>${formatDate(row.completedAt || row.submittedAt)}</td>
         <td>
-          <details>
-            <summary>View JSON</summary>
-            <pre>${esc(JSON.stringify(payload || row, null, 2))}</pre>
-          </details>
-        </td>
+  ${renderDetailViewer(row, payload)}
+</td>
       </tr>
     `;
   }).join('');
@@ -521,6 +555,95 @@ function renderDashboard(rows, studentsRoster = [], pasRoster = []) {
         ${tableRows || '<tr><td colspan="11">No records found.</td></tr>'}
       </tbody>
     </table>
+  `;
+}
+  function renderDetailViewer(row, payload) {
+  const record = payload || row || {};
+
+  const selfConcepts = Array.isArray(record.selfConcepts) ? record.selfConcepts : [];
+  const socraticHistory = Array.isArray(record.socraticHistory) ? record.socraticHistory : [];
+  const masteredConcepts = record.masteredConcepts || {};
+  const essayCitations = record.essayCitations || {};
+
+  const selfHtml = selfConcepts.length ? selfConcepts.map((c, i) => `
+    <div class="detail-box" style="margin-bottom:8px">
+      <strong>${esc(i + 1)}. ${esc(c.concept || 'Concept')}</strong>
+      <br>${esc(c.knowledge || '')}
+    </div>
+  `).join('') : '<div class="detail-box">No self-assessment saved.</div>';
+
+  const chatHtml = socraticHistory.length ? socraticHistory.map(m => `
+    <div class="chat-line">
+      <span class="chat-role">${esc(m.role === 'user' ? 'Student' : 'Tutor')}:</span>
+      ${esc(m.content || '')}
+    </div>
+  `).join('') : '<div class="detail-box">No Socratic transcript saved for this submission.</div>';
+
+  const masteredHtml = Object.entries(masteredConcepts).length ? Object.entries(masteredConcepts).map(([id, m]) => `
+    <div class="detail-box" style="margin-bottom:8px">
+      <strong>${esc(m.label || id)}</strong>
+      <br>${esc(m.summary || '')}
+      ${m.citation ? `<br><span class="mono">Citation: ${esc(m.citation)}</span>` : ''}
+    </div>
+  `).join('') : '<div class="detail-box">No mastered concept details saved.</div>';
+
+  const citationsHtml = Object.entries(essayCitations).length ? Object.entries(essayCitations).map(([id, citation]) => `
+    <div class="mono">${esc(id)}: ${esc(citation)}</div>
+  `).join('') : '<div class="detail-box">No citations saved.</div>';
+
+  return `
+    <details>
+      <summary>View Details</summary>
+
+      <div class="detail-section" style="margin-top:10px">
+        <div class="detail-title">Question</div>
+        <div class="detail-box">
+          ${esc(record.courseId || row.courseId || '')} · ${esc(record.weekLabel || row.weekLabel || '')} · Q${esc(record.questionNumber || row.questionNumber || '')}
+          <br><strong>${esc(record.topic || row.topic || '')}</strong>
+          <br><span class="mono">${esc(record.questionId || row.questionId || '')}</span>
+        </div>
+      </div>
+
+      <div class="detail-section">
+        <div class="detail-title">Self-assessment</div>
+        ${selfHtml}
+      </div>
+
+      <div class="detail-section">
+        <div class="detail-title">Socratic conversation</div>
+        <div class="detail-box">${chatHtml}</div>
+      </div>
+
+      <div class="detail-section">
+        <div class="detail-title">Mastered concepts</div>
+        ${masteredHtml}
+      </div>
+
+      <div class="detail-section">
+        <div class="detail-title">Essay</div>
+        <div class="detail-box">${esc(record.essayText || row.essayText || 'No essay saved.')}</div>
+      </div>
+
+      <div class="detail-section">
+        <div class="detail-title">Citations</div>
+        <div class="detail-box">${citationsHtml}</div>
+      </div>
+
+      <div class="detail-section">
+        <div class="detail-title">Reflection</div>
+        <div class="detail-box">
+          <strong>Comparison:</strong>
+          <br>${esc(record.reflectionText || row.reflectionText || '')}
+          <br><br><strong>New learning:</strong>
+          <br>${esc(record.reflectionLearned || row.reflectionLearned || '')}
+        </div>
+      </div>
+
+      <details>
+        <summary>Raw JSON</summary>
+        <pre>${esc(JSON.stringify(record || row, null, 2))}</pre>
+      </details>
+    </details>
   `;
 }
 function renderStudentSummary(rows, studentsRoster = []) {
