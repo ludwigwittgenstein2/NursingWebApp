@@ -891,38 +891,68 @@ function renderReflectPhase(q){const el=document.getElementById('mainContent');c
   <button class="btn btn-ghost btn-sm" onclick="state.selectedQuestionId='';saveToStorage();renderExerciseNavigator()">← Back to exercises</button>
 </div><div class="card"><div class="card-title">Look Back — Reflect on Your Learning</div><div class="card-subtitle">Compare where you started to where you ended up.</div><div class="reflection-comparison"><div class="compare-col"><h4>Your Initial List</h4><ul>${initList}</ul></div><div class="compare-col"><h4>Concepts Mastered</h4><ul>${mastList}</ul></div></div><div class="field-group"><label>How does your initial list compare to what you learned?</label><textarea id="reflectionText" rows="4" placeholder="What did you already know? What was missing?" oninput="state.reflectionText=this.value;saveToStorage();">${escHtml(state.reflectionText||'')}</textarea></div><div class="field-group"><label>What are the most important things you learned that you did NOT already know?</label><textarea id="reflectionLearned" rows="4" placeholder="Be specific — which concepts surprised you?" oninput="state.reflectionLearned=this.value;saveToStorage();">${escHtml(state.reflectionLearned||'')}</textarea></div><button class="btn btn-primary btn-lg" style="width:100%;justify-content:center" id="completeBtn">Complete Exercise & Export →</button></div>`;document.getElementById('completeBtn').onclick=()=>completeExercise(q);}
 
-function completeExercise(q){const rt=document.getElementById('reflectionText').value.trim();const rl=document.getElementById('reflectionLearned').value.trim();if(rt.length<40||rl.length<40){toast('Please write a more complete reflection','error');return;}state.reflectionText=rt;state.reflectionLearned=rl;state.exerciseEndTime=new Date().toISOString();const record={
-  questionId:q.id,
-  classId:COURSE_DATA?.classId||'',
-  academicYear:COURSE_DATA?.academicYear||'',
-  questionSetId:COURSE_DATA?.questionSetId||'',
-  courseId:state.courseId||'',
-  courseName:state.courseName||'',
-  week:q.week||'',
-  weekLabel:q.weekLabel||'',
-  questionNumber:q.questionNumber||'',
-  topic:q.topic,
-  question:q.question,releaseDate:q.releaseDate,deadline:q.deadline||null,startedAt:state.exerciseStartTime,completedAt:state.exerciseEndTime,isLate:isLate(q),selfConcepts:[...state.selfConcepts],
-socraticHistory:[...(state.socraticHistory||[])],
-confirmedRoadmap:q.concepts.map(c=>({id:c.id,label:c.label})),
-masteredConcepts:{...state.masteredConcepts},{...state.masteredConcepts},essayText:state.essayText||'',essayCitations:{...(state.essayCitations||{})},totalConcepts:q.concepts.length,conceptsMastered:Object.keys(state.masteredConcepts).length,totalExchanges:countExchanges(),timeMinutes:Math.round((new Date(state.exerciseEndTime)-new Date(state.exerciseStartTime))/60000),reflectionText:state.reflectionText,reflectionLearned:state.reflectionLearned};state.completedExercises.push(record);
-state.currentPhase='complete';
-state.selectedQuestionId=q.id;
-state.activeQuestionId='';
-saveToStorage();
+function completeExercise(q){
+  const rt=document.getElementById('reflectionText').value.trim();
+  const rl=document.getElementById('reflectionLearned').value.trim();
 
-submitPerformance(record)
-  .then(() => {
-    toast('Exercise complete! Data saved to Google Sheet.','success');
-  })
-  .catch((err) => {
-    console.error(err);
-    toast('Exercise complete, but Google Sheet save failed. Please export your data as backup.','error');
-  })
-  .finally(() => {
-    exportData();
-    renderMainScreen();
-  });
+  if(rt.length<40||rl.length<40){
+    toast('Please write a more complete reflection','error');
+    return;
+  }
+
+  state.reflectionText=rt;
+  state.reflectionLearned=rl;
+  state.exerciseEndTime=new Date().toISOString();
+
+  const record={
+    questionId:q.id,
+    classId:COURSE_DATA?.classId||'',
+    academicYear:COURSE_DATA?.academicYear||'',
+    questionSetId:COURSE_DATA?.questionSetId||'',
+    courseId:state.courseId||'',
+    courseName:state.courseName||'',
+    week:q.week||'',
+    weekLabel:q.weekLabel||'',
+    questionNumber:q.questionNumber||'',
+    topic:q.topic,
+    question:q.question,
+    releaseDate:q.releaseDate,
+    deadline:q.deadline||null,
+    startedAt:state.exerciseStartTime,
+    completedAt:state.exerciseEndTime,
+    isLate:isLate(q),
+    selfConcepts:[...state.selfConcepts],
+    socraticHistory:[...(state.socraticHistory||[])],
+    confirmedRoadmap:q.concepts.map(c=>({id:c.id,label:c.label})),
+    masteredConcepts:{...state.masteredConcepts},
+    essayText:state.essayText||'',
+    essayCitations:{...(state.essayCitations||{})},
+    totalConcepts:q.concepts.length,
+    conceptsMastered:Object.keys(state.masteredConcepts).length,
+    totalExchanges:countExchanges(),
+    timeMinutes:Math.round((new Date(state.exerciseEndTime)-new Date(state.exerciseStartTime))/60000),
+    reflectionText:state.reflectionText,
+    reflectionLearned:state.reflectionLearned
+  };
+
+  state.completedExercises.push(record);
+  state.currentPhase='complete';
+  state.selectedQuestionId=q.id;
+  state.activeQuestionId='';
+  saveToStorage();
+
+  submitPerformance(record)
+    .then(() => {
+      toast('Exercise complete! Data saved to Google Sheet.','success');
+    })
+    .catch((err) => {
+      console.error(err);
+      toast('Exercise complete, but Google Sheet save failed. Please export your data as backup.','error');
+    })
+    .finally(() => {
+      exportData();
+      renderMainScreen();
+    });
 }
   async function submitPerformance(record) {
   const payload = {
