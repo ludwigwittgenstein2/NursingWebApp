@@ -262,11 +262,11 @@ async function loadDashboard() {
 
     document.getElementById('dashboard').style.display = 'block';
     dashboardRows = data.performance?.rows || [];
-dashboardStudents = data.students?.rows || [];
-dashboardPAs = data.pas?.rows || [];
+    dashboardStudents = data.students?.rows || [];
+    dashboardPAs = data.pas?.rows || [];
 
-populatePAFilter(dashboardPAs);
-renderDashboard(dashboardRows, dashboardStudents, dashboardPAs);
+    populatePAFilter(dashboardPAs);
+    renderDashboard(dashboardRows, dashboardStudents, dashboardPAs);
   } catch (err) {
     if (loginError) loginError.textContent = err.message || 'Dashboard load failed.';
   } finally {
@@ -290,17 +290,18 @@ function populatePAFilter(pasRoster = []) {
 }
 
 function applyFilters() {
+  renderDashboard(dashboardRows, dashboardStudents, dashboardPAs);
+}
+function renderDashboard(rows, studentsRoster = [], pasRoster = []) {
   const selectedPA = String(document.getElementById('paFilter')?.value || '').trim().toLowerCase();
 
   const studentByEmail = {};
-  dashboardStudents.forEach(s => {
-    const studentEmail = String(s.googleEmail || '').trim().toLowerCase();
-    if (studentEmail) {
-      studentByEmail[studentEmail] = s;
-    }
+  studentsRoster.forEach(s => {
+    const email = String(s.googleEmail || '').trim().toLowerCase();
+    if (email) studentByEmail[email] = s;
   });
 
-  const filtered = dashboardRows.filter(row => {
+  const filteredRows = rows.filter(row => {
     if (!selectedPA) return true;
 
     const rowEmail = String(row.googleEmail || '').trim().toLowerCase();
@@ -309,69 +310,65 @@ function applyFilters() {
     if (!rosterMatch) return false;
 
     const assignedPA = String(rosterMatch.assignedPAEmail || '').trim().toLowerCase();
-
     return assignedPA === selectedPA;
   });
 
-  renderDashboard(filtered, dashboardStudents, dashboardPAs);
-}
-function renderDashboard(rows, studentsRoster = [], pasRoster = []) {
-  const students = new Set(rows.map(r => r.studentUUID || r.googleEmail || r.studentName).filter(Boolean));
-  const questions = new Set(rows.map(r => r.questionId).filter(Boolean));
-  const lateRows = rows.filter(r => String(r.isLate).toLowerCase() === 'true');
-const studentByEmail = {};
-studentsRoster.forEach(s => {
-  const email = String(s.googleEmail || '').trim().toLowerCase();
-  if (email) studentByEmail[email] = s;
-});
-  document.getElementById('statRows').textContent = rows.length;
+  const students = new Set(filteredRows.map(r => r.studentUUID || r.googleEmail || r.studentName).filter(Boolean));
+  const questions = new Set(filteredRows.map(r => r.questionId).filter(Boolean));
+  const lateRows = filteredRows.filter(r => String(r.isLate).toLowerCase() === 'true');
+
+  document.getElementById('statRows').textContent = filteredRows.length;
   document.getElementById('statStudents').textContent = students.size;
   document.getElementById('statQuestions').textContent = questions.size;
   document.getElementById('statLate').textContent = lateRows.length;
-document.getElementById('statRosterStudents').textContent = studentsRoster.length;
-document.getElementById('statPAs').textContent = pasRoster.length;
-  const sorted = [...rows].sort((a, b) => {
-  return String(b.completedAt || b.submittedAt || '').localeCompare(String(a.completedAt || a.submittedAt || ''));
-});
+  document.getElementById('statRosterStudents').textContent = studentsRoster.length;
+  document.getElementById('statPAs').textContent = pasRoster.length;
+
+  const sorted = [...filteredRows].sort((a, b) => {
+    return String(b.completedAt || b.submittedAt || '').localeCompare(String(a.completedAt || a.submittedAt || ''));
+  });
 
   const tableRows = sorted.map(row => {
-  const payload = parsePayload(row.fullRecordJson);
-  const status = row.completedAt ? 'Complete' : 'In progress';
-  const late = String(row.isLate).toLowerCase() === 'true';
-const rowEmail = String(row.googleEmail || '').trim().toLowerCase();
-const rosterMatch = studentByEmail[rowEmail] || {};
-const assignedPA = rosterMatch.assignedPAEmail || '';
-  return `
-    <tr>
-      <td>
-  ${esc(row.studentName)}
-  <div class="mono">${esc(row.googleEmail)}</div>
-  ${assignedPA ? `<div class="mono">PA: ${esc(assignedPA)}</div>` : ''}
-</td>
-      <td class="mono">${esc(row.studentUUID)}</td>
-      <td>
-        ${esc(row.courseId)}
-        <div class="mono">${esc(row.classId)} · ${esc(row.academicYear)}</div>
-      </td>
-      <td>
-        ${esc(row.weekLabel)} · Q${esc(row.questionNumber)}
-        <div class="mono">${esc(row.questionId)}</div>
-      </td>
-      <td>${esc(row.topic)}</td>
-      <td><span class="pill complete">${esc(status)}</span>${late ? ' <span class="pill late">Late</span>' : ''}</td>
-      <td>${esc(row.conceptsMastered)} / ${esc(row.totalConcepts)}</td>
-     <td>${esc(row.totalExchanges)}</td>
-<td>${esc(row.timeMinutes)}m</td>
-<td>${formatDate(row.completedAt || row.submittedAt)}</td>
-      <td>
-        <details>
-          <summary>View JSON</summary>
-          <pre>${esc(JSON.stringify(payload || row, null, 2))}</pre>
-        </details>
-      </td>
-    </tr>
-  `;
-}).join('');
+    const payload = parsePayload(row.fullRecordJson);
+    const status = row.completedAt ? 'Complete' : 'In progress';
+    const late = String(row.isLate).toLowerCase() === 'true';
+
+    const rowEmail = String(row.googleEmail || '').trim().toLowerCase();
+    const rosterMatch = studentByEmail[rowEmail] || {};
+    const assignedPA = rosterMatch.assignedPAEmail || '';
+
+    return `
+      <tr>
+        <td>
+          ${esc(row.studentName)}
+          <div class="mono">${esc(row.googleEmail)}</div>
+          ${assignedPA ? `<div class="mono">PA: ${esc(assignedPA)}</div>` : ''}
+        </td>
+        <td class="mono">${esc(row.studentUUID)}</td>
+        <td>
+          ${esc(row.courseId)}
+          <div class="mono">${esc(row.classId)} · ${esc(row.academicYear)}</div>
+        </td>
+        <td>
+          ${esc(row.weekLabel)} · Q${esc(row.questionNumber)}
+          <div class="mono">${esc(row.questionId)}</div>
+        </td>
+        <td>${esc(row.topic)}</td>
+        <td><span class="pill complete">${esc(status)}</span>${late ? ' <span class="pill late">Late</span>' : ''}</td>
+        <td>${esc(row.conceptsMastered)} / ${esc(row.totalConcepts)}</td>
+        <td>${esc(row.totalExchanges)}</td>
+        <td>${esc(row.timeMinutes)}m</td>
+        <td>${formatDate(row.completedAt || row.submittedAt)}</td>
+        <td>
+          <details>
+            <summary>View JSON</summary>
+            <pre>${esc(JSON.stringify(payload || row, null, 2))}</pre>
+          </details>
+        </td>
+      </tr>
+    `;
+  }).join('');
+
   document.getElementById('tableWrap').innerHTML = `
     <table>
       <thead>
@@ -384,13 +381,13 @@ const assignedPA = rosterMatch.assignedPAEmail || '';
           <th>Status</th>
           <th>Concepts</th>
           <th>Exchanges</th>
-<th>Time</th>
-<th>Completed/Saved</th>
+          <th>Time</th>
+          <th>Completed/Saved</th>
           <th>Details</th>
         </tr>
       </thead>
       <tbody>
-        ${tableRows || '<tr><td colspan="10">No records found.</td></tr>'}
+        ${tableRows || '<tr><td colspan="11">No records found.</td></tr>'}
       </tbody>
     </table>
   `;
