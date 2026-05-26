@@ -85,6 +85,7 @@
       ]
     },
     {
+      "id": "GI2-W03-Q01",
       "week": 3,
       "weekLabel": "Week 3",
       "questionNumber": 1,
@@ -98,15 +99,14 @@
           "label": "Microvascular third nerve palsy and pupil sparing",
           "idealAnswer": "The somatic motor fibers of CN III that control extraocular muscles and the levator can be affected by ischemia of the nerve’s internal vasa nervorum in diabetes, producing ptosis and ophthalmoplegia. The parasympathetic pupillomotor fibers are relatively superficial/peripheral on CN III and may be spared in microvascular ischemia, so the pupil can remain normal. In contrast, external compression, classically from a posterior communicating artery aneurysm, is more likely to affect superficial pupillomotor fibers. However, pupil sparing is not an absolute rule: compressive lesions can occasionally present without obvious pupil involvement, and microvascular palsies can sometimes have pupil findings, so acute third nerve palsy still requires appropriate clinical evaluation and imaging when indicated."
         }
-            ],
-      "id": "GI2-W03-Q01"
+      ]
     },
     {
       "id": "GI2-W04-Q01",
       "week": 4,
       "weekLabel": "Week 4",
       "questionNumber": 1,
-      "topic": "Psoriasis and the IL-23/Th17 pathway",
+      "topic": "Derm Immunology",
       "releaseDate": "2026-05-25",
       "deadline": "2026-09-07T08:00:00-04:00",
       "question": "A 22-year-old man comes to clinic because of a chronic rash on his elbows and knees. The lesions are well-demarcated erythematous plaques with overlying silvery scale. He says the rash worsens during stressful periods. He has no fever and otherwise feels well.\n\nA skin biopsy shows epidermal thickening, parakeratosis, and inflammatory cells in the dermis and epidermis.\n\nExplain the immunologic mechanism that drives psoriasis.\n\nIn your answer, discuss the roles of dendritic cells, IL-23, Th17 cells, IL-17, keratinocytes, and neutrophils.\n\nWhy do psoriatic plaques become thick and scaly?",
