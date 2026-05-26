@@ -39,13 +39,42 @@
   }
 
   input {
-    padding: 10px 12px;
-    border: 1px solid #c8c2b4;
-    border-radius: 8px;
-    font-size: 14px;
-    width: 280px;
-    max-width: 100%;
-  }
+  padding: 10px 12px;
+  border: 1px solid #c8c2b4;
+  border-radius: 8px;
+  font-size: 14px;
+  width: 280px;
+  max-width: 100%;
+}
+
+select {
+  padding: 10px 12px;
+  border: 1px solid #c8c2b4;
+  border-radius: 8px;
+  font-size: 14px;
+  min-width: 180px;
+  background: #fff;
+}
+
+.filter-label {
+  display: block;
+  font-size: 12px;
+  color: #6f675f;
+  margin-bottom: 4px;
+}
+
+.checkbox-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  font-size: 13px;
+  color: #4a4540;
+  padding-bottom: 10px;
+}
+
+.checkbox-row input {
+  width: auto;
+}
 
   button {
     background: #2d6a4f;
@@ -213,17 +242,49 @@
     <div class="card">
   <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:end">
     <div>
-      <label style="display:block;font-size:12px;color:#6f675f;margin-bottom:4px">PA filter</label>
-      <select id="paFilter" onchange="applyFilters()" style="padding:10px 12px;border:1px solid #c8c2b4;border-radius:8px;font-size:14px;min-width:240px">
+      <label class="filter-label">PA</label>
+      <select id="paFilter" onchange="applyFilters()">
         <option value="">All PAs</option>
       </select>
     </div>
+
+    <div>
+      <label class="filter-label">Class</label>
+      <select id="classFilter" onchange="applyFilters()">
+        <option value="">All classes</option>
+      </select>
+    </div>
+
+    <div>
+      <label class="filter-label">Course</label>
+      <select id="courseFilter" onchange="applyFilters()">
+        <option value="">All courses</option>
+      </select>
+    </div>
+
+    <div>
+      <label class="filter-label">Week / Question</label>
+      <select id="questionFilter" onchange="applyFilters()">
+        <option value="">All questions</option>
+      </select>
+    </div>
+
+    <div>
+      <label class="filter-label">Search</label>
+      <input type="text" id="searchFilter" placeholder="Student, email, topic..." oninput="applyFilters()">
+    </div>
+
+    <label class="checkbox-row">
+      <input type="checkbox" id="lateOnlyFilter" onchange="applyFilters()">
+      Late only
+    </label>
 
     <button onclick="loadDashboard()">Refresh</button>
   </div>
 </div>
 
     <div id="tableWrap"></div>
+    <div id="summaryWrap" style="margin-top:16px"></div>
   </div>
 </div>
 
@@ -265,28 +326,73 @@ async function loadDashboard() {
     dashboardStudents = data.students?.rows || [];
     dashboardPAs = data.pas?.rows || [];
 
-    populatePAFilter(dashboardPAs);
-    renderDashboard(dashboardRows, dashboardStudents, dashboardPAs);
+    populateFilters(dashboardRows, dashboardPAs);
+renderDashboard(dashboardRows, dashboardStudents, dashboardPAs);
   } catch (err) {
     if (loginError) loginError.textContent = err.message || 'Dashboard load failed.';
   } finally {
     if (button) button.disabled = false;
   }
 }
-function populatePAFilter(pasRoster = []) {
-  const select = document.getElementById('paFilter');
+function populateFilters(rows = [], pasRoster = []) {
+  populatePAFilter(pasRoster);
+  populateClassFilter(rows);
+  populateCourseFilter(rows);
+  populateQuestionFilter(rows);
+}
+
+function setOptions(selectId, options, allLabel) {
+  const select = document.getElementById(selectId);
   if (!select) return;
 
   const current = select.value;
-  const activePAs = pasRoster.filter(pa => String(pa.active || '').toLowerCase() === 'true');
-
-  select.innerHTML = '<option value="">All PAs</option>' + activePAs.map(pa => {
-    const email = String(pa.paEmail || '').trim();
-    const label = `${pa.paName || email} (${email})`;
-    return `<option value="${esc(email)}">${esc(label)}</option>`;
+  select.innerHTML = `<option value="">${esc(allLabel)}</option>` + options.map(opt => {
+    return `<option value="${esc(opt.value)}">${esc(opt.label)}</option>`;
   }).join('');
 
-  select.value = current;
+  select.value = options.some(opt => opt.value === current) ? current : '';
+}
+
+function populatePAFilter(pasRoster = []) {
+  const activePAs = pasRoster
+    .filter(pa => String(pa.active || '').toLowerCase() === 'true')
+    .map(pa => {
+      const email = String(pa.paEmail || '').trim();
+      return {
+        value: email,
+        label: `${pa.paName || email} (${email})`
+      };
+    })
+    .filter(pa => pa.value)
+    .sort((a, b) => a.label.localeCompare(b.label));
+
+  setOptions('paFilter', activePAs, 'All PAs');
+}
+
+function populateClassFilter(rows = []) {
+  const values = [...new Set(rows.map(r => r.classId).filter(Boolean))].sort();
+  setOptions('classFilter', values.map(v => ({ value: v, label: v })), 'All classes');
+}
+
+function populateCourseFilter(rows = []) {
+  const values = [...new Set(rows.map(r => r.courseId).filter(Boolean))].sort();
+  setOptions('courseFilter', values.map(v => ({ value: v, label: v })), 'All courses');
+}
+
+function populateQuestionFilter(rows = []) {
+  const seen = {};
+  rows.forEach(r => {
+    const id = String(r.questionId || '').trim();
+    if (!id) return;
+    const label = `${r.weekLabel || 'Week ?'} · Q${r.questionNumber || '?'} · ${r.topic || id}`;
+    seen[id] = label;
+  });
+
+  const options = Object.entries(seen)
+    .map(([value, label]) => ({ value, label }))
+    .sort((a, b) => a.label.localeCompare(b.label));
+
+  setOptions('questionFilter', options, 'All questions');
 }
 
 function applyFilters() {
@@ -294,6 +400,11 @@ function applyFilters() {
 }
 function renderDashboard(rows, studentsRoster = [], pasRoster = []) {
   const selectedPA = String(document.getElementById('paFilter')?.value || '').trim().toLowerCase();
+  const selectedClass = String(document.getElementById('classFilter')?.value || '').trim();
+  const selectedCourse = String(document.getElementById('courseFilter')?.value || '').trim();
+  const selectedQuestion = String(document.getElementById('questionFilter')?.value || '').trim();
+  const lateOnly = !!document.getElementById('lateOnlyFilter')?.checked;
+  const searchText = String(document.getElementById('searchFilter')?.value || '').trim().toLowerCase();
 
   const studentByEmail = {};
   studentsRoster.forEach(s => {
@@ -302,15 +413,33 @@ function renderDashboard(rows, studentsRoster = [], pasRoster = []) {
   });
 
   const filteredRows = rows.filter(row => {
-    if (!selectedPA) return true;
-
     const rowEmail = String(row.googleEmail || '').trim().toLowerCase();
-    const rosterMatch = studentByEmail[rowEmail];
-
-    if (!rosterMatch) return false;
-
+    const rosterMatch = studentByEmail[rowEmail] || {};
     const assignedPA = String(rosterMatch.assignedPAEmail || '').trim().toLowerCase();
-    return assignedPA === selectedPA;
+
+    if (selectedPA && assignedPA !== selectedPA) return false;
+    if (selectedClass && String(row.classId || '') !== selectedClass) return false;
+    if (selectedCourse && String(row.courseId || '') !== selectedCourse) return false;
+    if (selectedQuestion && String(row.questionId || '') !== selectedQuestion) return false;
+    if (lateOnly && String(row.isLate).toLowerCase() !== 'true') return false;
+
+    if (searchText) {
+      const haystack = [
+        row.studentName,
+        row.googleEmail,
+        row.studentUUID,
+        row.courseId,
+        row.courseName,
+        row.questionId,
+        row.weekLabel,
+        row.topic,
+        assignedPA
+      ].join(' ').toLowerCase();
+
+      if (!haystack.includes(searchText)) return false;
+    }
+
+    return true;
   });
 
   const students = new Set(filteredRows.map(r => r.studentUUID || r.googleEmail || r.studentName).filter(Boolean));
@@ -327,6 +456,8 @@ function renderDashboard(rows, studentsRoster = [], pasRoster = []) {
   const sorted = [...filteredRows].sort((a, b) => {
     return String(b.completedAt || b.submittedAt || '').localeCompare(String(a.completedAt || a.submittedAt || ''));
   });
+
+  renderStudentSummary(filteredRows, studentsRoster);
 
   const tableRows = sorted.map(row => {
     const payload = parsePayload(row.fullRecordJson);
@@ -392,7 +523,87 @@ function renderDashboard(rows, studentsRoster = [], pasRoster = []) {
     </table>
   `;
 }
+function renderStudentSummary(rows, studentsRoster = []) {
+  const wrap = document.getElementById('summaryWrap');
+  if (!wrap) return;
 
+  const studentByEmail = {};
+  studentsRoster.forEach(s => {
+    const email = String(s.googleEmail || '').trim().toLowerCase();
+    if (email) studentByEmail[email] = s;
+  });
+
+  const grouped = {};
+  rows.forEach(row => {
+    const key = String(row.googleEmail || row.studentUUID || row.studentName || 'unknown').trim().toLowerCase();
+    if (!grouped[key]) {
+      const rosterMatch = studentByEmail[String(row.googleEmail || '').trim().toLowerCase()] || {};
+      grouped[key] = {
+        studentName: row.studentName || rosterMatch.studentName || key,
+        googleEmail: row.googleEmail || rosterMatch.googleEmail || '',
+        assignedPAEmail: rosterMatch.assignedPAEmail || '',
+        completed: 0,
+        late: 0,
+        exchanges: 0,
+        time: 0,
+        questions: new Set(),
+        courses: new Set()
+      };
+    }
+
+    grouped[key].completed += 1;
+    if (String(row.isLate).toLowerCase() === 'true') grouped[key].late += 1;
+    grouped[key].exchanges += Number(row.totalExchanges || 0);
+    grouped[key].time += Number(row.timeMinutes || 0);
+    if (row.questionId) grouped[key].questions.add(row.questionId);
+    if (row.courseId) grouped[key].courses.add(row.courseId);
+  });
+
+  const summaries = Object.values(grouped).sort((a, b) => a.studentName.localeCompare(b.studentName));
+
+  const rowsHtml = summaries.map(s => {
+    const avgExchanges = s.completed ? (s.exchanges / s.completed).toFixed(1) : '0';
+    const avgTime = s.completed ? (s.time / s.completed).toFixed(1) : '0';
+
+    return `
+      <tr>
+        <td>
+          ${esc(s.studentName)}
+          <div class="mono">${esc(s.googleEmail)}</div>
+          ${s.assignedPAEmail ? `<div class="mono">PA: ${esc(s.assignedPAEmail)}</div>` : ''}
+        </td>
+        <td>${esc(s.completed)}</td>
+        <td>${esc(s.late)}</td>
+        <td>${esc(avgExchanges)}</td>
+        <td>${esc(avgTime)}m</td>
+        <td>${esc(s.courses.size)}</td>
+        <td>${esc(s.questions.size)}</td>
+      </tr>
+    `;
+  }).join('');
+
+  wrap.innerHTML = `
+    <div class="card">
+      <h2 style="font-size:20px;margin:0 0 12px">Student Summary</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Student</th>
+            <th>Completed</th>
+            <th>Late</th>
+            <th>Avg Exchanges</th>
+            <th>Avg Time</th>
+            <th>Courses</th>
+            <th>Questions</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rowsHtml || '<tr><td colspan="7">No student summary available.</td></tr>'}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
 function parsePayload(text) {
   if (!text) return null;
   try {
