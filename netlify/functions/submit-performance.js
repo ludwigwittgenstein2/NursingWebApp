@@ -1,174 +1,80 @@
-const crypto = require('crypto');
+const { createClient } = require('@supabase/supabase-js');
 
 exports.handler = async function(event) {
   if (event.httpMethod !== 'POST') {
-    return {
-      statusCode: 405,
-      body: 'Method Not Allowed'
-    };
+    return { statusCode: 405, body: 'Method Not Allowed' };
   }
 
-  const required = [
-    'GOOGLE_SHEET_ID',
-    'GOOGLE_SERVICE_ACCOUNT_EMAIL',
-    'GOOGLE_PRIVATE_KEY'
-  ];
-
+  const required = ['SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY'];
   for (const key of required) {
     if (!process.env[key]) {
-      return jsonResponse(500, {
-        error: `Missing ${key} environment variable.`
-      });
+      return jsonResponse(500, { error: `Missing ${key} environment variable.` });
     }
   }
 
   try {
     const record = JSON.parse(event.body || '{}');
-    const accessToken = await getGoogleAccessToken();
 
-    const row = [
-  new Date().toISOString(),
-
-  record.studentName || '',
-  record.studentUUID || '',
-  record.googleSub || '',
-  record.googleEmail || '',
-  record.googleName || '',
-  record.googleHd || '',
-
-  record.classId || '',
-  record.academicYear || '',
-  record.questionSetId || '',
-  record.courseId || '',
-  record.courseName || '',
-
-  record.questionId || '',
-  String(record.week ?? ''),
-  record.weekLabel || '',
-  String(record.questionNumber ?? ''),
-  record.topic || '',
-  record.releaseDate || '',
-  record.deadline || '',
-
-  record.startedAt || '',
-  record.completedAt || '',
-  String(record.isLate ?? ''),
-  String(record.totalConcepts ?? ''),
-  String(record.conceptsMastered ?? ''),
-  String(record.totalExchanges ?? ''),
-  String(record.timeMinutes ?? ''),
-
-  JSON.stringify(record.selfConcepts || []),
-  JSON.stringify(record.masteredConcepts || {}),
-  record.essayText || '',
-  JSON.stringify(record.essayCitations || {}),
-  record.reflectionText || '',
-  record.reflectionLearned || '',
-
-  JSON.stringify(record)
-];
-
-const sheetId = process.env.GOOGLE_SHEET_ID;
-const range = 'PerformanceLog!A:AG';
-
-    const response = await fetch(
-      `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${encodeURIComponent(range)}:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS`,
-      {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ values: [row] })
-      }
+    const supabase = createClient(
+      process.env.SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE_KEY
     );
 
-    const text = await response.text();
-    const data = safeJson(text);
+    const insertRow = {
+      student_name: record.studentName || '',
+      student_uuid: record.studentUUID || '',
+      google_sub:   record.googleSub || '',
+      google_email: record.googleEmail || '',
+      google_name:  record.googleName || '',
+      google_hd:    record.googleHd || '',
 
-    if (!response.ok) {
-      return jsonResponse(response.status, data);
+      class_id:        record.classId || '',
+      academic_year:   record.academicYear || '',
+      question_set_id: record.questionSetId || '',
+      course_id:       record.courseId || '',
+      course_name:     record.courseName || '',
+
+      question_id:     record.questionId || '',
+      week:            String(record.week ?? ''),
+      week_label:      record.weekLabel || '',
+      question_number: String(record.questionNumber ?? ''),
+      topic:           record.topic || '',
+      release_date:    record.releaseDate || '',
+      deadline:        record.deadline || '',
+
+      started_at:        record.startedAt || '',
+      completed_at:      record.completedAt || '',
+      is_late:           String(record.isLate ?? ''),
+      total_concepts:    String(record.totalConcepts ?? ''),
+      concepts_mastered: String(record.conceptsMastered ?? ''),
+      total_exchanges:   String(record.totalExchanges ?? ''),
+      time_minutes:      String(record.timeMinutes ?? ''),
+
+      self_concepts:     record.selfConcepts || [],
+      mastered_concepts: record.masteredConcepts || {},
+      essay_text:        record.essayText || '',
+      essay_citations:   record.essayCitations || {},
+      reflection_text:   record.reflectionText || '',
+      reflection_learned: record.reflectionLearned || '',
+
+      full_record: record
+    };
+
+    const { data, error } = await supabase
+      .from('performance')
+      .insert(insertRow)
+      .select('id')
+      .single();
+
+    if (error) {
+      return jsonResponse(500, { error: error.message });
     }
 
-    return jsonResponse(200, {
-      ok: true,
-      updatedRange: data.updates?.updatedRange || null
-    });
+    return jsonResponse(200, { ok: true, id: data.id });
   } catch (error) {
-    return jsonResponse(500, {
-      error: error.message || 'Server error'
-    });
+    return jsonResponse(500, { error: error.message || 'Server error' });
   }
 };
-
-async function getGoogleAccessToken() {
-  const now = Math.floor(Date.now() / 1000);
-
-  const header = {
-    alg: 'RS256',
-    typ: 'JWT'
-  };
-
-  const claimSet = {
-    iss: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-    scope: 'https://www.googleapis.com/auth/spreadsheets',
-    aud: 'https://oauth2.googleapis.com/token',
-    exp: now + 3600,
-    iat: now
-  };
-
-  const encodedHeader = base64UrlEncode(JSON.stringify(header));
-  const encodedClaimSet = base64UrlEncode(JSON.stringify(claimSet));
-  const unsignedToken = `${encodedHeader}.${encodedClaimSet}`;
-
-  const privateKey = process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n');
-
-  const signature = crypto
-    .createSign('RSA-SHA256')
-    .update(unsignedToken)
-    .sign(privateKey, 'base64');
-
-  const jwt = `${unsignedToken}.${base64UrlFromBase64(signature)}`;
-
-  const response = await fetch('https://oauth2.googleapis.com/token', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded'
-    },
-    body: new URLSearchParams({
-      grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
-      assertion: jwt
-    })
-  });
-
-  const text = await response.text();
-  const data = safeJson(text);
-
-  if (!response.ok) {
-    throw new Error(`Google token error: ${JSON.stringify(data)}`);
-  }
-
-  return data.access_token;
-}
-
-function base64UrlEncode(input) {
-  return base64UrlFromBase64(Buffer.from(input).toString('base64'));
-}
-
-function base64UrlFromBase64(base64) {
-  return base64
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
-    .replace(/=+$/g, '');
-}
-
-function safeJson(text) {
-  try {
-    return JSON.parse(text);
-  } catch {
-    return { raw: text };
-  }
-}
 
 function jsonResponse(statusCode, body) {
   return {

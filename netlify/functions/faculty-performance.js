@@ -1,17 +1,11 @@
-const crypto = require('crypto');
+const { createClient } = require('@supabase/supabase-js');
 
 exports.handler = async function(event) {
   if (event.httpMethod !== 'POST') {
     return jsonResponse(405, { error: 'Method Not Allowed' });
   }
 
-  const required = [
-    'GOOGLE_SHEET_ID',
-    'GOOGLE_SERVICE_ACCOUNT_EMAIL',
-    'GOOGLE_PRIVATE_KEY',
-    'FACULTY_DASHBOARD_PASSWORD'
-  ];
-
+  const required = ['SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY', 'FACULTY_DASHBOARD_PASSWORD'];
   for (const key of required) {
     if (!process.env[key]) {
       return jsonResponse(500, { error: `Missing ${key} environment variable.` });
@@ -20,144 +14,86 @@ exports.handler = async function(event) {
 
   try {
     const body = JSON.parse(event.body || '{}');
-
     if (body.password !== process.env.FACULTY_DASHBOARD_PASSWORD) {
       return jsonResponse(401, { error: 'Unauthorized' });
     }
 
-    const accessToken = await getGoogleAccessToken();
-    const sheetId = process.env.GOOGLE_SHEET_ID;
+    const supabase = createClient(
+      process.env.SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE_KEY
+    );
 
-    const [performance, students, pas] = await Promise.all([
-      readSheetRange(sheetId, accessToken, 'PerformanceLog!A:AG'),
-      readSheetRange(sheetId, accessToken, 'Students!A:H'),
-      readSheetRange(sheetId, accessToken, 'PAs!A:F')
+    const [perfRes, studRes, paRes] = await Promise.all([
+      supabase.from('performance').select('*').order('completed_at', { ascending: false }),
+      supabase.from('students').select('*'),
+      supabase.from('pas').select('*')
     ]);
+
+    if (perfRes.error) {
+      return jsonResponse(500, { error: perfRes.error.message });
+    }
 
     return jsonResponse(200, {
       ok: true,
-      performance,
-      students,
-      pas
+      performance: { rows: (perfRes.data || []).map(mapPerformanceRow) },
+      students:    { rows: (studRes.data || []).map(mapStudentRow) },
+      pas:         { rows: (paRes.data || []).map(mapPaRow) }
     });
   } catch (error) {
-    return jsonResponse(500, {
-      error: error.message || 'Server error'
-    });
+    return jsonResponse(500, { error: error.message || 'Server error' });
   }
 };
 
-async function getGoogleAccessToken() {
-  const now = Math.floor(Date.now() / 1000);
-
-  const header = {
-    alg: 'RS256',
-    typ: 'JWT'
-  };
-
-  const claimSet = {
-    iss: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-    scope: 'https://www.googleapis.com/auth/spreadsheets',
-    aud: 'https://oauth2.googleapis.com/token',
-    exp: now + 3600,
-    iat: now
-  };
-
-  const encodedHeader = base64UrlEncode(JSON.stringify(header));
-  const encodedClaimSet = base64UrlEncode(JSON.stringify(claimSet));
-  const unsignedToken = `${encodedHeader}.${encodedClaimSet}`;
-
-  const privateKey = process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n');
-
-  const signature = crypto
-    .createSign('RSA-SHA256')
-    .update(unsignedToken)
-    .sign(privateKey, 'base64');
-
-  const jwt = `${unsignedToken}.${base64UrlFromBase64(signature)}`;
-
-  const response = await fetch('https://oauth2.googleapis.com/token', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded'
-    },
-    body: new URLSearchParams({
-      grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
-      assertion: jwt
-    })
-  });
-
-  const text = await response.text();
-  const data = safeJson(text);
-
-  if (!response.ok) {
-    throw new Error(`Google token error: ${JSON.stringify(data)}`);
-  }
-
-  return data.access_token;
-}
-
-async function readSheetRange(sheetId, accessToken, range) {
-  const response = await fetch(
-    `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${encodeURIComponent(range)}`,
-    {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${accessToken}`
-      }
-    }
-  );
-
-  const text = await response.text();
-  const data = safeJson(text);
-
-  if (!response.ok) {
-    throw new Error(`Google Sheets read error for ${range}: ${JSON.stringify(data)}`);
-  }
-
-  const values = data.values || [];
-
-  if (values.length === 0) {
-    return {
-      range,
-      headers: [],
-      rows: []
-    };
-  }
-
-  const headers = values[0];
-  const rows = values.slice(1).map((row) => {
-    const obj = {};
-    headers.forEach((header, index) => {
-      obj[header] = row[index] || '';
-    });
-    return obj;
-  });
-
+function mapPerformanceRow(r) {
   return {
-    range,
-    headers,
-    rows
+    submittedAt: r.created_at || '',
+    studentName: r.student_name || '',
+    studentUUID: r.student_uuid || '',
+    googleSub: r.google_sub || '',
+    googleEmail: r.google_email || '',
+    googleName: r.google_name || '',
+    googleHd: r.google_hd || '',
+    classId: r.class_id || '',
+    academicYear: r.academic_year || '',
+    questionSetId: r.question_set_id || '',
+    courseId: r.course_id || '',
+    courseName: r.course_name || '',
+    questionId: r.question_id || '',
+    week: r.week || '',
+    weekLabel: r.week_label || '',
+    questionNumber: r.question_number || '',
+    topic: r.topic || '',
+    releaseDate: r.release_date || '',
+    deadline: r.deadline || '',
+    startedAt: r.started_at || '',
+    completedAt: r.completed_at || '',
+    isLate: r.is_late || '',
+    totalConcepts: r.total_concepts || '',
+    conceptsMastered: r.concepts_mastered || '',
+    totalExchanges: r.total_exchanges || '',
+    timeMinutes: r.time_minutes || '',
+    fullRecordJson: r.full_record ? JSON.stringify(r.full_record) : ''
   };
 }
 
-function base64UrlEncode(input) {
-  return base64UrlFromBase64(Buffer.from(input).toString('base64'));
+function mapStudentRow(s) {
+  return {
+    googleEmail: s.google_email || '',
+    studentName: s.student_name || '',
+    studentUUID: s.student_uuid || '',
+    classId: s.class_id || '',
+    courseId: s.course_id || '',
+    assignedPAEmail: s.assigned_pa_email || '',
+    active: String(s.active ?? '')
+  };
 }
 
-function base64UrlFromBase64(base64) {
-  return base64
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
-    .replace(/=+$/g, '');
-}
-
-function safeJson(text) {
-  try {
-    return JSON.parse(text);
-  } catch {
-    return { raw: text };
-  }
+function mapPaRow(p) {
+  return {
+    paEmail: p.pa_email || '',
+    paName: p.pa_name || '',
+    active: String(p.active ?? '')
+  };
 }
 
 function jsonResponse(statusCode, body) {
