@@ -245,7 +245,19 @@ select {
       <input type="password" id="password" placeholder="Faculty dashboard password">
       <button onclick="loadDashboard()">Load dashboard</button>
       <div id="loginError" class="error"></div>
+      <div style="margin-top:14px;padding-top:14px;border-top:1px solid #ddd8cc">
+        <div style="font-size:13px;color:#6f675f;margin-bottom:8px">No server connected? View demo data from this browser, or load student export files.</div>
+        <button onclick="loadDemoDashboard()" style="background:#1a4a7a">View demo data (offline)</button>
+        <button onclick="document.getElementById('facultyImport').click()" style="background:#8a6a1a">Load export files…</button>
+        <input type="file" id="facultyImport" accept=".json" multiple style="display:none" onchange="importFacultyFiles(event)">
+        <div id="importedCount" style="font-size:12px;color:#6f675f;margin-top:8px"></div>
+      </div>
+      <div style="margin-top:12px"><a href="admin.html" style="font-size:13px;color:#1a4a7a">← Admin hub</a> · <a href="index.html" style="font-size:13px;color:#1a4a7a">Student app</a></div>
     </div>
+  </div>
+
+  <div id="demoNotice" style="display:none;background:#e0eaf5;border:1px solid #b0c8e8;color:#1a4a7a;border-radius:8px;padding:12px 16px;font-size:13px;margin-bottom:16px">
+    <strong>Offline demo mode.</strong> Showing completed exercises from this browser and any export files you loaded. No live server connected.
   </div>
 
   <div id="dashboard" style="display:none">
@@ -330,6 +342,95 @@ let lastPassword = '';
 let dashboardRows = [];
 let dashboardStudents = [];
 let dashboardPAs = [];
+let importedRows = [];
+
+function recordToRow(stu, rec) {
+  return {
+    studentName: stu.studentName || stu.googleName || '',
+    googleEmail: stu.googleEmail || '',
+    studentUUID: stu.studentUUID || '',
+    courseId: rec.courseId || stu.courseId || '',
+    courseName: rec.courseName || stu.courseName || '',
+    classId: rec.classId || '',
+    academicYear: rec.academicYear || '',
+    questionId: rec.questionId || '',
+    questionNumber: rec.questionNumber || '',
+    weekLabel: rec.weekLabel || '',
+    topic: rec.topic || '',
+    isLate: String(!!rec.isLate),
+    conceptsMastered: rec.conceptsMastered != null ? rec.conceptsMastered : (rec.masteredConcepts ? Object.keys(rec.masteredConcepts).length : 0),
+    totalConcepts: rec.totalConcepts != null ? rec.totalConcepts : (rec.confirmedRoadmap ? rec.confirmedRoadmap.length : 0),
+    totalExchanges: rec.totalExchanges != null ? rec.totalExchanges : '',
+    timeMinutes: rec.timeMinutes != null ? rec.timeMinutes : '',
+    completedAt: rec.completedAt || '',
+    submittedAt: rec.completedAt || '',
+    fullRecordJson: JSON.stringify(rec)
+  };
+}
+
+function buildRowsFromLocalStorage() {
+  const rows = [];
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (!key || !key.startsWith('medtutor_student_')) continue;
+      const stu = JSON.parse(localStorage.getItem(key));
+      if (!stu || !Array.isArray(stu.completedExercises)) continue;
+      stu.completedExercises.forEach(rec => rows.push(recordToRow(stu, rec)));
+    }
+  } catch (e) { console.warn(e); }
+  return rows;
+}
+
+function importFacultyFiles(event) {
+  const files = Array.from(event.target.files || []);
+  if (!files.length) return;
+  let pending = files.length;
+  files.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      try {
+        const data = JSON.parse(e.target.result);
+        const stu = data.student || { studentName: data.studentName, googleEmail: data.googleEmail, studentUUID: data.studentUUID, courseId: data.courseId, courseName: data.courseName };
+        const recs = Array.isArray(data.completedExercises) ? data.completedExercises : [];
+        recs.forEach(rec => importedRows.push(recordToRow(stu, rec)));
+      } catch (err) { console.warn('Bad export file', err); }
+      if (--pending === 0) {
+        const cnt = document.getElementById('importedCount');
+        if (cnt) cnt.textContent = `${importedRows.length} record(s) loaded from files.`;
+        loadDemoDashboard();
+      }
+    };
+    reader.readAsText(file);
+  });
+}
+
+function loadDemoDashboard() {
+  // Demo password gate — uses the password set in Admin → App Config (if any).
+  let demoPw = '';
+  try { const c = JSON.parse(localStorage.getItem('medtutor_admin_config') || '{}'); demoPw = c.facultyPassword || ''; } catch (e) {}
+  if (demoPw) {
+    const typed = (document.getElementById('password')?.value || lastPassword || '').trim();
+    if (typed !== demoPw) {
+      const le = document.getElementById('loginError');
+      if (le) le.textContent = 'Enter the faculty password to view the dashboard.';
+      return;
+    }
+  }
+  const notice = document.getElementById('demoNotice');
+  if (notice) notice.style.display = 'block';
+  dashboardRows = buildRowsFromLocalStorage().concat(importedRows);
+  dashboardStudents = [];
+  dashboardPAs = [];
+  document.getElementById('dashboard').style.display = 'block';
+  populateFilters(dashboardRows, dashboardPAs);
+  renderDashboard(dashboardRows, dashboardStudents, dashboardPAs);
+  if (!dashboardRows.length) {
+    const tw = document.getElementById('tableWrap');
+    if (tw) tw.innerHTML = '<div class="card">No completed exercises found in this browser yet. Complete an exercise in the student app first, or load export files above.</div>';
+  }
+}
+
 async function loadDashboard() {
   const password = document.getElementById('password')?.value || lastPassword;
   const loginError = document.getElementById('loginError');
@@ -346,11 +447,25 @@ async function loadDashboard() {
   if (button) button.disabled = true;
 
   try {
-    const response = await fetch('/.netlify/functions/faculty-performance', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password })
-    });
+    let response;
+    try {
+      response = await fetch('/.netlify/functions/faculty-performance', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password })
+      });
+    } catch (networkErr) {
+      // No server reachable at all (e.g. opened as a file) — show demo data.
+      loadDemoDashboard();
+      return;
+    }
+
+    const ct = response.headers.get('content-type') || '';
+    if (!ct.includes('json')) {
+      // Server returned HTML (function not deployed) — fall back to demo data.
+      loadDemoDashboard();
+      return;
+    }
 
     const data = await response.json().catch(() => ({}));
 
@@ -358,6 +473,8 @@ async function loadDashboard() {
       throw new Error(data.error || 'Dashboard load failed.');
     }
 
+    const notice = document.getElementById('demoNotice');
+    if (notice) notice.style.display = 'none';
     document.getElementById('dashboard').style.display = 'block';
     dashboardRows = data.performance?.rows || [];
     dashboardStudents = data.students?.rows || [];

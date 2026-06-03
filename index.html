@@ -135,7 +135,7 @@ textarea{resize:vertical;min-height:80px}
   <div class="onboard-wrap">
     <div class="onboard-card">
       <div class="onboard-logo">Med<em>Tutor</em></div>
-      <div class="onboard-sub">Your CAPPS Tutor.<br>Sign in with your CWRU Google account to begin.</div>
+      <div class="onboard-sub">Your CAPPS Tutor.<br>Sign in with your Cleveland Clinic Google account to begin.</div>
 
 <div id="returningUserBox" style="display:none;text-align:left;background:var(--accent-light);border:1px solid #a8d5be;border-radius:var(--radius);padding:14px;margin:16px 0;">
   <div style="font-size:13px;color:var(--accent);font-weight:600;margin-bottom:4px;">Returning user</div>
@@ -144,6 +144,20 @@ textarea{resize:vertical;min-height:80px}
 </div>
 
 <div id="googleSignInBox" style="display:flex;justify-content:center;margin:20px 0;"></div>
+
+<div id="emailSignInBox" style="text-align:left;margin:16px 0;">
+  <div class="divider"></div>
+  <div style="font-size:12px;color:var(--ink3);margin:12px 0 10px;text-align:center;">Or continue with your email</div>
+  <div class="field-group">
+    <label>Your name</label>
+    <input type="text" id="emailNameInput" placeholder="Jane Doe">
+  </div>
+  <div class="field-group">
+    <label>Email</label>
+    <input type="text" id="emailInput" placeholder="you@example.com">
+  </div>
+  <button class="btn btn-secondary btn-lg" style="width:100%;margin-top:4px;justify-content:center" onclick="continueWithEmail()">Continue with email →</button>
+</div>
 
 <div id="signedInBox" style="display:none;text-align:left;background:var(--accent-light);border:1px solid #a8d5be;border-radius:var(--radius);padding:14px;margin:16px 0;">
   <div style="font-size:13px;color:var(--accent);font-weight:600;margin-bottom:4px;">Signed in</div>
@@ -210,11 +224,77 @@ const DEFAULT_QUESTION_SET='qset_01';
 let GOOGLE_OAUTH_CLIENT_ID='';
 let COURSE_DATA=null;
 
+// Offline fallback: used when the app can't fetch /questions/*.json
+// (e.g. when index.html is opened directly as a file). Edit this to change
+// the questions when running without a server.
+const EMBEDDED_COURSE={
+  courseId:"NURS-101",
+  courseName:"Foundations of Nursing Practice",
+  classId:"NURS101-2026",
+  academicYear:"2025-2026",
+  questionSetId:"qset_01",
+  questions:[
+    {id:"Q1",week:"1",weekLabel:"Week 1 — Patient Assessment",questionNumber:"1",
+     topic:"Recognizing early sepsis in a post-operative patient",
+     question:"A 68-year-old patient is 2 days post-abdominal surgery. Their temperature is 38.6°C, heart rate 112, respiratory rate 24, and blood pressure 98/60. They seem more confused than yesterday. What is happening physiologically, what should the nurse assess and do first, and why does early recognition matter?",
+     releaseDate:"2026-01-01",deadline:null,
+     concepts:[
+       {id:"C1",label:"SIRS / early sepsis criteria",idealAnswer:"The patient meets multiple SIRS criteria (temp >38°C, HR >90, RR >20), which in the setting of a likely infection source (recent surgery) suggests sepsis. Recognizing the clustering of vital sign changes plus new confusion is key."},
+       {id:"C2",label:"Compensatory mechanisms and the falling blood pressure",idealAnswer:"Tachycardia and tachypnea are compensatory responses to maintain perfusion and oxygenation. The borderline-low blood pressure and new confusion suggest compensation is beginning to fail and perfusion to the brain is dropping."},
+       {id:"C3",label:"Nursing priorities and escalation",idealAnswer:"Priorities: reassess full vitals and level of consciousness, ensure airway/oxygenation, establish IV access, anticipate fluids and blood cultures before antibiotics, and escalate to the provider/rapid response immediately. Early recognition and the sepsis bundle improve survival."}
+     ]},
+    {id:"Q2",week:"2",weekLabel:"Week 2 — Medication Safety",questionNumber:"1",
+     topic:"Safe administration of high-alert medications",
+     question:"You are about to give IV insulin to a patient. Explain the safety principles that govern administration of high-alert medications, the specific risks of insulin, and the checks a nurse performs to prevent a serious error.",
+     releaseDate:"2026-01-08",deadline:null,
+     concepts:[
+       {id:"C1",label:"High-alert medications and independent double-checks",idealAnswer:"High-alert medications carry a heightened risk of significant harm when used in error. Insulin is high-alert; many facilities require an independent double-check of the drug, dose, concentration, and pump settings by a second nurse."},
+       {id:"C2",label:"Rights of medication administration",idealAnswer:"The rights (right patient, drug, dose, route, time, documentation, and reason/response) structure safe administration. With insulin, dose and units verification and confirming the patient's current glucose are especially critical."},
+       {id:"C3",label:"Hypoglycemia risk and monitoring",idealAnswer:"The main risk of insulin is hypoglycemia. The nurse checks blood glucose before administration, knows the onset/peak of the insulin type, monitors for hypoglycemia symptoms, and ensures a treatment source is available."}
+     ]}
+  ]
+};
+
+let DEMO_NOTICE_SHOWN=false;
+
 async function callClaude(system,messages){
-  const r=await fetch('/.netlify/functions/claude-feedback',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({max_tokens:1000,system,messages})});
-  if(!r.ok){const e=await r.text();throw new Error(`API ${r.status}: ${e}`);}
-  const d=await r.json();
-  return d.text||'';
+  try{
+    const r=await fetch('/.netlify/functions/claude-feedback',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({max_tokens:1000,system,messages})});
+    if(!r.ok)throw new Error(`API ${r.status}`);
+    const ct=r.headers.get('content-type')||'';
+    if(!ct.includes('json'))throw new Error('non-JSON response');
+    const d=await r.json();
+    if(d && typeof d.text==='string' && d.text.trim())return d.text;
+    throw new Error('empty response');
+  }catch(e){
+    // No live AI backend reachable — fall back to the built-in demo tutor
+    // so the full flow can be walked through offline.
+    if(!DEMO_NOTICE_SHOWN){toast('AI tutor not connected — running in demo mode.','info');DEMO_NOTICE_SHOWN=true;}
+    return simulateTutor(system,messages);
+  }
+}
+
+function simulateTutor(system,messages){
+  const q=getSelectedQuestion();
+  if(!q||!q.concepts){return "Thanks for sharing — tell me more about your reasoning here.";}
+  const pending=q.concepts.filter(c=>!state.masteredConcepts[c.id]);
+  if(pending.length===0){return "You've worked through every concept beautifully. Go ahead and write your synthesis essay.";}
+  const assistantTurns=(messages||[]).filter(m=>m.role==='assistant').length;
+  const current=pending[0];
+  if(assistantTurns===0){
+    return `Welcome — let's reason through this case together, one concept at a time.\n\nLet's start with **${current.label}**. In your own words, what do you think is going on here, and why does it matter for this patient?`;
+  }
+  let summary=(current.idealAnswer||'').trim().split('. ')[0];
+  if(summary && !/[.!?]$/.test(summary))summary+='.';
+  if(!summary)summary=`Demonstrated understanding of ${current.label}.`;
+  const next=pending[1];
+  let msg=`That's solid reasoning — you've connected the key ideas well.\n\nCONCEPT_MASTERED:${current.id}:${summary}\n`;
+  if(next){
+    msg+=`\nNow let's look at **${next.label}**. What's your thinking on that one?`;
+  }else{
+    msg+=`\nThat was the final concept — you've mastered them all. Time to write your synthesis essay.`;
+  }
+  return msg;
 }
 
 let state={
@@ -277,6 +357,22 @@ async function completeOnboarding(){
   showScreen('screen-main');
   renderExerciseNavigator();
 }
+function continueWithEmail(){
+  const name=(document.getElementById('emailNameInput').value||'').trim();
+  const email=(document.getElementById('emailInput').value||'').trim();
+  if(!name){toast('Please enter your name.','error');return;}
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){toast('Please enter a valid email address.','error');return;}
+  state.googleSub='email:'+email.toLowerCase();
+  state.googleEmail=email;
+  state.googleName=name;
+  state.googlePicture='';
+  state.googleHd='';
+  state.studentName=name;
+  if(!state.studentUUID){state.studentUUID=generateUUID();}
+  saveToStorage();
+  completeOnboarding();
+}
+
 function renderReturningUser(){
   const returningUserBox=document.getElementById('returningUserBox');
   const returningUserName=document.getElementById('returningUserName');
@@ -291,7 +387,9 @@ function renderReturningUser(){
   if(returningUserName)returningUserName.textContent=state.googleName || state.studentName || 'Previous user';
   if(returningUserEmail)returningUserEmail.textContent=state.googleEmail || '';
 
+  const emailSignInBox=document.getElementById('emailSignInBox');
   if(googleSignInBox)googleSignInBox.style.display='none';
+  if(emailSignInBox)emailSignInBox.style.display='none';
   if(signedInBox)signedInBox.style.display='none';
   if(beginBtn)beginBtn.style.display='none';
   if(continueBtn)continueBtn.style.display='inline-flex';
@@ -364,18 +462,25 @@ function clearMedTutorLocalStorage(){
 async function loadPublicConfig(){
   try{
     const response=await fetch('/.netlify/functions/public-config',{cache:'no-store'});
+    const ct=response.headers.get('content-type')||'';
+    if(!response.ok || !ct.includes('application/json')){
+      console.warn('public-config not available — Google sign-in disabled. Use email sign-in.');
+      GOOGLE_OAUTH_CLIENT_ID='';
+      return;
+    }
     const data=await response.json();
     GOOGLE_OAUTH_CLIENT_ID=data.googleOAuthClientId || '';
   }catch(err){
-    console.error(err);
-    toast('Could not load app configuration.','error');
+    // No server config — fall back to an OAuth client id set in the Admin page (if any).
+    try{const c=JSON.parse(localStorage.getItem('medtutor_admin_config')||'{}');GOOGLE_OAUTH_CLIENT_ID=c.oauthClientId||'';}catch(e){GOOGLE_OAUTH_CLIENT_ID='';}
+    if(!GOOGLE_OAUTH_CLIENT_ID)console.warn('public-config not available — Google sign-in disabled. Use email sign-in.');
   }
 }
 function renderGoogleSignIn(){
   const box=document.getElementById('googleSignInBox');
   if(!box)return;
 if(!GOOGLE_OAUTH_CLIENT_ID){
-  toast('Missing Google OAuth client configuration.','error');
+  box.style.display='none';
   return;
 }
   if(!window.google || !google.accounts || !google.accounts.id){
@@ -459,18 +564,39 @@ function toggleImportSection(){const s=document.getElementById('onboardImportSec
 async function loadCourse(){
   const params=new URLSearchParams(window.location.search);
   const qset=params.get('qset')||DEFAULT_QUESTION_SET;
+  // Highest priority: a question set defined in the Admin page (offline/demo).
+  try{
+    const adminQset=localStorage.getItem('medtutor_admin_qset');
+    if(adminQset){
+      const parsed=JSON.parse(adminQset);
+      if(parsed && Array.isArray(parsed.questions) && parsed.questions.length){
+        COURSE_DATA=parsed;
+        state.courseId=parsed.courseId;
+        state.courseName=parsed.courseName;
+        state.questions=parsed.questions;
+        const mm=document.getElementById('headerMeta');
+        if(mm){const id=state.googleEmail||state.studentName||'';mm.textContent=`${state.courseId} · ${id}`;}
+        return;
+      }
+    }
+  }catch(e){/* ignore and continue */}
   try{
     const response=await fetch(`/questions/${qset}.json`,{cache:'no-store'});
-    if(!response.ok)throw new Error(`Could not load /questions/${qset}.json`);
+    const ct=response.headers.get('content-type')||'';
+    if(!response.ok)throw new Error(`Could not load /questions/${qset}.json (HTTP ${response.status})`);
+    if(!ct.includes('json'))throw new Error(`/questions/${qset}.json is missing — got a non-JSON response. Make sure the questions/ folder is deployed.`);
     COURSE_DATA=await response.json();
     state.courseId=COURSE_DATA.courseId;
     state.courseName=COURSE_DATA.courseName;
     state.questions=COURSE_DATA.questions||[];
   }catch(e){
-    toast(`Question load error: ${e.message}`,'error');
-    state.courseId=state.courseId||'UNKNOWN';
-    state.courseName=state.courseName||'Course not loaded';
-    state.questions=[];
+    // Fetch failed (e.g. opened as a file, or questions/ not deployed).
+    // Fall back to the embedded course so the app still works.
+    COURSE_DATA=EMBEDDED_COURSE;
+    state.courseId=COURSE_DATA.courseId;
+    state.courseName=COURSE_DATA.courseName;
+    state.questions=COURSE_DATA.questions||[];
+    console.warn('Using embedded questions (could not fetch /questions):',e.message);
   }
   const m=document.getElementById('headerMeta');
   if(m){

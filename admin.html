@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MedTutor Admin</title>
+<style>
+  :root{--bg:#f5f2eb;--surface:#fff;--surface2:#faf8f4;--border:#ddd8cc;--border-dark:#c8c2b4;--ink:#1a1814;--ink2:#4a4540;--ink3:#8a8278;--accent:#2d6a4f;--blue:#1a4a7a;--amber:#8a6a1a;--red:#c0392b;}
+  *{box-sizing:border-box;}
+  body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink);margin:0;padding:24px;}
+  .wrap{max-width:1000px;margin:0 auto;}
+  h1{font-size:28px;margin:0 0 4px;}
+  .sub{color:var(--ink3);font-size:14px;margin-bottom:20px;}
+  h2{font-size:18px;margin:0 0 12px;}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px;box-shadow:0 2px 12px rgba(0,0,0,0.06);}
+  label{display:block;font-size:12px;color:var(--ink3);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px;margin-top:10px;}
+  input,textarea{width:100%;padding:9px 11px;border:1px solid var(--border-dark);border-radius:8px;font-size:14px;font-family:inherit;background:var(--surface2);}
+  textarea{resize:vertical;min-height:60px;}
+  button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:10px 16px;font-weight:600;cursor:pointer;font-size:14px;}
+  button.blue{background:var(--blue);} button.amber{background:var(--amber);} button.red{background:var(--red);} button.ghost{background:#fff;color:var(--ink2);border:1px solid var(--border-dark);}
+  button:disabled{opacity:.5;cursor:not-allowed;}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+  .nav a{display:inline-block;text-decoration:none;}
+  .nav button{font-size:15px;padding:14px 20px;}
+  .qcard{border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:14px;background:var(--surface2);}
+  .qhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+  .qhead .qlabel{font-weight:700;color:var(--accent);}
+  .concept{border:1px dashed var(--border-dark);border-radius:8px;padding:10px;margin-top:10px;background:#fff;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+  .note{font-size:13px;color:var(--ink3);line-height:1.6;margin-bottom:10px;}
+  .data-item{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);font-size:14px;}
+  .mono{font-family:ui-monospace,monospace;font-size:12px;color:var(--ink3);}
+  .toast{position:fixed;bottom:20px;right:20px;background:var(--surface);border:1px solid var(--accent);border-radius:8px;padding:10px 16px;font-size:13px;box-shadow:0 8px 24px rgba(0,0,0,.15);}
+  @media(max-width:640px){.grid2,.grid3{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>MedTutor Admin</h1>
+  <div class="sub">Manage the app, edit questions, and switch between views. Works offline for demos.</div>
+
+  <div class="card nav">
+    <h2>Views</h2>
+    <div class="note">Open the other parts of the app:</div>
+    <div class="row">
+      <a href="index.html"><button class="blue">🎓 Open Student App</button></a>
+      <a href="faculty.html"><button class="amber">📊 Open Faculty Dashboard</button></a>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>App Config</h2>
+
+    <div class="note" style="background:#fdf6e3;border:1px solid #e8dca8;border-radius:8px;padding:10px 12px">
+      <strong>Demo vs. live:</strong> Deadlines are real app settings and work everywhere. The faculty password and OAuth ID below are <em>server secrets</em> on a live site — set them as Netlify environment variables (this page shows you exactly what to paste). The values here also drive the <em>offline demo</em> so you can show a gated login.
+    </div>
+
+    <h3 style="margin:18px 0 4px;font-size:15px">Faculty dashboard password</h3>
+    <div class="note">Used to gate the Faculty dashboard in the offline demo on this browser.</div>
+    <div class="grid2">
+      <div><label>Demo password</label><input id="cfgFacultyPassword" placeholder="e.g. nursing2026"></div>
+      <div><label>Live: Netlify env variable</label><input class="mono" value="FACULTY_DASHBOARD_PASSWORD" readonly></div>
+    </div>
+
+    <h3 style="margin:18px 0 4px;font-size:15px">Google OAuth (sign-in)</h3>
+    <div class="note">For a live site, paste your OAuth Client ID. The email sign-in always works without this; the Google button only fully works once the serverless functions are deployed.</div>
+    <div class="grid2">
+      <div><label>OAuth Client ID</label><input id="cfgOAuthClientId" placeholder="xxxx.apps.googleusercontent.com"></div>
+      <div><label>Live: Netlify env variable</label><input class="mono" value="GOOGLE_OAUTH_CLIENT_ID" readonly></div>
+    </div>
+
+    <h3 style="margin:18px 0 4px;font-size:15px">Deadlines</h3>
+    <div class="note">Set a due date per question. Past the deadline, student submissions are flagged <strong>Late</strong> in the student app and faculty dashboard. Leave blank for no deadline.</div>
+    <div id="deadlineList"></div>
+    <div class="row" style="margin-top:8px">
+      <input id="bulkDeadline" type="date" style="max-width:200px">
+      <button class="ghost" onclick="applyBulkDeadline()">Apply to all questions</button>
+    </div>
+
+    <div class="row" style="margin-top:18px;border-top:1px solid var(--border);padding-top:16px">
+      <button onclick="saveConfig()">💾 Save config &amp; deadlines</button>
+      <button class="blue" onclick="showNetlifyEnv()">📋 Show Netlify env settings</button>
+    </div>
+    <pre id="envOutput" class="mono" style="display:none;white-space:pre-wrap;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px;margin-top:12px"></pre>
+  </div>
+
+  <div class="card">
+    <h2>Question Set Editor</h2>
+    <div class="note">Edit the exercises students see. <strong>Save</strong> applies them to the Student app on this browser (for demos). <strong>Download JSON</strong> gives you a file to put in <span class="mono">questions/qset_01.json</span> for a real deployment.</div>
+    <div class="grid3">
+      <div><label>Course ID</label><input id="courseId"></div>
+      <div><label>Course Name</label><input id="courseName"></div>
+      <div><label>Question Set ID</label><input id="questionSetId"></div>
+      <div><label>Class ID</label><input id="classId"></div>
+      <div><label>Academic Year</label><input id="academicYear"></div>
+    </div>
+
+    <div id="questions" style="margin-top:16px"></div>
+
+    <div class="row" style="margin-top:12px">
+      <button class="ghost" onclick="addQuestion()">+ Add question</button>
+    </div>
+
+    <div class="row" style="margin-top:18px;border-top:1px solid var(--border);padding-top:16px">
+      <button onclick="saveQset()">💾 Save (apply to student app)</button>
+      <button class="blue" onclick="downloadQset()">⬇ Download JSON</button>
+      <button class="ghost" onclick="loadSeed()">Reset to sample nursing set</button>
+      <button class="red" onclick="clearQset()">Clear saved set</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Local Data</h2>
+    <div class="note">Student progress and completed exercises stored in this browser.</div>
+    <div id="dataList"></div>
+    <div class="row" style="margin-top:14px">
+      <button class="red" onclick="clearAllStudentData()">🗑 Clear all student data</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const SEED={
+  courseId:"NURS-101",courseName:"Foundations of Nursing Practice",classId:"NURS101-2026",academicYear:"2025-2026",questionSetId:"qset_01",
+  questions:[
+    {id:"Q1",week:"1",weekLabel:"Week 1 — Patient Assessment",questionNumber:"1",topic:"Recognizing early sepsis in a post-operative patient",question:"A 68-year-old patient is 2 days post-abdominal surgery. Their temperature is 38.6°C, heart rate 112, respiratory rate 24, and blood pressure 98/60. They seem more confused than yesterday. What is happening physiologically, what should the nurse assess and do first, and why does early recognition matter?",releaseDate:"2026-01-01",deadline:"",
+     concepts:[
+       {id:"C1",label:"SIRS / early sepsis criteria",idealAnswer:"The patient meets multiple SIRS criteria (temp >38°C, HR >90, RR >20), which with a likely infection source suggests sepsis."},
+       {id:"C2",label:"Compensatory mechanisms and falling blood pressure",idealAnswer:"Tachycardia and tachypnea are compensatory; borderline-low BP and new confusion suggest compensation is failing."},
+       {id:"C3",label:"Nursing priorities and escalation",idealAnswer:"Reassess vitals and consciousness, ensure oxygenation, IV access, anticipate cultures and fluids, and escalate immediately."}
+     ]},
+    {id:"Q2",week:"2",weekLabel:"Week 2 — Medication Safety",questionNumber:"1",topic:"Safe administration of high-alert medications",question:"You are about to give IV insulin to a patient. Explain the safety principles for high-alert medications, the specific risks of insulin, and the checks a nurse performs to prevent a serious error.",releaseDate:"2026-01-08",deadline:"",
+     concepts:[
+       {id:"C1",label:"High-alert medications and double-checks",idealAnswer:"High-alert meds carry heightened risk; insulin often requires an independent double-check of drug, dose, and pump settings."},
+       {id:"C2",label:"Rights of medication administration",idealAnswer:"The rights structure safe administration; with insulin, units verification and current glucose are critical."},
+       {id:"C3",label:"Hypoglycemia risk and monitoring",idealAnswer:"Main risk is hypoglycemia; check glucose, know onset/peak, monitor for symptoms, keep treatment available."}
+     ]}
+  ]
+};
+
+let qset=null;
+let cfg={facultyPassword:'',oauthClientId:''};
+
+function loadConfig(){
+  try{const s=localStorage.getItem('medtutor_admin_config');if(s)cfg=Object.assign(cfg,JSON.parse(s));}catch(e){}
+  document.getElementById('cfgFacultyPassword').value=cfg.facultyPassword||'';
+  document.getElementById('cfgOAuthClientId').value=cfg.oauthClientId||'';
+}
+function renderDeadlines(){
+  const el=document.getElementById('deadlineList');
+  el.innerHTML=qset.questions.map((q,i)=>`
+    <div class="data-item">
+      <div><strong>${esc(q.id||('Q'+(i+1)))}</strong> — ${esc(q.topic||'(no topic)')}</div>
+      <input type="date" value="${esc((q.deadline||'').slice(0,10))}" style="max-width:180px" oninput="setQ(${i},'deadline',this.value)">
+    </div>`).join('') || '<div class="note">Add questions below first.</div>';
+}
+function applyBulkDeadline(){
+  const v=document.getElementById('bulkDeadline').value;
+  if(!v){toast('Pick a date first.');return;}
+  qset.questions.forEach(q=>q.deadline=v);
+  renderDeadlines();toast('Applied to all — remember to Save.');
+}
+function saveConfig(){
+  cfg.facultyPassword=document.getElementById('cfgFacultyPassword').value.trim();
+  cfg.oauthClientId=document.getElementById('cfgOAuthClientId').value.trim();
+  localStorage.setItem('medtutor_admin_config',JSON.stringify(cfg));
+  // deadlines live on the qset — persist it too
+  localStorage.setItem('medtutor_admin_qset',JSON.stringify(qset));
+  toast('Config and deadlines saved.');
+}
+function showNetlifyEnv(){
+  const out=document.getElementById('envOutput');
+  const lines=[
+    '# Set these in Netlify → Site settings → Environment variables',
+    'FACULTY_DASHBOARD_PASSWORD = '+(cfg.facultyPassword||'(your password)'),
+    'GOOGLE_OAUTH_CLIENT_ID = '+(cfg.oauthClientId||'(your client id).apps.googleusercontent.com'),
+    'ANTHROPIC_API_KEY = (your Anthropic API key, for the AI tutor)',
+    '',
+    '# Deadlines are stored per-question in questions/'+(qset.questionSetId||'qset_01')+'.json',
+    '# Use "Download JSON" in the editor below to get that file.'
+  ];
+  out.textContent=lines.join('\n');
+  out.style.display='block';
+}
+
+function loadCurrent(){
+  try{const saved=localStorage.getItem('medtutor_admin_qset');qset=saved?JSON.parse(saved):JSON.parse(JSON.stringify(SEED));}
+  catch(e){qset=JSON.parse(JSON.stringify(SEED));}
+  if(!qset.questions)qset.questions=[];
+  loadConfig();
+  renderMeta();renderQuestions();renderDeadlines();renderData();
+}
+function renderMeta(){
+  courseId.value=qset.courseId||'';courseName.value=qset.courseName||'';questionSetId.value=qset.questionSetId||'';
+  classId.value=qset.classId||'';academicYear.value=qset.academicYear||'';
+}
+function readMeta(){
+  qset.courseId=courseId.value.trim();qset.courseName=courseName.value.trim();qset.questionSetId=questionSetId.value.trim();
+  qset.classId=classId.value.trim();qset.academicYear=academicYear.value.trim();
+}
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+function renderQuestions(){
+  const el=document.getElementById('questions');
+  el.innerHTML=qset.questions.map((q,qi)=>`
+    <div class="qcard">
+      <div class="qhead"><div class="qlabel">Question ${qi+1}</div>
+        <button class="red" onclick="removeQuestion(${qi})">Remove</button></div>
+      <div class="grid3">
+        <div><label>ID</label><input value="${esc(q.id)}" oninput="setQ(${qi},'id',this.value)"></div>
+        <div><label>Week #</label><input value="${esc(q.week)}" oninput="setQ(${qi},'week',this.value)"></div>
+        <div><label>Question #</label><input value="${esc(q.questionNumber)}" oninput="setQ(${qi},'questionNumber',this.value)"></div>
+      </div>
+      <label>Week label</label><input value="${esc(q.weekLabel)}" oninput="setQ(${qi},'weekLabel',this.value)">
+      <label>Topic</label><input value="${esc(q.topic)}" oninput="setQ(${qi},'topic',this.value)">
+      <label>Question text</label><textarea oninput="setQ(${qi},'question',this.value)">${esc(q.question)}</textarea>
+      <div class="grid2">
+        <div><label>Release date (YYYY-MM-DD)</label><input value="${esc(q.releaseDate)}" oninput="setQ(${qi},'releaseDate',this.value)"></div>
+        <div><label>Deadline (optional)</label><input value="${esc(q.deadline)}" oninput="setQ(${qi},'deadline',this.value)"></div>
+      </div>
+      <label style="margin-top:14px">Concepts</label>
+      ${(q.concepts||[]).map((c,ci)=>`
+        <div class="concept">
+          <div class="qhead"><span class="mono">Concept ${ci+1}</span>
+            <button class="red" onclick="removeConcept(${qi},${ci})">✕</button></div>
+          <div class="grid2">
+            <div><label>ID</label><input value="${esc(c.id)}" oninput="setC(${qi},${ci},'id',this.value)"></div>
+            <div><label>Label</label><input value="${esc(c.label)}" oninput="setC(${qi},${ci},'label',this.value)"></div>
+          </div>
+          <label>Ideal understanding (guides the tutor)</label>
+          <textarea oninput="setC(${qi},${ci},'idealAnswer',this.value)">${esc(c.idealAnswer)}</textarea>
+        </div>`).join('')}
+      <div style="margin-top:8px"><button class="ghost" onclick="addConcept(${qi})">+ Add concept</button></div>
+    </div>`).join('') || '<div class="note">No questions yet. Add one below.</div>';
+}
+
+function setQ(i,f,v){qset.questions[i][f]=v;}
+function setC(qi,ci,f,v){qset.questions[qi].concepts[ci][f]=v;}
+function addQuestion(){
+  const n=qset.questions.length+1;
+  qset.questions.push({id:'Q'+n,week:String(n),weekLabel:'Week '+n,questionNumber:'1',topic:'',question:'',releaseDate:new Date().toISOString().split('T')[0],deadline:'',concepts:[{id:'C1',label:'',idealAnswer:''}]});
+  renderQuestions();renderDeadlines();
+}
+function removeQuestion(i){if(confirm('Remove this question?')){qset.questions.splice(i,1);renderQuestions();renderDeadlines();}}
+function addConcept(qi){if(!qset.questions[qi].concepts)qset.questions[qi].concepts=[];const n=qset.questions[qi].concepts.length+1;qset.questions[qi].concepts.push({id:'C'+n,label:'',idealAnswer:''});renderQuestions();}
+function removeConcept(qi,ci){qset.questions[qi].concepts.splice(ci,1);renderQuestions();}
+
+function validate(){
+  readMeta();
+  if(!qset.questions.length){toast('Add at least one question.');return false;}
+  for(const q of qset.questions){
+    if(!q.id||!q.topic||!q.question){toast('Each question needs an ID, topic, and question text.');return false;}
+    if(!q.concepts||!q.concepts.length){toast('Each question needs at least one concept.');return false;}
+    for(const c of q.concepts){if(!c.id||!c.label){toast('Each concept needs an ID and label.');return false;}}
+  }
+  return true;
+}
+function saveQset(){
+  if(!validate())return;
+  localStorage.setItem('medtutor_admin_qset',JSON.stringify(qset));
+  toast('Saved. The student app on this browser will now use these questions.');
+}
+function downloadQset(){
+  if(!validate())return;
+  const clean=JSON.parse(JSON.stringify(qset));
+  clean.questions.forEach(q=>{if(!q.deadline)q.deadline=null;});
+  const blob=new Blob([JSON.stringify(clean,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=(qset.questionSetId||'qset_01')+'.json';a.click();
+  toast('Downloaded. Place it in questions/ for a real deployment.');
+}
+function loadSeed(){if(confirm('Reset the editor to the sample nursing set? Unsaved edits will be lost.')){qset=JSON.parse(JSON.stringify(SEED));renderMeta();renderQuestions();renderDeadlines();toast('Sample set loaded. Remember to Save.');}}
+function clearQset(){if(confirm('Remove the saved question set? The student app will revert to its built-in questions.')){localStorage.removeItem('medtutor_admin_qset');toast('Saved set cleared.');}}
+
+function renderData(){
+  const el=document.getElementById('dataList');
+  const items=[];
+  try{
+    for(let i=0;i<localStorage.length;i++){
+      const k=localStorage.key(i);
+      if(k&&k.startsWith('medtutor_student_')){
+        const s=JSON.parse(localStorage.getItem(k));
+        items.push({name:s.studentName||s.googleName||'(unnamed)',email:s.googleEmail||'',count:(s.completedExercises||[]).length});
+      }
+    }
+  }catch(e){}
+  el.innerHTML=items.length?items.map(it=>`<div class="data-item"><div><strong>${esc(it.name)}</strong> <span class="mono">${esc(it.email)}</span></div><div class="mono">${it.count} completed</div></div>`).join(''):'<div class="note">No student data in this browser yet.</div>';
+}
+function clearAllStudentData(){
+  if(!confirm('Delete all student progress stored in this browser? This cannot be undone.'))return;
+  const keys=[];for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith('medtutor_student_'))keys.push(k);}
+  keys.forEach(k=>localStorage.removeItem(k));renderData();toast('All student data cleared.');
+}
+
+function toast(msg){const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),3000);}
+
+loadCurrent();
+</script>
+</body>
+</html>
