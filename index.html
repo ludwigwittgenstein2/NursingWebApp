@@ -127,6 +127,8 @@ textarea{resize:vertical;min-height:80px}
 .config-warn{background:var(--amber-light);border:1px solid #f0c080;border-radius:var(--radius);padding:14px 18px;font-size:13px;color:var(--amber);margin-bottom:16px;line-height:1.5}
 .import-zone{border:2px dashed var(--border-dark);border-radius:var(--radius);padding:20px;text-align:center;cursor:pointer;transition:all .15s;margin-top:12px}
 .import-zone:hover{border-color:var(--accent);background:var(--accent-dim)}
+.model-picker{font-family:var(--sans);font-size:12px;color:var(--ink2);background:var(--surface);border:1px solid var(--border-dark);border-radius:var(--radius);padding:6px 10px;cursor:pointer;outline:none}
+.model-picker:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim)}
 </style>
 </head>
 <body>
@@ -185,6 +187,11 @@ textarea{resize:vertical;min-height:80px}
     <div class="logo">Nursing <em>Education</em></div>
     <div class="header-meta" id="headerMeta"></div>
     <div class="header-actions">
+  <select id="modelPicker" class="model-picker" title="Tutor model" onchange="setLlmProvider(this.value)">
+    <option value="anthropic">Claude</option>
+    <option value="openai">OpenAI (GPT)</option>
+    <option value="oss">Open-Source Medical LLM</option>
+  </select>
   <button class="btn btn-ghost btn-sm" onclick="showScreen('screen-dashboard')">📊 My Progress</button>
   <button class="btn btn-ghost btn-sm" onclick="showScreen('screen-leitner')">🃏 Review Cards</button>
   <button class="btn btn-secondary btn-sm" onclick="exportData()">⬇ Export</button>
@@ -283,7 +290,7 @@ let DEMO_NOTICE_SHOWN=false;
 
 async function callClaude(system,messages){
   try{
-    const r=await fetch('/.netlify/functions/claude-feedback',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({max_tokens:1000,system,messages})});
+    const r=await fetch('/.netlify/functions/claude-feedback',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({max_tokens:1000, system, messages, provider: state.llmProvider || 'anthropic'})});
     if(!r.ok)throw new Error(`API ${r.status}`);
     const ct=r.headers.get('content-type')||'';
     if(!ct.includes('json'))throw new Error('non-JSON response');
@@ -324,6 +331,7 @@ function simulateTutor(system,messages){
 let state={
   studentName:'',
   studentUUID:'',
+  llmProvider:'anthropic',
   googleSub:'',
   googleEmail:'',
   googleName:'',
@@ -348,7 +356,19 @@ let state={
   leitnerCards:[],
   leitnerSession:null
 };
-  
+
+function setLlmProvider(value){
+  state.llmProvider=value||'anthropic';
+  saveToStorage();
+  const labels={anthropic:'Claude',openai:'OpenAI (GPT)',oss:'Open-Source Medical LLM'};
+  toast('Tutor model: '+(labels[state.llmProvider]||state.llmProvider),'success');
+}
+
+function syncModelPicker(){
+  const mp=document.getElementById('modelPicker');
+  if(mp)mp.value=state.llmProvider||'anthropic';
+}
+
 function generateUUID(){return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return(c==='x'?r:(r&0x3|0x8)).toString(16);});}
 
 async function init(){
@@ -443,6 +463,7 @@ function signOutAndReset(){
   state={
     studentName:'',
     studentUUID:'',
+    llmProvider:'anthropic',
     googleSub:'',
     googleEmail:'',
     googleName:'',
@@ -1109,11 +1130,11 @@ function completeExercise(q){
 
   submitPerformance(record)
     .then(() => {
-      toast('Exercise complete! Data saved to Google Sheet.','success');
+      toast('Exercise complete! Data saved to the database.','success');
     })
     .catch((err) => {
       console.error(err);
-      toast('Exercise complete, but Google Sheet save failed. Please export your data as backup.','error');
+      toast('Exercise complete, but the database save failed. Please export your data as backup.','error');
     })
     .finally(() => {
       exportData();
@@ -1144,7 +1165,7 @@ function completeExercise(q){
   const data = await response.json().catch(() => ({}));
 
   if (!response.ok || !data.ok) {
-    throw new Error(data.error || JSON.stringify(data) || 'Google Sheet save failed');
+    throw new Error(data.error || JSON.stringify(data) || 'Database save failed');
   }
 
   return data;
@@ -1238,6 +1259,7 @@ function showScreen(id){
   document.getElementById(id).classList.add('active');
 
   if(id==='screen-main'){
+    syncModelPicker();
     if(state.selectedQuestionId || state.activeQuestionId){
       renderMainScreen();
     }else{
