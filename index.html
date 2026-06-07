@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MedTutor</title>
+<title>Nursing Education</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
@@ -134,8 +134,8 @@ textarea{resize:vertical;min-height:80px}
 <div id="screen-onboard" class="screen active">
   <div class="onboard-wrap">
     <div class="onboard-card">
-      <div class="onboard-logo">Med<em>Tutor</em></div>
-      <div class="onboard-sub">Your CAPPS Tutor.<br>Sign in with your Cleveland Clinic Google account to begin.</div>
+      <div class="onboard-logo">Nursing <em>Education</em></div>
+      <div class="onboard-sub">Your Nursing Education Tutor.<br>Sign in with your institutional Google account or continue with email to begin.</div>
 
 <div id="returningUserBox" style="display:none;text-align:left;background:var(--accent-light);border:1px solid #a8d5be;border-radius:var(--radius);padding:14px;margin:16px 0;">
   <div style="font-size:13px;color:var(--accent);font-weight:600;margin-bottom:4px;">Returning user</div>
@@ -182,7 +182,7 @@ textarea{resize:vertical;min-height:80px}
 
 <div id="screen-main" class="screen">
   <div class="app-header">
-    <div class="logo">Med<em>Tutor</em></div>
+    <div class="logo">Nursing <em>Education</em></div>
     <div class="header-meta" id="headerMeta"></div>
     <div class="header-actions">
   <button class="btn btn-ghost btn-sm" onclick="showScreen('screen-dashboard')">📊 My Progress</button>
@@ -196,7 +196,7 @@ textarea{resize:vertical;min-height:80px}
 
 <div id="screen-dashboard" class="screen">
   <div class="app-header">
-    <div class="logo">Med<em>Tutor</em></div>
+    <div class="logo">Nursing <em>Education</em></div>
     <div class="header-meta">My Progress</div>
     <div class="header-actions">
       <button class="btn btn-ghost btn-sm" onclick="showScreen('screen-main')">← Back</button>
@@ -208,7 +208,7 @@ textarea{resize:vertical;min-height:80px}
 
 <div id="screen-leitner" class="screen">
   <div class="app-header">
-    <div class="logo">Med<em>Tutor</em></div>
+    <div class="logo">Nursing <em>Education</em></div>
     <div class="header-meta">Review Cards</div>
     <div class="header-actions">
       <button class="btn btn-ghost btn-sm" onclick="showScreen('screen-main')">← Back</button>
@@ -220,7 +220,7 @@ textarea{resize:vertical;min-height:80px}
 <div class="toast-wrap" id="toastWrap"></div>
 
 <script>
-const DEFAULT_QUESTION_SET='qset_01';
+const DEFAULT_QUESTION_SET='nursing/acute-care';
 let GOOGLE_OAUTH_CLIENT_ID='';
 let COURSE_DATA=null;
 
@@ -228,30 +228,54 @@ let COURSE_DATA=null;
 // (e.g. when index.html is opened directly as a file). Edit this to change
 // the questions when running without a server.
 const EMBEDDED_COURSE={
-  courseId:"NURS-101",
-  courseName:"Foundations of Nursing Practice",
-  classId:"NURS101-2026",
-  academicYear:"2025-2026",
-  questionSetId:"qset_01",
-  questions:[
-    {id:"Q1",week:"1",weekLabel:"Week 1 — Patient Assessment",questionNumber:"1",
-     topic:"Recognizing early sepsis in a post-operative patient",
-     question:"A 68-year-old patient is 2 days post-abdominal surgery. Their temperature is 38.6°C, heart rate 112, respiratory rate 24, and blood pressure 98/60. They seem more confused than yesterday. What is happening physiologically, what should the nurse assess and do first, and why does early recognition matter?",
-     releaseDate:"2026-01-01",deadline:null,
-     concepts:[
-       {id:"C1",label:"SIRS / early sepsis criteria",idealAnswer:"The patient meets multiple SIRS criteria (temp >38°C, HR >90, RR >20), which in the setting of a likely infection source (recent surgery) suggests sepsis. Recognizing the clustering of vital sign changes plus new confusion is key."},
-       {id:"C2",label:"Compensatory mechanisms and the falling blood pressure",idealAnswer:"Tachycardia and tachypnea are compensatory responses to maintain perfusion and oxygenation. The borderline-low blood pressure and new confusion suggest compensation is beginning to fail and perfusion to the brain is dropping."},
-       {id:"C3",label:"Nursing priorities and escalation",idealAnswer:"Priorities: reassess full vitals and level of consciousness, ensure airway/oxygenation, establish IV access, anticipate fluids and blood cultures before antibiotics, and escalate to the provider/rapid response immediately. Early recognition and the sepsis bundle improve survival."}
-     ]},
-    {id:"Q2",week:"2",weekLabel:"Week 2 — Medication Safety",questionNumber:"1",
-     topic:"Safe administration of high-alert medications",
-     question:"You are about to give IV insulin to a patient. Explain the safety principles that govern administration of high-alert medications, the specific risks of insulin, and the checks a nurse performs to prevent a serious error.",
-     releaseDate:"2026-01-08",deadline:null,
-     concepts:[
-       {id:"C1",label:"High-alert medications and independent double-checks",idealAnswer:"High-alert medications carry a heightened risk of significant harm when used in error. Insulin is high-alert; many facilities require an independent double-check of the drug, dose, concentration, and pump settings by a second nurse."},
-       {id:"C2",label:"Rights of medication administration",idealAnswer:"The rights (right patient, drug, dose, route, time, documentation, and reason/response) structure safe administration. With insulin, dose and units verification and confirming the patient's current glucose are especially critical."},
-       {id:"C3",label:"Hypoglycemia risk and monitoring",idealAnswer:"The main risk of insulin is hypoglycemia. The nurse checks blood glucose before administration, knows the onset/peak of the insulin type, monitors for hypoglycemia symptoms, and ensures a treatment source is available."}
-     ]}
+  "courseId": "NURS-ACUTE",
+  "courseName": "Nursing Education: Acute Care Scenarios",
+  "classId": "nursing-education",
+  "academicYear": "2026-2027",
+  "questionSetId": "nursing-acute-care",
+  "questions": [
+    {
+      "id": "NURS-W01-Q01",
+      "week": 1,
+      "weekLabel": "Week 1 — Acute Coronary Syndrome",
+      "questionNumber": 1,
+      "topic": "Myocardial Infarction: Recognizing Acute Deterioration",
+      "releaseDate": "2026-05-22",
+      "deadline": "2026-09-07T08:00:00-04:00",
+      "question": "Taylor Collins is a 58-year-old male in the emergency department.\n\nChief complaint: \"I've had some pressure in my chest since this morning. I thought it was indigestion, but it isn't going away.\"\n\nHistory of present illness: Chest pressure began approximately 3 hours ago while he was doing yard work. The pain was initially 3/10. He reports intermittent radiation to the left shoulder and mild nausea. He has no vomiting. His symptoms improved slightly with rest but never fully resolved.\n\nPast medical history: Hypertension, hyperlipidemia, type 2 diabetes, and former smoker with a 30 pack-year history.\n\nHome medications: Lisinopril, metformin, and atorvastatin.\n\nAllergies: No known drug allergies.\n\nPhase 1: Initial assessment\nBP 138/82, HR 84 bpm, RR 18, SpO2 98% on room air, temperature 98.4°F, pain 3/10. He is alert and oriented x4. Skin is warm, dry, and pink. Lungs are clear bilaterally. Heart rhythm is regular. No edema is present. Mild anxiety is noted. Telemetry shows normal sinus rhythm. Initial troponin is negative. CBC and CMP are within normal limits.\n\nPhase 2: Worsening symptoms, 1 hour later\nThe patient says: \"The pressure is getting worse now. It's moving into my jaw.\" BP 146/88, HR 96 bpm, RR 20, SpO2 97% on room air, pain 6/10. He has increased anxiety, restlessness, mild diaphoresis, and is intermittently clutching his chest. Telemetry shows sinus rhythm with new 1 mm ST-segment depression in lead II. Repeat troponin is pending.\n\nPhase 3: Acute deterioration, 30 minutes later\nThe patient says: \"This is the worst it's been. It feels like an elephant is sitting on my chest.\" BP 158/94, HR 108 bpm, RR 24, SpO2 95% on room air, pain 9/10. He is diaphoretic, pale, increasingly distressed, guarding his chest, and reports nausea. Telemetry shows sinus tachycardia with 2–3 mm ST-segment elevation in lead II. Troponin is 50 mg/L, with normal less than 12.\n\nUsing the nursing process, answer the following:\n\n1. What did you find on your focused assessment?\n2. What assessment findings are abnormal?\n3. What has changed from baseline?\n4. Using common medical terminology, what problem is occurring or could occur with this patient?\n5. What assessment data will you monitor?\n6. What nursing actions will you take?\n7. What information do you need to share with the provider?\n8. What diagnostic tests or orders do you anticipate?\n9. What medications do you anticipate?\n10. Based on the patient's current clinical presentation, which level of urgency is most appropriate?\n\nA. Stable — continue assessment and monitoring of interventions\nB. Unstable — requires urgent escalation of care\nC. Emergent — requires immediate resuscitative intervention",
+      "concepts": [
+        {
+          "id": "C1",
+          "label": "Assessment: gather and interpret pertinent data",
+          "idealAnswer": "The student should identify the abnormal and changing assessment findings. Important cues include worsening chest pressure, radiation to the jaw and left shoulder, nausea, diaphoresis, pallor, anxiety, restlessness, chest guarding, increasing pain from 3/10 to 9/10, rising heart rate and respiratory rate, new ST-segment depression progressing to ST-segment elevation, and markedly elevated troponin. The key clinical reasoning point is recognizing that the patient is deteriorating from possible ischemia to acute myocardial infarction."
+        },
+        {
+          "id": "C2",
+          "label": "Diagnosis / problem identification",
+          "idealAnswer": "The correct patient problem is myocardial infarction, heart attack, or acute coronary syndrome with evolving ST-elevation myocardial infarction features. The student should connect the worsening chest pain, radiation, diaphoresis, dynamic ECG changes, and elevated troponin to myocardial injury. Myocardial infarction occurs when reduced or blocked coronary blood flow causes oxygen deprivation and myocardial cell injury or death."
+        },
+        {
+          "id": "C3",
+          "label": "Planning and implementation: nursing monitoring",
+          "idealAnswer": "The nurse should monitor heart rate, blood pressure, pulse oximetry, respiratory rate, pain level, cardiac rhythm, changes in symptoms, skin signs such as pallor or diaphoresis, and evidence of worsening perfusion or distress. Continuous cardiac monitoring is important because acute myocardial infarction can be complicated by dysrhythmias, heart failure, cardiogenic shock, and cardiac arrest."
+        },
+        {
+          "id": "C4",
+          "label": "Planning and implementation: nursing interventions",
+          "idealAnswer": "The nurse should immediately notify the provider, repeat a focused cardiovascular assessment, activate the medical emergency team or chest pain/STEMI pathway according to local protocol, maintain continuous cardiac monitoring, ensure ECG changes are compared with baseline, obtain or prepare for a 12-lead ECG, maintain IV access, reduce patient exertion, reassess pain and vital signs, and prepare the patient for urgent escalation of care."
+        },
+        {
+          "id": "C5",
+          "label": "Planning and implementation: anticipated provider interventions",
+          "idealAnswer": "The student should anticipate provider orders for repeat cardiac enzymes or troponin, 12-lead ECG, aspirin, nitroglycerin if appropriate, analgesia, additional antiplatelet or anticoagulant therapy according to local protocol, cardiology consultation, and preparation for cardiac catheterization or reperfusion therapy. STEMI management emphasizes rapid diagnosis and rapid treatment because delay increases the risk of death and permanent myocardial injury."
+        },
+        {
+          "id": "C6",
+          "label": "Evaluation of urgency",
+          "idealAnswer": "The most appropriate urgency level is B: Unstable — requires urgent escalation of care. The patient is not simply stable for routine monitoring because he has worsening chest pain, dynamic ECG changes, elevated troponin, diaphoresis, pallor, distress, and tachycardia. He is not described as pulseless, apneic, unconscious, or requiring immediate resuscitation, so emergent resuscitative intervention is not the best answer based on the provided data."
+        }
+      ]
+    }
   ]
 };
 
@@ -342,7 +366,7 @@ async function init(){
 }
 async function completeOnboarding(){
   if(!state.googleSub || !state.googleEmail){
-    toast('Please sign in with your CWRU Google account first.','error');
+    toast('Please sign in with your institutional Google account or continue with email first.','error');
     return;
   }
 
@@ -564,22 +588,11 @@ function toggleImportSection(){const s=document.getElementById('onboardImportSec
 async function loadCourse(){
   const params=new URLSearchParams(window.location.search);
   const qset=params.get('qset')||DEFAULT_QUESTION_SET;
-  // Highest priority: a question set defined in the Admin page (offline/demo).
-  try{
-    const adminQset=localStorage.getItem('medtutor_admin_qset');
-    if(adminQset){
-      const parsed=JSON.parse(adminQset);
-      if(parsed && Array.isArray(parsed.questions) && parsed.questions.length){
-        COURSE_DATA=parsed;
-        state.courseId=parsed.courseId;
-        state.courseName=parsed.courseName;
-        state.questions=parsed.questions;
-        const mm=document.getElementById('headerMeta');
-        if(mm){const id=state.googleEmail||state.studentName||'';mm.textContent=`${state.courseId} · ${id}`;}
-        return;
-      }
-    }
-  }catch(e){/* ignore and continue */}
+
+  // Nursing-only mode:
+  // The student app loads /questions/nursing/acute-care.json by default.
+  // We intentionally do NOT load medtutor_admin_qset from localStorage here,
+  // because an old Admin-page saved set can otherwise override the nursing case.
   try{
     const response=await fetch(`/questions/${qset}.json`,{cache:'no-store'});
     const ct=response.headers.get('content-type')||'';
@@ -591,26 +604,38 @@ async function loadCourse(){
     state.questions=COURSE_DATA.questions||[];
   }catch(e){
     // Fetch failed (e.g. opened as a file, or questions/ not deployed).
-    // Fall back to the embedded course so the app still works.
+    // Fall back to the embedded nursing MI case so the app still works.
     COURSE_DATA=EMBEDDED_COURSE;
     state.courseId=COURSE_DATA.courseId;
     state.courseName=COURSE_DATA.courseName;
     state.questions=COURSE_DATA.questions||[];
-    console.warn('Using embedded questions (could not fetch /questions):',e.message);
+    console.warn('Using embedded nursing questions (could not fetch /questions):',e.message);
   }
+
   const m=document.getElementById('headerMeta');
   if(m){
-  const identity=state.googleEmail || state.studentName || '';
-  m.textContent=`${state.courseId} · ${identity}`;
-}
+    const identity=state.googleEmail || state.studentName || '';
+    m.textContent=`${state.courseId} · ${identity}`;
+  }
 }
 
 function getActiveQuestion(){const today=new Date().toISOString().split('T')[0];let active=null;for(const q of state.questions){if(q.releaseDate<=today)active=q;}return active;}
 function isLate(q){if(!q.deadline)return false;return new Date()>new Date(q.deadline);}
 function isCompleted(qid){return state.completedExercises.some(e=>e.questionId===qid);}
 function countExchanges(){return Math.floor((state.socraticHistory||[]).length/2);}
+function normalizeQuestionId(value){
+  return String(value || '').trim();
+}
+
+function sameQuestionId(a,b){
+  const left=normalizeQuestionId(a);
+  const right=normalizeQuestionId(b);
+  return !!left && !!right && left===right;
+}
+
 function getQuestionById(questionId){
-  return state.questions.find(q=>q.id===questionId)||null;
+  const target=normalizeQuestionId(questionId);
+  return state.questions.find(q=>sameQuestionId(q.id,target))||null;
 }
 
 function getSelectedQuestion(){
@@ -629,7 +654,7 @@ function hasInProgressAttempt(){
 
 function getQuestionStatus(q){
   const completed=isCompleted(q.id);
-  const inProgress=hasInProgressAttempt() && state.activeQuestionId===q.id;
+  const inProgress=hasInProgressAttempt() && sameQuestionId(state.activeQuestionId,q.id);
   const today=new Date();
   const released=!q.releaseDate || new Date(q.releaseDate+'T00:00:00')<=today;
   const late=isLate(q);
@@ -723,15 +748,28 @@ function renderExerciseCard(q){
   const cls=statusClass(status);
   const locked=status==='locked';
   const completed=status==='complete';
-  const inProgress=status==='in-progress';
-  const otherInProgress=hasInProgressAttempt() && state.activeQuestionId!==q.id;
+
+  const qid=normalizeQuestionId(q.id);
+  const activeQuestionId=normalizeQuestionId(state.activeQuestionId);
+  const hasProgress=hasInProgressAttempt();
+
+  // Important: the exercise that is already in progress should show Resume,
+  // not Blocked. Only other exercises should be blocked.
+  const isThisActiveQuestion=hasProgress && sameQuestionId(activeQuestionId,qid);
+  const inProgress=status==='in-progress' || isThisActiveQuestion;
+  const otherInProgress=hasProgress && !inProgress && !completed && !locked;
   const available=(status==='available' || status==='late') && !otherInProgress;
 
   let action='';
   let displayStatus=status;
   let displayCls=cls;
 
-  if(otherInProgress && !completed && !locked){
+  if(inProgress){
+    displayStatus='in-progress';
+    displayCls='amber';
+  }
+
+  if(otherInProgress){
     displayStatus='blocked';
     displayCls='gray';
   }
@@ -746,6 +784,8 @@ function renderExerciseCard(q){
     action=`<button class="btn btn-ghost btn-sm" disabled>Blocked</button>`;
   }else if(available){
     action=`<button class="btn btn-primary btn-sm" onclick="openQuestion('${escJs(q.id)}')">Start</button>`;
+  }else{
+    action=`<button class="btn btn-ghost btn-sm" disabled>Unavailable</button>`;
   }
 
   return `
@@ -787,14 +827,14 @@ function openQuestion(questionId){
     return;
   }
 
-  if(hasInProgressAttempt() && state.activeQuestionId!==q.id){
+  if(hasInProgressAttempt() && !sameQuestionId(state.activeQuestionId,q.id)){
     toast('You already have an exercise in progress. Please continue or complete it before starting another.','error');
     return;
   }
 
   state.selectedQuestionId=q.id;
 
-  if(!state.activeQuestionId){
+  if(!state.activeQuestionId || sameQuestionId(state.activeQuestionId,q.id)){
     state.activeQuestionId=q.id;
   }
 
@@ -817,7 +857,7 @@ function renderMainScreen(){
     return;
   }
 
-    if(isCompleted(q.id) && state.activeQuestionId!==q.id){
+    if(isCompleted(q.id) && !sameQuestionId(state.activeQuestionId,q.id)){
     renderCompletedQuestionDetail(q.id);
     return;
   }
@@ -933,7 +973,7 @@ function resetQuestionAttempt(questionId){
     return;
   }
 
-  if(hasInProgressAttempt() && state.activeQuestionId!==questionId){
+  if(hasInProgressAttempt() && !sameQuestionId(state.activeQuestionId,questionId)){
     toast('You already have a different exercise in progress. Please complete it before resetting another question.','error');
     return;
   }

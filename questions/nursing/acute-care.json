@@ -1,0 +1,51 @@
+{
+  "questionSetId": "nursing-acute-care",
+  "classId": "nursing-education",
+  "courseId": "NURS-ACUTE",
+  "courseName": "Nursing Education: Acute Care Scenarios",
+  "academicYear": "2026-2027",
+  "questions": [
+    {
+      "id": "NURS-W01-Q01",
+      "week": 1,
+      "weekLabel": "Week 1 — Acute Coronary Syndrome",
+      "questionNumber": 1,
+      "topic": "Myocardial Infarction: Recognizing Acute Deterioration",
+      "releaseDate": "2026-05-22",
+      "deadline": "2026-09-07T08:00:00-04:00",
+      "question": "Taylor Collins is a 58-year-old male in the emergency department.\n\nChief complaint: \"I've had some pressure in my chest since this morning. I thought it was indigestion, but it isn't going away.\"\n\nHistory of present illness: Chest pressure began approximately 3 hours ago while he was doing yard work. The pain was initially 3/10. He reports intermittent radiation to the left shoulder and mild nausea. He has no vomiting. His symptoms improved slightly with rest but never fully resolved.\n\nPast medical history: Hypertension, hyperlipidemia, type 2 diabetes, and former smoker with a 30 pack-year history.\n\nHome medications: Lisinopril, metformin, and atorvastatin.\n\nAllergies: No known drug allergies.\n\nPhase 1: Initial assessment\nBP 138/82, HR 84 bpm, RR 18, SpO2 98% on room air, temperature 98.4°F, pain 3/10. He is alert and oriented x4. Skin is warm, dry, and pink. Lungs are clear bilaterally. Heart rhythm is regular. No edema is present. Mild anxiety is noted. Telemetry shows normal sinus rhythm. Initial troponin is negative. CBC and CMP are within normal limits.\n\nPhase 2: Worsening symptoms, 1 hour later\nThe patient says: \"The pressure is getting worse now. It's moving into my jaw.\" BP 146/88, HR 96 bpm, RR 20, SpO2 97% on room air, pain 6/10. He has increased anxiety, restlessness, mild diaphoresis, and is intermittently clutching his chest. Telemetry shows sinus rhythm with new 1 mm ST-segment depression in lead II. Repeat troponin is pending.\n\nPhase 3: Acute deterioration, 30 minutes later\nThe patient says: \"This is the worst it's been. It feels like an elephant is sitting on my chest.\" BP 158/94, HR 108 bpm, RR 24, SpO2 95% on room air, pain 9/10. He is diaphoretic, pale, increasingly distressed, guarding his chest, and reports nausea. Telemetry shows sinus tachycardia with 2–3 mm ST-segment elevation in lead II. Troponin is 50 mg/L, with normal less than 12.\n\nUsing the nursing process, answer the following:\n\n1. What did you find on your focused assessment?\n2. What assessment findings are abnormal?\n3. What has changed from baseline?\n4. Using common medical terminology, what problem is occurring or could occur with this patient?\n5. What assessment data will you monitor?\n6. What nursing actions will you take?\n7. What information do you need to share with the provider?\n8. What diagnostic tests or orders do you anticipate?\n9. What medications do you anticipate?\n10. Based on the patient's current clinical presentation, which level of urgency is most appropriate?\n\nA. Stable — continue assessment and monitoring of interventions\nB. Unstable — requires urgent escalation of care\nC. Emergent — requires immediate resuscitative intervention",
+      "concepts": [
+        {
+          "id": "C1",
+          "label": "Assessment: gather and interpret pertinent data",
+          "idealAnswer": "The student should identify the abnormal and changing assessment findings. Important cues include worsening chest pressure, radiation to the jaw and left shoulder, nausea, diaphoresis, pallor, anxiety, restlessness, chest guarding, increasing pain from 3/10 to 9/10, rising heart rate and respiratory rate, new ST-segment depression progressing to ST-segment elevation, and markedly elevated troponin. The key clinical reasoning point is recognizing that the patient is deteriorating from possible ischemia to acute myocardial infarction."
+        },
+        {
+          "id": "C2",
+          "label": "Diagnosis / problem identification",
+          "idealAnswer": "The correct patient problem is myocardial infarction, heart attack, or acute coronary syndrome with evolving ST-elevation myocardial infarction features. The student should connect the worsening chest pain, radiation, diaphoresis, dynamic ECG changes, and elevated troponin to myocardial injury. Myocardial infarction occurs when reduced or blocked coronary blood flow causes oxygen deprivation and myocardial cell injury or death."
+        },
+        {
+          "id": "C3",
+          "label": "Planning and implementation: nursing monitoring",
+          "idealAnswer": "The nurse should monitor heart rate, blood pressure, pulse oximetry, respiratory rate, pain level, cardiac rhythm, changes in symptoms, skin signs such as pallor or diaphoresis, and evidence of worsening perfusion or distress. Continuous cardiac monitoring is important because acute myocardial infarction can be complicated by dysrhythmias, heart failure, cardiogenic shock, and cardiac arrest."
+        },
+        {
+          "id": "C4",
+          "label": "Planning and implementation: nursing interventions",
+          "idealAnswer": "The nurse should immediately notify the provider, repeat a focused cardiovascular assessment, activate the medical emergency team or chest pain/STEMI pathway according to local protocol, maintain continuous cardiac monitoring, ensure ECG changes are compared with baseline, obtain or prepare for a 12-lead ECG, maintain IV access, reduce patient exertion, reassess pain and vital signs, and prepare the patient for urgent escalation of care."
+        },
+        {
+          "id": "C5",
+          "label": "Planning and implementation: anticipated provider interventions",
+          "idealAnswer": "The student should anticipate provider orders for repeat cardiac enzymes or troponin, 12-lead ECG, aspirin, nitroglycerin if appropriate, analgesia, additional antiplatelet or anticoagulant therapy according to local protocol, cardiology consultation, and preparation for cardiac catheterization or reperfusion therapy. STEMI management emphasizes rapid diagnosis and rapid treatment because delay increases the risk of death and permanent myocardial injury."
+        },
+        {
+          "id": "C6",
+          "label": "Evaluation of urgency",
+          "idealAnswer": "The most appropriate urgency level is B: Unstable — requires urgent escalation of care. The patient is not simply stable for routine monitoring because he has worsening chest pain, dynamic ECG changes, elevated troponin, diaphoresis, pallor, distress, and tachycardia. He is not described as pulseless, apneic, unconscious, or requiring immediate resuscitation, so emergent resuscitative intervention is not the best answer based on the provided data."
+        }
+      ]
+    }
+  ]
+}

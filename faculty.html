@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CAAPPs Tutor Faculty Dashboard</title>
+<title>Nursing Education Faculty Dashboard</title>
 <style>
   body {
     font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -39,42 +39,42 @@
   }
 
   input {
-  padding: 10px 12px;
-  border: 1px solid #c8c2b4;
-  border-radius: 8px;
-  font-size: 14px;
-  width: 280px;
-  max-width: 100%;
-}
+    padding: 10px 12px;
+    border: 1px solid #c8c2b4;
+    border-radius: 8px;
+    font-size: 14px;
+    width: 280px;
+    max-width: 100%;
+  }
 
-select {
-  padding: 10px 12px;
-  border: 1px solid #c8c2b4;
-  border-radius: 8px;
-  font-size: 14px;
-  min-width: 180px;
-  background: #fff;
-}
+  select {
+    padding: 10px 12px;
+    border: 1px solid #c8c2b4;
+    border-radius: 8px;
+    font-size: 14px;
+    min-width: 180px;
+    background: #fff;
+  }
 
-.filter-label {
-  display: block;
-  font-size: 12px;
-  color: #6f675f;
-  margin-bottom: 4px;
-}
+  .filter-label {
+    display: block;
+    font-size: 12px;
+    color: #6f675f;
+    margin-bottom: 4px;
+  }
 
-.checkbox-row {
-  display: flex;
-  gap: 6px;
-  align-items: center;
-  font-size: 13px;
-  color: #4a4540;
-  padding-bottom: 10px;
-}
+  .checkbox-row {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    font-size: 13px;
+    color: #4a4540;
+    padding-bottom: 10px;
+  }
 
-.checkbox-row input {
-  width: auto;
-}
+  .checkbox-row input {
+    width: auto;
+  }
 
   button {
     background: #2d6a4f;
@@ -196,63 +196,72 @@ select {
     max-height: 300px;
     overflow: auto;
   }
+
   .detail-section {
-  margin-bottom: 14px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid #eee8dc;
-}
+    margin-bottom: 14px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #eee8dc;
+  }
 
-.detail-section:last-child {
-  border-bottom: 0;
-}
+  .detail-section:last-child {
+    border-bottom: 0;
+  }
 
-.detail-title {
-  font-size: 12px;
-  color: #6f675f;
-  text-transform: uppercase;
-  letter-spacing: .04em;
-  margin-bottom: 6px;
-  font-weight: 700;
-}
+  .detail-title {
+    font-size: 12px;
+    color: #6f675f;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    margin-bottom: 6px;
+    font-weight: 700;
+  }
 
-.detail-box {
-  background: #faf8f4;
-  border: 1px solid #ddd8cc;
-  border-radius: 8px;
-  padding: 10px;
-  font-size: 13px;
-  line-height: 1.55;
-  white-space: pre-wrap;
-}
+  .detail-box {
+    background: #faf8f4;
+    border: 1px solid #ddd8cc;
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 13px;
+    line-height: 1.55;
+    white-space: pre-wrap;
+  }
 
-.chat-line {
-  margin-bottom: 8px;
-}
+  .chat-line {
+    margin-bottom: 8px;
+  }
 
-.chat-role {
-  font-weight: 700;
-  color: #2d6a4f;
-}
+  .chat-role {
+    font-weight: 700;
+    color: #2d6a4f;
+  }
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="card">
-    <h1>CAPPs Tutor Faculty Dashboard</h1>
-    <div class="sub">Faculty view of CAPPs Tutor student exercise performance.</div>
+    <h1>Nursing Education Faculty Dashboard</h1>
+    <div class="sub">Faculty view of Nursing Education student exercise performance.</div>
 
     <div id="loginBox">
       <input type="password" id="password" placeholder="Faculty dashboard password">
       <button onclick="loadDashboard()">Load dashboard</button>
       <div id="loginError" class="error"></div>
+
       <div style="margin-top:14px;padding-top:14px;border-top:1px solid #ddd8cc">
-        <div style="font-size:13px;color:#6f675f;margin-bottom:8px">No server connected? View demo data from this browser, or load student export files.</div>
+        <div style="font-size:13px;color:#6f675f;margin-bottom:8px">
+          No server connected? View demo data from this browser, or load student export files.
+        </div>
         <button onclick="loadDemoDashboard()" style="background:#1a4a7a">View demo data (offline)</button>
         <button onclick="document.getElementById('facultyImport').click()" style="background:#8a6a1a">Load export files…</button>
         <input type="file" id="facultyImport" accept=".json" multiple style="display:none" onchange="importFacultyFiles(event)">
         <div id="importedCount" style="font-size:12px;color:#6f675f;margin-top:8px"></div>
       </div>
-      <div style="margin-top:12px"><a href="admin.html" style="font-size:13px;color:#1a4a7a">← Admin hub</a> · <a href="index.html" style="font-size:13px;color:#1a4a7a">Student app</a></div>
+
+      <div style="margin-top:12px">
+        <a href="admin.html" style="font-size:13px;color:#1a4a7a">← Admin hub</a>
+        ·
+        <a href="index.html" style="font-size:13px;color:#1a4a7a">Student app</a>
+      </div>
     </div>
   </div>
 
@@ -266,71 +275,76 @@ select {
         <div class="num" id="statRows">0</div>
         <div class="lbl">Rows</div>
       </div>
+
       <div class="stat">
         <div class="num" id="statStudents">0</div>
         <div class="lbl">Students</div>
       </div>
+
       <div class="stat">
         <div class="num" id="statQuestions">0</div>
         <div class="lbl">Questions</div>
       </div>
+
       <div class="stat">
         <div class="num" id="statLate">0</div>
         <div class="lbl">Late</div>
       </div>
+
       <div class="stat">
-  <div class="num" id="statRosterStudents">0</div>
-  <div class="lbl">Roster Students</div>
-</div>
-<div class="stat">
-  <div class="num" id="statPAs">0</div>
-  <div class="lbl">PAs</div>
-</div>
+        <div class="num" id="statRosterStudents">0</div>
+        <div class="lbl">Roster Students</div>
+      </div>
+
+      <div class="stat">
+        <div class="num" id="statPAs">0</div>
+        <div class="lbl">PAs</div>
+      </div>
     </div>
 
     <div class="card">
-  <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:end">
-    <div>
-      <label class="filter-label">PA</label>
-      <select id="paFilter" onchange="applyFilters()">
-        <option value="">All PAs</option>
-      </select>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:end">
+        <div>
+          <label class="filter-label">PA</label>
+          <select id="paFilter" onchange="applyFilters()">
+            <option value="">All PAs</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="filter-label">Class</label>
+          <select id="classFilter" onchange="applyFilters()">
+            <option value="">All classes</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="filter-label">Course</label>
+          <select id="courseFilter" onchange="applyFilters()">
+            <option value="">All courses</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="filter-label">Week / Question</label>
+          <select id="questionFilter" onchange="applyFilters()">
+            <option value="">All questions</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="filter-label">Search</label>
+          <input type="text" id="searchFilter" placeholder="Student, email, topic..." oninput="applyFilters()">
+        </div>
+
+        <label class="checkbox-row">
+          <input type="checkbox" id="lateOnlyFilter" onchange="applyFilters()">
+          Late only
+        </label>
+
+        <button onclick="loadDashboard()">Refresh</button>
+      </div>
     </div>
-
-    <div>
-      <label class="filter-label">Class</label>
-      <select id="classFilter" onchange="applyFilters()">
-        <option value="">All classes</option>
-      </select>
-    </div>
-
-    <div>
-      <label class="filter-label">Course</label>
-      <select id="courseFilter" onchange="applyFilters()">
-        <option value="">All courses</option>
-      </select>
-    </div>
-
-    <div>
-      <label class="filter-label">Week / Question</label>
-      <select id="questionFilter" onchange="applyFilters()">
-        <option value="">All questions</option>
-      </select>
-    </div>
-
-    <div>
-      <label class="filter-label">Search</label>
-      <input type="text" id="searchFilter" placeholder="Student, email, topic..." oninput="applyFilters()">
-    </div>
-
-    <label class="checkbox-row">
-      <input type="checkbox" id="lateOnlyFilter" onchange="applyFilters()">
-      Late only
-    </label>
-
-    <button onclick="loadDashboard()">Refresh</button>
-  </div>
-</div>
 
     <div id="tableWrap"></div>
     <div id="summaryWrap" style="margin-top:16px"></div>
@@ -370,84 +384,144 @@ function recordToRow(stu, rec) {
 
 function buildRowsFromLocalStorage() {
   const rows = [];
+
   try {
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
+
       if (!key || !key.startsWith('medtutor_student_')) continue;
+
       const stu = JSON.parse(localStorage.getItem(key));
+
       if (!stu || !Array.isArray(stu.completedExercises)) continue;
+
       stu.completedExercises.forEach(rec => rows.push(recordToRow(stu, rec)));
     }
-  } catch (e) { console.warn(e); }
+  } catch (e) {
+    console.warn(e);
+  }
+
   return rows;
 }
 
 function importFacultyFiles(event) {
   const files = Array.from(event.target.files || []);
+
   if (!files.length) return;
+
   let pending = files.length;
+
   files.forEach(file => {
     const reader = new FileReader();
+
     reader.onload = e => {
       try {
         const data = JSON.parse(e.target.result);
-        const stu = data.student || { studentName: data.studentName, googleEmail: data.googleEmail, studentUUID: data.studentUUID, courseId: data.courseId, courseName: data.courseName };
+
+        const stu = data.student || {
+          studentName: data.studentName,
+          googleEmail: data.googleEmail,
+          studentUUID: data.studentUUID,
+          courseId: data.courseId,
+          courseName: data.courseName
+        };
+
         const recs = Array.isArray(data.completedExercises) ? data.completedExercises : [];
+
         recs.forEach(rec => importedRows.push(recordToRow(stu, rec)));
-      } catch (err) { console.warn('Bad export file', err); }
+      } catch (err) {
+        console.warn('Bad export file', err);
+      }
+
       if (--pending === 0) {
         const cnt = document.getElementById('importedCount');
-        if (cnt) cnt.textContent = `${importedRows.length} record(s) loaded from files.`;
+
+        if (cnt) {
+          cnt.textContent = `${importedRows.length} record(s) loaded from files.`;
+        }
+
         loadDemoDashboard();
       }
     };
+
     reader.readAsText(file);
   });
 }
 
 function loadDemoDashboard() {
-  // Demo password gate — uses the password set in Admin → App Config (if any).
+  // Demo password gate — uses the password set in Admin → App Config, if any.
   let demoPw = '';
-  try { const c = JSON.parse(localStorage.getItem('medtutor_admin_config') || '{}'); demoPw = c.facultyPassword || ''; } catch (e) {}
+
+  try {
+    const c = JSON.parse(localStorage.getItem('medtutor_admin_config') || '{}');
+    demoPw = c.facultyPassword || '';
+  } catch (e) {}
+
   if (demoPw) {
     const typed = (document.getElementById('password')?.value || lastPassword || '').trim();
+
     if (typed !== demoPw) {
       const le = document.getElementById('loginError');
-      if (le) le.textContent = 'Enter the faculty password to view the dashboard.';
+
+      if (le) {
+        le.textContent = 'Enter the faculty password to view the dashboard.';
+      }
+
       return;
     }
   }
+
   const notice = document.getElementById('demoNotice');
-  if (notice) notice.style.display = 'block';
+
+  if (notice) {
+    notice.style.display = 'block';
+  }
+
   dashboardRows = buildRowsFromLocalStorage().concat(importedRows);
   dashboardStudents = [];
   dashboardPAs = [];
+
   document.getElementById('dashboard').style.display = 'block';
+
   populateFilters(dashboardRows, dashboardPAs);
   renderDashboard(dashboardRows, dashboardStudents, dashboardPAs);
+
   if (!dashboardRows.length) {
     const tw = document.getElementById('tableWrap');
-    if (tw) tw.innerHTML = '<div class="card">No completed exercises found in this browser yet. Complete an exercise in the student app first, or load export files above.</div>';
+
+    if (tw) {
+      tw.innerHTML = '<div class="card">No completed exercises found in this browser yet. Complete an exercise in the student app first, or load export files above.</div>';
+    }
   }
 }
 
 async function loadDashboard() {
   const password = document.getElementById('password')?.value || lastPassword;
   const loginError = document.getElementById('loginError');
-  if (loginError) loginError.textContent = '';
+
+  if (loginError) {
+    loginError.textContent = '';
+  }
 
   if (!password) {
-    if (loginError) loginError.textContent = 'Enter the dashboard password.';
+    if (loginError) {
+      loginError.textContent = 'Enter the dashboard password.';
+    }
+
     return;
   }
 
   lastPassword = password;
 
   const button = document.querySelector('button');
-  if (button) button.disabled = true;
+
+  if (button) {
+    button.disabled = true;
+  }
 
   try {
     let response;
+
     try {
       response = await fetch('/.netlify/functions/faculty-performance', {
         method: 'POST',
@@ -455,14 +529,15 @@ async function loadDashboard() {
         body: JSON.stringify({ password })
       });
     } catch (networkErr) {
-      // No server reachable at all (e.g. opened as a file) — show demo data.
+      // No server reachable at all, for example when opened as a file.
       loadDemoDashboard();
       return;
     }
 
     const ct = response.headers.get('content-type') || '';
+
     if (!ct.includes('json')) {
-      // Server returned HTML (function not deployed) — fall back to demo data.
+      // Server returned HTML, likely because the function is not deployed.
       loadDemoDashboard();
       return;
     }
@@ -474,20 +549,30 @@ async function loadDashboard() {
     }
 
     const notice = document.getElementById('demoNotice');
-    if (notice) notice.style.display = 'none';
+
+    if (notice) {
+      notice.style.display = 'none';
+    }
+
     document.getElementById('dashboard').style.display = 'block';
+
     dashboardRows = data.performance?.rows || [];
     dashboardStudents = data.students?.rows || [];
     dashboardPAs = data.pas?.rows || [];
 
     populateFilters(dashboardRows, dashboardPAs);
-renderDashboard(dashboardRows, dashboardStudents, dashboardPAs);
+    renderDashboard(dashboardRows, dashboardStudents, dashboardPAs);
   } catch (err) {
-    if (loginError) loginError.textContent = err.message || 'Dashboard load failed.';
+    if (loginError) {
+      loginError.textContent = err.message || 'Dashboard load failed.';
+    }
   } finally {
-    if (button) button.disabled = false;
+    if (button) {
+      button.disabled = false;
+    }
   }
 }
+
 function populateFilters(rows = [], pasRoster = []) {
   populatePAFilter(pasRoster);
   populateClassFilter(rows);
@@ -497,12 +582,16 @@ function populateFilters(rows = [], pasRoster = []) {
 
 function setOptions(selectId, options, allLabel) {
   const select = document.getElementById(selectId);
+
   if (!select) return;
 
   const current = select.value;
-  select.innerHTML = `<option value="">${esc(allLabel)}</option>` + options.map(opt => {
-    return `<option value="${esc(opt.value)}">${esc(opt.label)}</option>`;
-  }).join('');
+
+  select.innerHTML =
+    `<option value="">${esc(allLabel)}</option>` +
+    options.map(opt => {
+      return `<option value="${esc(opt.value)}">${esc(opt.label)}</option>`;
+    }).join('');
 
   select.value = options.some(opt => opt.value === current) ? current : '';
 }
@@ -512,6 +601,7 @@ function populatePAFilter(pasRoster = []) {
     .filter(pa => String(pa.active || '').toLowerCase() === 'true')
     .map(pa => {
       const email = String(pa.paEmail || '').trim();
+
       return {
         value: email,
         label: `${pa.paName || email} (${email})`
@@ -525,20 +615,34 @@ function populatePAFilter(pasRoster = []) {
 
 function populateClassFilter(rows = []) {
   const values = [...new Set(rows.map(r => r.classId).filter(Boolean))].sort();
-  setOptions('classFilter', values.map(v => ({ value: v, label: v })), 'All classes');
+
+  setOptions(
+    'classFilter',
+    values.map(v => ({ value: v, label: v })),
+    'All classes'
+  );
 }
 
 function populateCourseFilter(rows = []) {
   const values = [...new Set(rows.map(r => r.courseId).filter(Boolean))].sort();
-  setOptions('courseFilter', values.map(v => ({ value: v, label: v })), 'All courses');
+
+  setOptions(
+    'courseFilter',
+    values.map(v => ({ value: v, label: v })),
+    'All courses'
+  );
 }
 
 function populateQuestionFilter(rows = []) {
   const seen = {};
+
   rows.forEach(r => {
     const id = String(r.questionId || '').trim();
+
     if (!id) return;
+
     const label = `${r.weekLabel || 'Week ?'} · Q${r.questionNumber || '?'} · ${r.topic || id}`;
+
     seen[id] = label;
   });
 
@@ -552,6 +656,7 @@ function populateQuestionFilter(rows = []) {
 function applyFilters() {
   renderDashboard(dashboardRows, dashboardStudents, dashboardPAs);
 }
+
 function renderDashboard(rows, studentsRoster = [], pasRoster = []) {
   const selectedPA = String(document.getElementById('paFilter')?.value || '').trim().toLowerCase();
   const selectedClass = String(document.getElementById('classFilter')?.value || '').trim();
@@ -561,9 +666,13 @@ function renderDashboard(rows, studentsRoster = [], pasRoster = []) {
   const searchText = String(document.getElementById('searchFilter')?.value || '').trim().toLowerCase();
 
   const studentByEmail = {};
+
   studentsRoster.forEach(s => {
     const email = String(s.googleEmail || '').trim().toLowerCase();
-    if (email) studentByEmail[email] = s;
+
+    if (email) {
+      studentByEmail[email] = s;
+    }
   });
 
   const filteredRows = rows.filter(row => {
@@ -596,8 +705,18 @@ function renderDashboard(rows, studentsRoster = [], pasRoster = []) {
     return true;
   });
 
-  const students = new Set(filteredRows.map(r => r.studentUUID || r.googleEmail || r.studentName).filter(Boolean));
-  const questions = new Set(filteredRows.map(r => r.questionId).filter(Boolean));
+  const students = new Set(
+    filteredRows
+      .map(r => r.studentUUID || r.googleEmail || r.studentName)
+      .filter(Boolean)
+  );
+
+  const questions = new Set(
+    filteredRows
+      .map(r => r.questionId)
+      .filter(Boolean)
+  );
+
   const lateRows = filteredRows.filter(r => String(r.isLate).toLowerCase() === 'true');
 
   document.getElementById('statRows').textContent = filteredRows.length;
@@ -608,7 +727,9 @@ function renderDashboard(rows, studentsRoster = [], pasRoster = []) {
   document.getElementById('statPAs').textContent = pasRoster.length;
 
   const sorted = [...filteredRows].sort((a, b) => {
-    return String(b.completedAt || b.submittedAt || '').localeCompare(String(a.completedAt || a.submittedAt || ''));
+    return String(b.completedAt || b.submittedAt || '').localeCompare(
+      String(a.completedAt || a.submittedAt || '')
+    );
   });
 
   renderStudentSummary(filteredRows, studentsRoster);
@@ -639,14 +760,17 @@ function renderDashboard(rows, studentsRoster = [], pasRoster = []) {
           <div class="mono">${esc(row.questionId)}</div>
         </td>
         <td>${esc(row.topic)}</td>
-        <td><span class="pill complete">${esc(status)}</span>${late ? ' <span class="pill late">Late</span>' : ''}</td>
+        <td>
+          <span class="pill complete">${esc(status)}</span>
+          ${late ? ' <span class="pill late">Late</span>' : ''}
+        </td>
         <td>${esc(row.conceptsMastered)} / ${esc(row.totalConcepts)}</td>
         <td>${esc(row.totalExchanges)}</td>
         <td>${esc(row.timeMinutes)}m</td>
         <td>${formatDate(row.completedAt || row.submittedAt)}</td>
         <td>
-  ${renderDetailViewer(row, payload)}
-</td>
+          ${renderDetailViewer(row, payload)}
+        </td>
       </tr>
     `;
   }).join('');
@@ -674,7 +798,8 @@ function renderDashboard(rows, studentsRoster = [], pasRoster = []) {
     </table>
   `;
 }
-  function renderDetailViewer(row, payload) {
+
+function renderDetailViewer(row, payload) {
   const record = payload || row || {};
 
   const selfConcepts = Array.isArray(record.selfConcepts) ? record.selfConcepts : [];
@@ -682,31 +807,39 @@ function renderDashboard(rows, studentsRoster = [], pasRoster = []) {
   const masteredConcepts = record.masteredConcepts || {};
   const essayCitations = record.essayCitations || {};
 
-  const selfHtml = selfConcepts.length ? selfConcepts.map((c, i) => `
-    <div class="detail-box" style="margin-bottom:8px">
-      <strong>${esc(i + 1)}. ${esc(c.concept || 'Concept')}</strong>
-      <br>${esc(c.knowledge || '')}
-    </div>
-  `).join('') : '<div class="detail-box">No self-assessment saved.</div>';
+  const selfHtml = selfConcepts.length
+    ? selfConcepts.map((c, i) => `
+      <div class="detail-box" style="margin-bottom:8px">
+        <strong>${esc(i + 1)}. ${esc(c.concept || 'Concept')}</strong>
+        <br>${esc(c.knowledge || '')}
+      </div>
+    `).join('')
+    : '<div class="detail-box">No self-assessment saved.</div>';
 
-  const chatHtml = socraticHistory.length ? socraticHistory.map(m => `
-    <div class="chat-line">
-      <span class="chat-role">${esc(m.role === 'user' ? 'Student' : 'Tutor')}:</span>
-      ${esc(m.content || '')}
-    </div>
-  `).join('') : '<div class="detail-box">No Socratic transcript saved for this submission.</div>';
+  const chatHtml = socraticHistory.length
+    ? socraticHistory.map(m => `
+      <div class="chat-line">
+        <span class="chat-role">${esc(m.role === 'user' ? 'Student' : 'Tutor')}:</span>
+        ${esc(m.content || '')}
+      </div>
+    `).join('')
+    : '<div class="detail-box">No Socratic transcript saved for this submission.</div>';
 
-  const masteredHtml = Object.entries(masteredConcepts).length ? Object.entries(masteredConcepts).map(([id, m]) => `
-    <div class="detail-box" style="margin-bottom:8px">
-      <strong>${esc(m.label || id)}</strong>
-      <br>${esc(m.summary || '')}
-      ${m.citation ? `<br><span class="mono">Citation: ${esc(m.citation)}</span>` : ''}
-    </div>
-  `).join('') : '<div class="detail-box">No mastered concept details saved.</div>';
+  const masteredHtml = Object.entries(masteredConcepts).length
+    ? Object.entries(masteredConcepts).map(([id, m]) => `
+      <div class="detail-box" style="margin-bottom:8px">
+        <strong>${esc(m.label || id)}</strong>
+        <br>${esc(m.summary || '')}
+        ${m.citation ? `<br><span class="mono">Citation: ${esc(m.citation)}</span>` : ''}
+      </div>
+    `).join('')
+    : '<div class="detail-box">No mastered concept details saved.</div>';
 
-  const citationsHtml = Object.entries(essayCitations).length ? Object.entries(essayCitations).map(([id, citation]) => `
-    <div class="mono">${esc(id)}: ${esc(citation)}</div>
-  `).join('') : '<div class="detail-box">No citations saved.</div>';
+  const citationsHtml = Object.entries(essayCitations).length
+    ? Object.entries(essayCitations).map(([id, citation]) => `
+      <div class="mono">${esc(id)}: ${esc(citation)}</div>
+    `).join('')
+    : '<div class="detail-box">No citations saved.</div>';
 
   return `
     <details>
@@ -763,21 +896,32 @@ function renderDashboard(rows, studentsRoster = [], pasRoster = []) {
     </details>
   `;
 }
+
 function renderStudentSummary(rows, studentsRoster = []) {
   const wrap = document.getElementById('summaryWrap');
+
   if (!wrap) return;
 
   const studentByEmail = {};
+
   studentsRoster.forEach(s => {
     const email = String(s.googleEmail || '').trim().toLowerCase();
-    if (email) studentByEmail[email] = s;
+
+    if (email) {
+      studentByEmail[email] = s;
+    }
   });
 
   const grouped = {};
+
   rows.forEach(row => {
-    const key = String(row.googleEmail || row.studentUUID || row.studentName || 'unknown').trim().toLowerCase();
+    const key = String(row.googleEmail || row.studentUUID || row.studentName || 'unknown')
+      .trim()
+      .toLowerCase();
+
     if (!grouped[key]) {
       const rosterMatch = studentByEmail[String(row.googleEmail || '').trim().toLowerCase()] || {};
+
       grouped[key] = {
         studentName: row.studentName || rosterMatch.studentName || key,
         googleEmail: row.googleEmail || rosterMatch.googleEmail || '',
@@ -792,14 +936,26 @@ function renderStudentSummary(rows, studentsRoster = []) {
     }
 
     grouped[key].completed += 1;
-    if (String(row.isLate).toLowerCase() === 'true') grouped[key].late += 1;
+
+    if (String(row.isLate).toLowerCase() === 'true') {
+      grouped[key].late += 1;
+    }
+
     grouped[key].exchanges += Number(row.totalExchanges || 0);
     grouped[key].time += Number(row.timeMinutes || 0);
-    if (row.questionId) grouped[key].questions.add(row.questionId);
-    if (row.courseId) grouped[key].courses.add(row.courseId);
+
+    if (row.questionId) {
+      grouped[key].questions.add(row.questionId);
+    }
+
+    if (row.courseId) {
+      grouped[key].courses.add(row.courseId);
+    }
   });
 
-  const summaries = Object.values(grouped).sort((a, b) => a.studentName.localeCompare(b.studentName));
+  const summaries = Object.values(grouped).sort((a, b) => {
+    return a.studentName.localeCompare(b.studentName);
+  });
 
   const rowsHtml = summaries.map(s => {
     const avgExchanges = s.completed ? (s.exchanges / s.completed).toFixed(1) : '0';
@@ -844,8 +1000,10 @@ function renderStudentSummary(rows, studentsRoster = []) {
     </div>
   `;
 }
+
 function parsePayload(text) {
   if (!text) return null;
+
   try {
     return JSON.parse(text);
   } catch {
@@ -855,6 +1013,7 @@ function parsePayload(text) {
 
 function formatDate(iso) {
   if (!iso) return '';
+
   try {
     return new Date(iso).toLocaleString();
   } catch {

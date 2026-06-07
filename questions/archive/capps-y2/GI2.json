@@ -137,43 +137,6 @@
           "idealAnswer": "Inflammatory signals from activated keratinocytes recruit neutrophils into the epidermis. Collections of neutrophils in the stratum corneum are called Munro microabscesses, a classic histologic feature of psoriasis. Neutrophil recruitment is part of the feed-forward inflammatory loop that helps sustain plaque inflammation."
         }
       ]
-    },
-    {
-      "id": "GI2-W05-Q01",
-      "week": 5,
-      "weekLabel": "Week 5",
-      "questionNumber": 1,
-      "topic": "Myocardial Infarction: Recognizing Acute Deterioration",
-      "releaseDate": "2026-05-26",
-      "deadline": "2026-09-07T08:00:00-04:00",
-      "question": "Taylor Collins is a 58-year-old male in the emergency department who reports chest pressure that began about 3 hours ago while doing yard work. He thought it was indigestion, but it has not gone away. The pain initially was 3/10, with intermittent radiation to the left shoulder and mild nausea. He has hypertension, hyperlipidemia, type 2 diabetes, and a former 30 pack-year smoking history.\n\nInitial assessment: BP 138/82, HR 84 bpm, RR 18, SpO2 98% on room air, temperature 98.4°F, pain 3/10. He is alert and oriented x4, skin warm, dry, and pink, lungs clear bilaterally, regular heart rhythm, no edema, and mild anxiety. Telemetry shows normal sinus rhythm. Initial troponin is negative.\n\nOne hour later, he says: “The pressure is getting worse now. It’s moving into my jaw.” BP 146/88, HR 96 bpm, RR 20, SpO2 97% on room air, pain 6/10. He is more anxious, restless, mildly diaphoretic, and intermittently clutching his chest. Telemetry shows sinus rhythm with new 1 mm ST-segment depression in lead II. Repeat troponin is pending.\n\nThirty minutes later, he says: “This is the worst it’s been. It feels like an elephant is sitting on my chest.” BP 158/94, HR 108 bpm, RR 24, SpO2 95% on room air, pain 9/10. He is pale, diaphoretic, increasingly distressed, guarding his chest, and reports nausea. Telemetry shows sinus tachycardia with 2–3 mm ST-segment elevation in lead II. Troponin is 50 mg/L.\n\nUsing the nursing process, explain what assessment findings matter, what problem is occurring, what nursing actions you should take, what provider interventions you anticipate, and what level of urgency is appropriate.",
-      "concepts": [
-        {
-          "id": "C1",
-          "label": "Assessment: gather and interpret pertinent data",
-          "idealAnswer": "The student should identify the abnormal and changing assessment findings. Important cues include worsening chest pressure, radiation to the jaw and left shoulder, nausea, diaphoresis, pallor, anxiety, restlessness, chest guarding, increasing pain from 3/10 to 9/10, rising heart rate and respiratory rate, new ST-segment depression progressing to ST-segment elevation, and markedly elevated troponin. The key clinical reasoning point is recognizing that the patient is deteriorating from possible ischemia to acute myocardial infarction."
-        },
-        {
-          "id": "C2",
-          "label": "Diagnosis / problem identification",
-          "idealAnswer": "The correct patient problem is myocardial infarction, heart attack, or acute coronary syndrome with evolving STEMI features. The student should connect the worsening chest pain, radiation, diaphoresis, dynamic ECG changes, and elevated troponin to myocardial injury."
-        },
-        {
-          "id": "C3",
-          "label": "Planning and implementation: nursing interventions",
-          "idealAnswer": "The nurse should maintain continuous cardiac monitoring, repeat a focused cardiovascular assessment, monitor heart rate, blood pressure, pulse oximetry, respirations, and pain level, immediately notify the provider, activate the medical emergency team or STEMI/chest-pain pathway according to local protocol, obtain or prepare for a 12-lead ECG, maintain IV access, compare ECG changes with baseline, and prepare the patient for urgent escalation of care."
-        },
-        {
-          "id": "C4",
-          "label": "Planning and implementation: anticipated provider interventions",
-          "idealAnswer": "The student should anticipate provider orders for repeat cardiac enzymes or troponin, 12-lead ECG, aspirin, nitroglycerin if appropriate, analgesia, additional antiplatelet or anticoagulant therapy according to protocol, cardiology consultation, and preparation for cardiac catheterization or reperfusion therapy."
-        },
-        {
-          "id": "C5",
-          "label": "Evaluation of urgency",
-          "idealAnswer": "The most appropriate urgency level is unstable — requires urgent escalation of care. The patient is not simply stable for routine monitoring because he has worsening chest pain, dynamic ECG changes, elevated troponin, diaphoresis, pallor, distress, and tachycardia. He is not described as pulseless, apneic, or requiring immediate resuscitation, so emergent resuscitative intervention is not the best choice based on the provided data."
-        }
-      ]
     }
   ]
 }
