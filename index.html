@@ -129,6 +129,15 @@ textarea{resize:vertical;min-height:80px}
 .import-zone:hover{border-color:var(--accent);background:var(--accent-dim)}
 .model-picker{font-family:var(--sans);font-size:12px;color:var(--ink2);background:var(--surface);border:1px solid var(--border-dark);border-radius:var(--radius);padding:6px 10px;cursor:pointer;outline:none}
 .model-picker:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim)}
+.model-status{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;border:1px solid var(--border-dark);border-radius:999px;padding:5px 10px;cursor:pointer;background:var(--surface);color:var(--ink3);white-space:nowrap;user-select:none}
+.model-status .dot{width:8px;height:8px;border-radius:50%;background:var(--ink3);flex-shrink:0}
+.model-status.checking{color:var(--amber);border-color:#f0c080;background:var(--amber-light)}
+.model-status.checking .dot{background:var(--amber);animation:statuspulse 1s infinite}
+.model-status.ok{color:var(--accent);border-color:#a8d5be;background:var(--accent-light)}
+.model-status.ok .dot{background:var(--accent)}
+.model-status.fail{color:var(--red);border-color:#e8b0a8;background:var(--red-light)}
+.model-status.fail .dot{background:var(--red)}
+@keyframes statuspulse{0%,100%{opacity:1}50%{opacity:.35}}
 </style>
 </head>
 <body>
@@ -190,8 +199,9 @@ textarea{resize:vertical;min-height:80px}
   <select id="modelPicker" class="model-picker" title="Tutor model" onchange="setLlmProvider(this.value)">
     <option value="anthropic">Claude</option>
     <option value="openai">OpenAI (GPT)</option>
-    <option value="oss">Open-Source Medical LLM</option>
+    <option value="oss">NVIDIA: Nemotron 3 Ultra</option>
   </select>
+  <span id="modelStatus" class="model-status" title="Click to re-check the tutor model" onclick="checkModelStatus()"><span class="dot"></span><span id="modelStatusText">Check status</span></span>
   <button class="btn btn-ghost btn-sm" onclick="showScreen('screen-dashboard')">📊 My Progress</button>
   <button class="btn btn-ghost btn-sm" onclick="showScreen('screen-leitner')">🃏 Review Cards</button>
   <button class="btn btn-secondary btn-sm" onclick="exportData()">⬇ Export</button>
@@ -357,16 +367,75 @@ let state={
   leitnerSession:null
 };
 
+const PROVIDER_LABELS={anthropic:'Claude',openai:'OpenAI (GPT)',oss:'NVIDIA: Nemotron 3 Ultra'};
+const PROVIDER_SHORT={anthropic:'Claude',openai:'OpenAI',oss:'Nemotron'};
+
 function setLlmProvider(value){
   state.llmProvider=value||'anthropic';
   saveToStorage();
-  const labels={anthropic:'Claude',openai:'OpenAI (GPT)',oss:'Open-Source Medical LLM'};
-  toast('Tutor model: '+(labels[state.llmProvider]||state.llmProvider),'success');
+  toast('Tutor model: '+(PROVIDER_LABELS[state.llmProvider]||state.llmProvider),'success');
+  checkModelStatus();
 }
 
 function syncModelPicker(){
   const mp=document.getElementById('modelPicker');
   if(mp)mp.value=state.llmProvider||'anthropic';
+}
+
+// Live check: pings the selected provider through the backend and shows a
+// green/red status pill in the header. Bypasses the offline demo fallback,
+// so it reflects whether the real model is actually reachable.
+let MODEL_STATUS_SEQ=0;
+function setModelStatusUI(stateClass,text,tooltip){
+  const el=document.getElementById('modelStatus');
+  const txt=document.getElementById('modelStatusText');
+  if(!el)return;
+  el.classList.remove('checking','ok','fail');
+  if(stateClass)el.classList.add(stateClass);
+  if(txt)txt.textContent=text;
+  el.title=tooltip||'Click to re-check the tutor model';
+}
+
+async function checkModelStatus(){
+  const provider=state.llmProvider||'anthropic';
+  const short=PROVIDER_SHORT[provider]||provider;
+  const seq=++MODEL_STATUS_SEQ;
+  setModelStatusUI('checking','Checking '+short+'…','Contacting '+(PROVIDER_LABELS[provider]||provider)+'…');
+
+  const controller=new AbortController();
+  const timer=setTimeout(()=>controller.abort(),25000);
+  try{
+    const r=await fetch('/.netlify/functions/claude-feedback',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        provider,
+        max_tokens:16,
+        system:'You are a connection test. Reply with exactly: ok',
+        messages:[{role:'user',content:'Reply with the single word ok.'}]
+      }),
+      signal:controller.signal
+    });
+    clearTimeout(timer);
+    if(seq!==MODEL_STATUS_SEQ)return; // a newer check superseded this one
+
+    let d={};
+    try{d=await r.json();}catch(e){}
+
+    if(r.ok && d && typeof d.text==='string' && d.text.trim()){
+      setModelStatusUI('ok',short+' working','Connected — '+(PROVIDER_LABELS[provider]||provider)+' responded. Click to re-check.');
+    }else{
+      const reason=(d && d.error) ? String(d.error) : ('HTTP '+r.status);
+      setModelStatusUI('fail',short+' not working',(PROVIDER_LABELS[provider]||provider)+' error: '+reason+'. Click to re-check.');
+    }
+  }catch(e){
+    clearTimeout(timer);
+    if(seq!==MODEL_STATUS_SEQ)return;
+    const aborted=(e && e.name==='AbortError');
+    setModelStatusUI('fail', short+(aborted?' timed out':' not working'),
+      aborted ? ((PROVIDER_LABELS[provider]||provider)+' took too long to respond (timeout). A smaller/faster model may work better. Click to re-check.')
+              : ('Could not reach the tutor backend: '+String(e&&e.message||e)+'. Click to re-check.'));
+  }
 }
 
 function generateUUID(){return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return(c==='x'?r:(r&0x3|0x8)).toString(16);});}
@@ -1056,13 +1125,53 @@ function renderSocraticPhase(q){const el=document.getElementById('mainContent');
   <button class="btn btn-ghost btn-sm" onclick="state.selectedQuestionId='';saveToStorage();renderExerciseNavigator()">← Back to exercises</button>
 </div>${isLate(q)?'<div class="config-warn">⚠ Past deadline — submission will be marked late.</div>':''}<div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:${pct}%"></div></div><div class="progress-label">${doneCount} of ${total} concepts mastered</div><div class="roadmap" style="margin-bottom:20px">${q.concepts.map(c=>{const done=!!state.masteredConcepts[c.id];const summary=state.masteredConcepts[c.id]?.summary||'';return`<div class="roadmap-item ${done?'done':'active'}"><div class="ri-icon">${done?'✓':'○'}</div><div style="flex:1"><div class="ri-label ${done?'done':''}">${escHtml(c.label)}</div>${done&&summary?`<div style="font-size:11px;color:var(--accent);margin-top:2px;font-style:italic">${escHtml(summary)}</div>`:''}</div><div class="ri-status">${done?'Mastered':'Pending'}</div></div>`;}).join('')}</div>${allDone?`<div class="card" style="text-align:center;border-color:var(--accent);background:var(--accent-light)"><div style="font-size:32px;margin-bottom:8px">🎉</div><div style="font-family:var(--serif);font-size:20px;color:var(--accent);margin-bottom:8px">All concepts mastered!</div><div style="font-size:14px;color:var(--ink3);margin-bottom:20px">Now write your synthesis essay to complete the exercise.</div><button class="btn btn-primary btn-lg" onclick="startWritingPhase()">Write Synthesis Essay →</button></div>`:`<div class="card"><div class="card-title">Socratic Dialogue</div><div class="card-subtitle">Work through each concept with the tutor. Each concept is checked off automatically as you demonstrate mastery.</div><div class="chat-window" id="socraticChat">${(state.socraticHistory||[]).length===0?'<div style="text-align:center;padding:20px;color:var(--ink3);font-size:13px">Starting session…</div>':renderChatHistory(state.socraticHistory||[])}</div><div class="chat-input-row"><textarea id="socraticInput" placeholder="Respond to the tutor…" rows="2" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendSocraticMessage();}"></textarea><button class="btn btn-primary" onclick="sendSocraticMessage()">Send</button></div><div class="help-text">Press Enter to send · Shift+Enter for new line</div></div>`}`;if((state.socraticHistory||[]).length===0&&!allDone)startSocraticSession(q);scrollChat('socraticChat');}
 
-function buildSocraticSystemPrompt(q){const selfText=state.selfConcepts.map((c,i)=>`${i+1}. ${c.concept}: ${c.knowledge||'(no notes)'}`).join('\n');const conceptsText=q.concepts.map(c=>{const done=!!state.masteredConcepts[c.id];return`[${done?'MASTERED':'PENDING'}] ${c.id}: ${c.label}\n   Ideal understanding: ${c.idealAnswer}`;}).join('\n\n');const pending=q.concepts.filter(c=>!state.masteredConcepts[c.id]);const next=pending[0];return`You are a warm, knowledgeable Socratic medical tutor working through a clinical case with a student in one continuous conversation.\n\nCLINICAL QUESTION:\n${q.question}\n\nSTUDENT'S PRIOR KNOWLEDGE (start from here — do NOT re-ask things they already wrote):\n${selfText}\n\nCONCEPTS:\n${conceptsText}\n\nYOUR APPROACH:\n- Work through PENDING concepts one at a time in order\n- For each concept, acknowledge what the student already wrote in their self-assessment, then probe deeper with one focused question\n- Keep each concept to 3-5 exchanges — targeted and efficient\n- When the student demonstrates solid understanding, confirm warmly and emit EXACTLY this on its own line:\n  CONCEPT_MASTERED:[concept_id]:[one sentence summary of what they demonstrated]\n  Example: CONCEPT_MASTERED:C1:Demonstrated understanding of how immune tolerance breaks down in IBD leading to chronic mucosal injury.\n- Immediately move to the next PENDING concept\n- Never re-cover MASTERED concepts\n- This is one flowing tutorial — keep momentum\n\nTONE: Warm, encouraging, intellectually engaged. One focused question at a time.\n\nCURRENT CONCEPT: ${next?next.label:'All done — encourage the student to write their synthesis essay.'}`;}
+function buildSocraticSystemPrompt(q){const selfText=state.selfConcepts.map((c,i)=>`${i+1}. ${c.concept}: ${c.knowledge||'(no notes)'}`).join('\n');const conceptsText=q.concepts.map(c=>{const done=!!state.masteredConcepts[c.id];return`[${done?'MASTERED':'PENDING'}] ${c.id}: ${c.label}\n   Ideal understanding: ${c.idealAnswer}`;}).join('\n\n');const pending=q.concepts.filter(c=>!state.masteredConcepts[c.id]);const next=pending[0];return`You are a warm, knowledgeable Socratic medical tutor working through a clinical case with a student in one continuous conversation.\n\nCLINICAL QUESTION:\n${q.question}\n\nSTUDENT'S PRIOR KNOWLEDGE (start from here — do NOT re-ask things they already wrote):\n${selfText}\n\nCONCEPTS:\n${conceptsText}\n\nYOUR APPROACH:\n- Work through PENDING concepts one at a time in order\n- For each concept, acknowledge what the student already wrote in their self-assessment, then probe deeper with one focused question\n- Keep each concept to 3-5 exchanges — targeted and efficient\n- When the student demonstrates solid understanding, confirm warmly and emit EXACTLY this on its own line:\n  CONCEPT_MASTERED:[exact concept id from the CONCEPTS list]:[one sentence summary of what they demonstrated]\n- The concept id may include letters, numbers, underscores, and hyphens, such as W05-C1. Use the exact id shown in the CONCEPTS list.\n- Immediately move to the next PENDING concept\n- Never re-cover MASTERED concepts\n- This is one flowing tutorial — keep momentum\n\nTONE: Warm, encouraging, intellectually engaged. One focused question at a time.\n\nCURRENT CONCEPT: ${next?next.label:'All done — encourage the student to write their synthesis essay.'}`;}
 
 async function startSocraticSession(q){if(!state.socraticHistory)state.socraticHistory=[];const selfText=state.selfConcepts.map((c,i)=>`${i+1}. ${c.concept}: ${c.knowledge||'(no notes)'}`).join('\n');await sendToAPI('socraticChat','socraticInput',state.socraticHistory,buildSocraticSystemPrompt(q),`Here is what I already knew before starting:\n${selfText}\n\nI am ready to begin.`,false,(reply)=>checkConceptMastered(reply,q));}
 
 async function sendSocraticMessage(){const input=document.getElementById('socraticInput');const text=input.value.trim();if(!text)return;input.value='';const q=getSelectedQuestion();if(!state.socraticHistory)state.socraticHistory=[];await sendToAPI('socraticChat',null,state.socraticHistory,buildSocraticSystemPrompt(q),text,true,(reply)=>checkConceptMastered(reply,q));}
 
-function checkConceptMastered(responseText,q){const regex=/CONCEPT_MASTERED:(\w+):(.+)/g;let match;let any=false;while((match=regex.exec(responseText))!==null){const id=match[1].trim();const summary=match[2].trim();const concept=q.concepts.find(c=>c.id===id);if(concept&&!state.masteredConcepts[id]){state.masteredConcepts[id]={label:concept.label,summary,completedAt:new Date().toISOString()};addLeitnerCard({conceptId:id,questionId:q.id,label:concept.label,paragraph:summary,citation:''});any=true;}}if(any){saveToStorage();setTimeout(()=>{const allDone=Object.keys(state.masteredConcepts).length>=q.concepts.length;renderSocraticPhase(q);if(!allDone)scrollChat('socraticChat');},800);}}
+function checkConceptMastered(responseText, q) {
+  const regex = /CONCEPT_MASTERED:([A-Za-z0-9_-]+):([^\n]+)/g;
+
+  let match;
+  let any = false;
+
+  while ((match = regex.exec(responseText)) !== null) {
+    const id = match[1].trim();
+    const summary = match[2].trim();
+
+    const concept = q.concepts.find(c => String(c.id).trim() === id);
+
+    if (concept && !state.masteredConcepts[id]) {
+      state.masteredConcepts[id] = {
+        label: concept.label,
+        summary,
+        completedAt: new Date().toISOString()
+      };
+
+      addLeitnerCard({
+        conceptId: id,
+        questionId: q.id,
+        label: concept.label,
+        paragraph: summary,
+        citation: ''
+      });
+
+      any = true;
+    }
+  }
+
+  if (any) {
+    saveToStorage();
+
+    setTimeout(() => {
+      const allDone = Object.keys(state.masteredConcepts).length >= q.concepts.length;
+      renderSocraticPhase(q);
+      if (!allDone) scrollChat('socraticChat');
+    }, 800);
+  }
+}
 
 function startWritingPhase(){state.currentPhase='write';saveToStorage();renderMainScreen();}
 
@@ -1191,9 +1300,9 @@ function leitnerAnswer(correct){const s=state.leitnerSession;const i=state.leitn
 
 function endLeitnerSession(){state.leitnerSession=null;renderLeitner();}
 
-async function sendToAPI(chatId,inputId,history,systemPrompt,userMessage,addUserMsg=true,callback=null){if(addUserMsg&&userMessage){history.push({role:'user',content:userMessage});const chatEl=document.getElementById(chatId);if(chatEl){chatEl.insertAdjacentHTML('beforeend',`<div class="msg student"><div class="msg-label">You</div><div class="msg-bubble">${escHtml(userMessage)}</div></div>`);scrollChat(chatId);}saveToStorage();}const chatEl=document.getElementById(chatId);if(chatEl){chatEl.insertAdjacentHTML('beforeend','<div id="typingIndicator"><div class="msg tutor"><div class="msg-label">Tutor</div><div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div></div>');scrollChat(chatId);}try{let messages=history.slice(-20).map(m=>({role:m.role,content:m.content}));if(messages.length===0)messages=[{role:'user',content:userMessage||'Please begin.'}];if(messages[messages.length-1].role!=='user')messages.push({role:'user',content:'Please continue.'});const reply=await callClaude(systemPrompt,messages);document.getElementById('typingIndicator')?.remove();history.push({role:'assistant',content:reply});saveToStorage();if(chatEl){const disp=reply.replace(/CONCEPT_MASTERED:\w+:[^\n]*/g,'').replace(/ROADMAP_CONFIRMED/g,'').trim();chatEl.insertAdjacentHTML('beforeend',`<div class="msg tutor"><div class="msg-label">Tutor</div><div class="msg-bubble">${formatMessage(disp)}</div></div>`);scrollChat(chatId);}if(callback)callback(reply);}catch(e){document.getElementById('typingIndicator')?.remove();if(chatEl)chatEl.insertAdjacentHTML('beforeend',`<div class="msg system"><div class="msg-bubble">Error: ${e.message}</div></div>`);toast(`Error: ${e.message}`,'error');}if(inputId){const inp=document.getElementById(inputId);if(inp){inp.value='';inp.focus();}}}
+async function sendToAPI(chatId,inputId,history,systemPrompt,userMessage,addUserMsg=true,callback=null){if(addUserMsg&&userMessage){history.push({role:'user',content:userMessage});const chatEl=document.getElementById(chatId);if(chatEl){chatEl.insertAdjacentHTML('beforeend',`<div class="msg student"><div class="msg-label">You</div><div class="msg-bubble">${escHtml(userMessage)}</div></div>`);scrollChat(chatId);}saveToStorage();}const chatEl=document.getElementById(chatId);if(chatEl){chatEl.insertAdjacentHTML('beforeend','<div id="typingIndicator"><div class="msg tutor"><div class="msg-label">Tutor</div><div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div></div>');scrollChat(chatId);}try{let messages=history.slice(-20).map(m=>({role:m.role,content:m.content}));if(messages.length===0)messages=[{role:'user',content:userMessage||'Please begin.'}];if(messages[messages.length-1].role!=='user')messages.push({role:'user',content:'Please continue.'});const reply=await callClaude(systemPrompt,messages);document.getElementById('typingIndicator')?.remove();history.push({role:'assistant',content:reply});saveToStorage();if(chatEl){const disp=reply.replace(/CONCEPT_MASTERED:[A-Za-z0-9_-]+:[^\n]*/g,'').replace(/ROADMAP_CONFIRMED/g,'').trim();chatEl.insertAdjacentHTML('beforeend',`<div class="msg tutor"><div class="msg-label">Tutor</div><div class="msg-bubble">${formatMessage(disp)}</div></div>`);scrollChat(chatId);}if(callback)callback(reply);}catch(e){document.getElementById('typingIndicator')?.remove();if(chatEl)chatEl.insertAdjacentHTML('beforeend',`<div class="msg system"><div class="msg-bubble">Error: ${e.message}</div></div>`);toast(`Error: ${e.message}`,'error');}if(inputId){const inp=document.getElementById(inputId);if(inp){inp.value='';inp.focus();}}}
 
-function renderChatHistory(history){return history.map(m=>`<div class="msg ${m.role==='user'?'student':'tutor'}"><div class="msg-label">${m.role==='user'?'You':'Tutor'}</div><div class="msg-bubble">${formatMessage(m.content.replace(/CONCEPT_MASTERED:\w+:[^\n]*/g,'').trim())}</div></div>`).join('');}
+function renderChatHistory(history){return history.map(m=>`<div class="msg ${m.role==='user'?'student':'tutor'}"><div class="msg-label">${m.role==='user'?'You':'Tutor'}</div><div class="msg-bubble">${formatMessage(m.content.replace(/CONCEPT_MASTERED:[A-Za-z0-9_-]+:[^\n]*/g,'').trim())}</div></div>`).join('');}
 
 function exportData(){const q=getSelectedQuestion() || getActiveQuestion();const elapsed=state.exerciseStartTime?Math.round((Date.now()-new Date(state.exerciseStartTime))/60000):null;const obj={exportedAt:new Date().toISOString(),version:'1.0',student:{name:state.studentName,uuid:state.studentUUID,courseId:state.courseId,courseName:state.courseName},completedExercises:state.completedExercises,currentSession:{
   questionId:q?.id||null,
@@ -1260,6 +1369,7 @@ function showScreen(id){
 
   if(id==='screen-main'){
     syncModelPicker();
+    checkModelStatus();
     if(state.selectedQuestionId || state.activeQuestionId){
       renderMainScreen();
     }else{
