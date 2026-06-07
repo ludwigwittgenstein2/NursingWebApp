@@ -5,11 +5,8 @@
 //
 // Env vars (set in Netlify -> Site settings -> Environment variables):
 //   SUPABASE_URL                e.g. https://yazplthctxldwrpeubxw.supabase.co
-//   SUPABASE_SERVICE_ROLE_KEY   the SECRET service_role key (server-side only!)
+//   SUPABASE_SERVICE_ROLE_KEY   the SECRET service_role / sb_secret_ key
 //   SUPABASE_TABLE              optional, defaults to "performance"
-//
-// The service_role key bypasses Row Level Security, so this server-side insert
-// works even with RLS enabled. NEVER put the service_role key in the HTML/client.
 
 exports.handler = async function (event) {
   if (event.httpMethod !== 'POST') {
@@ -20,7 +17,16 @@ exports.handler = async function (event) {
   const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
   const TABLE = process.env.SUPABASE_TABLE || 'performance';
 
+  // Visible diagnostics in the Netlify function log
+  console.log('[submit-performance] start', {
+    hasUrl: !!SUPABASE_URL,
+    hasKey: !!SERVICE_KEY,
+    keyPrefix: SERVICE_KEY ? SERVICE_KEY.slice(0, 10) : null,
+    table: TABLE
+  });
+
   if (!SUPABASE_URL || !SERVICE_KEY) {
+    console.error('[submit-performance] MISSING ENV VARS');
     return json(500, {
       ok: false,
       error: 'Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY environment variable.'
@@ -31,10 +37,10 @@ exports.handler = async function (event) {
   try {
     p = JSON.parse(event.body || '{}');
   } catch {
+    console.error('[submit-performance] invalid JSON body');
     return json(400, { ok: false, error: 'Invalid JSON body' });
   }
 
-  // string-or-null, number-or-null, boolean, json-or-null helpers
   const s = (v) => (v === '' || v == null ? null : String(v));
   const n = (v) => (Number.isFinite(Number(v)) && v !== '' && v != null ? Number(v) : null);
   const b = (v) => !!v;
@@ -84,8 +90,11 @@ exports.handler = async function (event) {
     raw: p
   };
 
+  const endpoint = `${SUPABASE_URL}/rest/v1/${TABLE}`;
+  console.log('[submit-performance] POST', endpoint, 'student=', row.google_email || row.student_name);
+
   try {
-    const response = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}`, {
+    const response = await fetch(endpoint, {
       method: 'POST',
       headers: {
         'content-type': 'application/json',
@@ -100,7 +109,10 @@ exports.handler = async function (event) {
     let data;
     try { data = JSON.parse(text); } catch { data = { error: text }; }
 
+    console.log('[submit-performance] Supabase status', response.status, 'body', text.slice(0, 500));
+
     if (!response.ok) {
+      console.error('[submit-performance] INSERT FAILED', response.status, text.slice(0, 500));
       return json(response.status, {
         ok: false,
         error: (data && (data.message || data.error)) || 'Supabase insert failed',
@@ -108,8 +120,10 @@ exports.handler = async function (event) {
       });
     }
 
+    console.log('[submit-performance] INSERT OK');
     return json(200, { ok: true, inserted: Array.isArray(data) ? data[0] : data });
   } catch (error) {
+    console.error('[submit-performance] EXCEPTION', error.message);
     return json(500, { ok: false, error: error.message || 'Server error' });
   }
 };
