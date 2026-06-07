@@ -8,42 +8,170 @@
     {
       "id": "NURS-W01-Q01",
       "week": 1,
-      "weekLabel": "Week 1 — Acute Coronary Syndrome",
+      "weekLabel": "Week 1 — Inflammatory Bowel Disease",
       "questionNumber": 1,
-      "topic": "Myocardial Infarction: Recognizing Acute Deterioration",
+      "topic": "GI 1 Week 1",
       "releaseDate": "2026-05-22",
-      "deadline": "2026-09-07T08:00:00-04:00",
-      "question": "Taylor Collins is a 58-year-old male in the emergency department.\n\nChief complaint: \"I've had some pressure in my chest since this morning. I thought it was indigestion, but it isn't going away.\"\n\nHistory of present illness: Chest pressure began approximately 3 hours ago while he was doing yard work. The pain was initially 3/10. He reports intermittent radiation to the left shoulder and mild nausea. He has no vomiting. His symptoms improved slightly with rest but never fully resolved.\n\nPast medical history: Hypertension, hyperlipidemia, type 2 diabetes, and former smoker with a 30 pack-year history.\n\nHome medications: Lisinopril, metformin, and atorvastatin.\n\nAllergies: No known drug allergies.\n\nPhase 1: Initial assessment\nBP 138/82, HR 84 bpm, RR 18, SpO2 98% on room air, temperature 98.4°F, pain 3/10. He is alert and oriented x4. Skin is warm, dry, and pink. Lungs are clear bilaterally. Heart rhythm is regular. No edema is present. Mild anxiety is noted. Telemetry shows normal sinus rhythm. Initial troponin is negative. CBC and CMP are within normal limits.\n\nPhase 2: Worsening symptoms, 1 hour later\nThe patient says: \"The pressure is getting worse now. It's moving into my jaw.\" BP 146/88, HR 96 bpm, RR 20, SpO2 97% on room air, pain 6/10. He has increased anxiety, restlessness, mild diaphoresis, and is intermittently clutching his chest. Telemetry shows sinus rhythm with new 1 mm ST-segment depression in lead II. Repeat troponin is pending.\n\nPhase 3: Acute deterioration, 30 minutes later\nThe patient says: \"This is the worst it's been. It feels like an elephant is sitting on my chest.\" BP 158/94, HR 108 bpm, RR 24, SpO2 95% on room air, pain 9/10. He is diaphoretic, pale, increasingly distressed, guarding his chest, and reports nausea. Telemetry shows sinus tachycardia with 2–3 mm ST-segment elevation in lead II. Troponin is 50 mg/L, with normal less than 12.\n\nUsing the nursing process, answer the following:\n\n1. What did you find on your focused assessment?\n2. What assessment findings are abnormal?\n3. What has changed from baseline?\n4. Using common medical terminology, what problem is occurring or could occur with this patient?\n5. What assessment data will you monitor?\n6. What nursing actions will you take?\n7. What information do you need to share with the provider?\n8. What diagnostic tests or orders do you anticipate?\n9. What medications do you anticipate?\n10. Based on the patient's current clinical presentation, which level of urgency is most appropriate?\n\nA. Stable — continue assessment and monitoring of interventions\nB. Unstable — requires urgent escalation of care\nC. Emergent — requires immediate resuscitative intervention",
+      "deadline": "2026-05-25T08:00:00-04:00",
+      "question": "A 26-year-old woman comes to your office for an evaluation.  She was diagnosed with ulcerative colitis two years ago involving her entire colon. She asks to transfer her care over to you because of insurance issues. Her course with ulcerative colitis has been rocky over the past 8 months. She has 10 – 15 bloody bowel movements daily that are completely liquid. She has urgency to defecate and frequently is incontinent.  She reports decreased energy and weight loss of 40 lbs. Her chart shows that she has tried 5-ASAs, corticosteroids, azathioprine, and methotrexate. She says to you, “My friends who have Crohn’s disease used inflixamab and now they have their lives back! I do not want surgery. Why can’t you give me this medication?”\n\nHow does the immune response in Crohn’s disease differ from ulcerative colitis?\nPlease explain the cytokines and T-helper cells involved in the pathophysiology of the two diseases.\n\nHow does infliximab work?\n\nDo you think infliximab will work for this patient?",
       "concepts": [
         {
-          "id": "C1",
+          "id": "W01-C1",
+          "label": "Identify the IBD results from a loss of homeostasis in the host immune response",
+          "idealAnswer": "Inflammatory bowel disease (IBD) — which includes both Crohn's disease and ulcerative colitis (UC) — arises from a loss of normal immune homeostasis in the gastrointestinal tract. In a healthy gut, the immune system tolerates commensal bacteria and food antigens without mounting a destructive response. In IBD, this tolerance breaks down, and a dysregulated adaptive immune response causes chronic mucosal injury."
+        },
+        {
+          "id": "W01-C2",
+          "label": "Crohn's disease immunology",
+          "idealAnswer": "Crohn's disease is characterized by a T helper 1 (Th1)-dominant response. When antigen-presenting cells (APCs) in the gut lamina propria encounter microbial antigens in a susceptible host, they release IL-12, which drives naïve CD4+ T cells to differentiate into Th1 cells. These Th1 cells then produce:\n\nIL-2 — promotes T cell proliferation and sustains the inflammatory response\nInterferon-gamma (IFN-γ) — activates macrophages, which further amplify inflammation\nTNF-alpha (TNF-α) — a central pro-inflammatory cytokine that promotes tissue damage, granuloma formation, and fistula development\n\nThis Th1-driven, granulomatous inflammation explains why Crohn's disease can affect any part of the GI tract transmurally (full thickness) and is associated with complications like strictures and fistulas."
+        },
+        {
+          "id": "W01-C3",
+          "label": "Ulcerative colitis immunology",
+          "idealAnswer": "Ulcerative colitis, by contrast, has features more consistent with a T helper 2 (Th2)-like response, though it is sometimes referred to as an \"atypical Th2\" response because classical IL-4 production is less prominent. The key cytokines in UC include:\n\nIL-13 — produced largely by NKT cells; disrupts the epithelial barrier by impairing tight junctions, contributing to the mucosal damage seen in UC\nIL-5 — promotes eosinophil recruitment and activation\nIL-4 — present but plays a less dominant role than in classic Th2 responses\n\nThis pattern of inflammation is confined to the mucosal layer of the colon and rectum, which explains why UC presents with bloody diarrhea, urgency, and mucosal friability — as seen in this patient."
+        },
+        {
+          "id": "W01-C4",
+          "label": "Infliximab",
+          "idealAnswer": "Infliximab is a chimeric monoclonal antibody — meaning it is composed of both mouse (murine) and human immunoglobulin sequences. Specifically, the antigen-binding (variable) region is derived from mouse antibodies, while the constant region is human, which reduces immunogenicity compared to a fully murine antibody.\nInfliximab works by binding specifically to TNF-alpha, both the soluble form circulating in blood and the membrane-bound form on cells. By neutralizing TNF-α, infliximab:\n\nBlocks TNF-α from binding to its receptor on target cells\nReduces downstream pro-inflammatory signaling\nDecreases production of other inflammatory cytokines and adhesion molecules\nPromotes mucosal healing in Crohn's disease\nHas been shown to be effective in closing enterocutaneous and perianal fistulas in Crohn's disease — a complication driven largely by transmural TNF-α-mediated inflammation"
+        },
+        {
+          "id": "W01-C5",
+          "label": "Infliximab in IBD (Crohn's / Ulcerative Colitis?)",
+          "idealAnswer": "This is a critical reasoning question. Based on the immunopathology above, one might initially conclude that infliximab — an anti-TNF-α agent targeting a Th1 cytokine — would not work in UC, since UC is a Th2-dominant disease. However, this reasoning, while logical, is incomplete.\nThe correct answer is: Yes, infliximab is likely to benefit this patient, for the following reasons:\n\nInfliximab is FDA-approved for moderate-to-severe ulcerative colitis. Clinical trials (ACT 1 and ACT 2) demonstrated that infliximab induces and maintains clinical remission, improves mucosal healing, and reduces colectomy rates in UC patients who have failed conventional therapy.\nTNF-α plays a role in UC as well. While TNF-α is not the dominant cytokine in UC the way it is in Crohn's, it is still elevated in UC mucosal tissue and contributes to inflammation. Blocking it has meaningful therapeutic benefit.\nThis patient has failed multiple prior therapies — including 5-ASAs, corticosteroids, azathioprine, and methotrexate — which qualifies her as having refractory, moderate-to-severe UC. This is precisely the population in which infliximab is indicated.\nHer symptoms are severe (10–15 liquid bloody bowel movements daily, incontinence, 40 lb weight loss) and consistent with a serious disease flare requiring escalation of therapy.\n\nIn summary, the patient's request is medically reasonable. The physician should explain that while the underlying immunology of her disease differs from her friends' Crohn's disease, infliximab targets a cytokine pathway that is also relevant in UC and has strong evidence for efficacy in refractory cases like hers. Surgery remains an option if biologic therapy fails, but a trial of infliximab is appropriate before pursuing colectomy."
+        }
+      ]
+    },
+    {
+      "id": "NURS-W02-Q02",
+      "week": 2,
+      "weekLabel": "Week 2 — Atrial Fibrillation",
+      "questionNumber": 2,
+      "topic": "CRS 2 Week 2",
+      "releaseDate": "2026-05-23",
+      "deadline": "2026-09-07T08:00:00-04:00",
+      "question": "Your apparently healthy 75-year-old family member (BMI 32) was visiting while you were home for winter break. Over dinner, he shared stories about his childhood, and about his work as an accountant. Dinner was accompanied by several bottles of red wine, and part way through the meal, he complained of shortness of breath. As a responsible family member (and a CCLCM student!), you checked his pulse and blood pressure. His pulse was quite irregular and rapid (~130 bpm), making it difficult to get a good blood pressure reading. After he stepped outside for a while, he felt better and his pulse was slower (75 beats/minute) and regular with an elevated blood pressure (160/90). As he did not want to disrupt the evening, he did not let you perform a more detailed workup at the time.   \n\nYou expressed concern that he may have atrial fibrillation (AF) and be at risk for stroke and he agreed to an exam the following day.",
+      "concepts": [
+        {
+          "id": "W02-C1",
+          "label": "A.\tAt the cellular level, how do episodes of atrial fibrillation begin?  ",
+          "idealAnswer": "AF episodes typically begin with ectopic electrical activity, such as a premature atrial contraction. This can be caused by autonomic activity (strong vagal or sympathetic stimulation), changes in intrathoracic pressure (as during sleep apnea or exercise), or by hypoxia or ischemia. Ectopic activity is often related to abnormal release of calcium from intracellular stores within a cardiac myocyte. "
+        },
+        {
+          "id": "W02-C2",
+          "label": "B.\tWhat factors influence how long an AF episode persists?  ",
+          "idealAnswer": "The duration of arrhythmia episodes depends on the frequency of ectopic activity, the size of the cardiac chambers, and the wavelength of electrical activity (product of refractory period x conduction velocity). Reentry is favored when the wavelength is abbreviated or the heart (or relevant cardiac chamber) is enlarged"
+        },
+        {
+          "id": "W02-C3",
+          "label": "C.\tComment on 3 potential mechanisms linking obesity to risk for AF in your family member. ",
+          "idealAnswer": ". 1) Obesity promotes hypertension, resulting in increased vascular and atrial pressures, cardiac enlargement and interstitial fibrosis (accumulation of collagen between cardiac myocytes). \n2) Obesity increases the abundance of adipocytes and changes in the balance of circulating cytokines (IL-1, IL-6, TNF) and adipokines, leptin and adiponectin. These adipokines can alter the electrical activity of cardiac muscle cells via activation of the inflammasome and as a result of increased adipose deposits. \n3) Obesity increases sympathetic nerve activity, leading to increased heart rate and increased risk of obstructive sleep apnea.  \nCombined, these factors increase the risk of atrial ectopy and re-entrant electrical activity and increase the duration of episodes of AF.  Additional risk factors for AF include advanced age (>65), male gender, fitness level, family history (genetic factors), presence of coronary artery disease, valvular heart disease or heart failure, and poor renal function.   \n"
+        },
+        {
+          "id": "W02-C4",
+          "label": "D.\tAt the molecular signaling level, how might alcohol consumption impact risk of atrial fibrillation in this individual? ",
+          "idealAnswer": "Acute episodes of AF are sometimes triggered by alcohol consumption (holiday heart syndrome).  The mechanisms linking acute alcohol ingestion to arrhythmia are complex, likely including several of the following factors (from PMID: 29598867): \n- Oxidative stress that promotes JNK2 activation, promoting CaMKII phosphorylation of the calcium channel, RyR2 channel and increasing spontaneous calcium release from intracellular stores (PMID 39395657) \n- Slowing of cardiac conduction and shortening of atrial refractory period, facilitating re-entry \n- Increased autonomic nerve activity (increasing heart rate, blood pressure) \n- Injury of atrial myocytes, leading to inflammation and replacement fibrosis \n"
+        },
+        {
+          "id": "W02-C5",
+          "label": "E.\tIf you were assessing your family member in clinic, what would you want to look for on physical exam, and why?  ",
+          "idealAnswer": "In clinic, you would want to assess for signs of AF and complications of AF. On auscultation of the heart, you may hear tachycardia and irregular beats. On palpation of pulses, you may feel variable pulse strength, or an irregular pulse rate. The loss of an atrial kick can contribute to signs of heart failure and fluids overload such as elevated JVD, crackles in lungs, or peripheral edema.  "
+        },
+        {
+          "id": "W02-C6",
+          "label": "F.\tHe has an ECHO done the same day in clinic showing an EF of 60% and no valvular disease. He has a prior diagnosis of hypertension, but otherwise has been healthy. Do you want to start treatment with anticoagulation? Explain your reasoning. ",
+          "idealAnswer": "To determine the need for anticoagulation in non-valvular AF, you can use the CHA2DS2-VASC score. For this patient, the scoring is as follows: \n-          Age: 75 (+2) \n-          Sex: Male (0) \n-          CHF History: No (0) \n-          Hypertension History: Yes (1) \n-          Stroke/TIA/Thromboembolism History: No (0) \n-          Vascular disease history: No (0) \n-          Diabetes history: No (0) \n-          Total score: 3 points \nThe score of 3 points corresponds to a stroke risk of 3.2% in a year. A score > 2 is considered moderate-high risk for men, and anticoagulation should be recommended, in the absence of contraindications.  \n"
+        }
+      ]
+    },
+    {
+      "id": "NURS-W03-Q01",
+      "week": 3,
+      "weekLabel": "Week 3 — Neuro-ophthalmology",
+      "questionNumber": 1,
+      "topic": "Neuro-ophthalmology 3N",
+      "releaseDate": "2026-05-25",
+      "deadline": "2026-09-07",
+      "question": "A 62-year-old patient with long-standing type 2 diabetes develops acute binocular diplopia and right ptosis. Exam shows impaired right eye adduction, elevation, and depression, but the right pupil is equal in size to the left and reacts normally to light.\n\nExplain why a diabetic third nerve palsy can spare the pupil, and state one clinical caveat about relying on pupil sparing.",
+      "concepts": [
+        {
+          "id": "W03-C1",
+          "label": "Microvascular third nerve palsy and pupil sparing",
+          "idealAnswer": "The somatic motor fibers of CN III that control extraocular muscles and the levator can be affected by ischemia of the nerve’s internal vasa nervorum in diabetes, producing ptosis and ophthalmoplegia. The parasympathetic pupillomotor fibers are relatively superficial/peripheral on CN III and may be spared in microvascular ischemia, so the pupil can remain normal. In contrast, external compression, classically from a posterior communicating artery aneurysm, is more likely to affect superficial pupillomotor fibers. However, pupil sparing is not an absolute rule: compressive lesions can occasionally present without obvious pupil involvement, and microvascular palsies can sometimes have pupil findings, so acute third nerve palsy still requires appropriate clinical evaluation and imaging when indicated."
+        }
+      ]
+    },
+    {
+      "id": "NURS-W04-Q01",
+      "week": 4,
+      "weekLabel": "Week 4 — Dermatology Immunology",
+      "questionNumber": 1,
+      "topic": "Derm Immunology",
+      "releaseDate": "2026-05-25",
+      "deadline": "2026-09-07T08:00:00-04:00",
+      "question": "A 22-year-old man comes to clinic because of a chronic rash on his elbows and knees. The lesions are well-demarcated erythematous plaques with overlying silvery scale. He says the rash worsens during stressful periods. He has no fever and otherwise feels well.\n\nA skin biopsy shows epidermal thickening, parakeratosis, and inflammatory cells in the dermis and epidermis.\n\nExplain the immunologic mechanism that drives psoriasis.\n\nIn your answer, discuss the roles of dendritic cells, IL-23, Th17 cells, IL-17, keratinocytes, and neutrophils.\n\nWhy do psoriatic plaques become thick and scaly?",
+      "concepts": [
+        {
+          "id": "W04-C1",
+          "label": "Recognize psoriasis as an immune-mediated inflammatory skin disease",
+          "idealAnswer": "Psoriasis is a chronic immune-mediated inflammatory disease of the skin. It is not simply a disorder of dry skin or excess keratin production. The characteristic plaques result from dysregulated immune activation in the skin, especially involving dendritic cells, T cells, inflammatory cytokines, and keratinocytes. The immune system drives keratinocyte proliferation and abnormal differentiation, producing thick, scaly plaques."
+        },
+        {
+          "id": "W04-C2",
+          "label": "Dendritic cells and IL-23 initiate and sustain the inflammatory pathway",
+          "idealAnswer": "In psoriasis, activated dendritic cells in the skin produce cytokines including IL-23. IL-23 is important because it promotes the survival, expansion, and inflammatory activity of Th17 cells. This creates a self-sustaining inflammatory loop in which innate immune activation drives adaptive T-cell responses in the skin."
+        },
+        {
+          "id": "W04-C3",
+          "label": "Th17 cells and IL-17 are central drivers of psoriasis",
+          "idealAnswer": "Th17 cells are CD4+ helper T cells that produce IL-17 and related inflammatory cytokines. In psoriasis, IL-23 supports Th17 activity, and Th17 cells release IL-17. IL-17 acts on keratinocytes and other skin cells to amplify inflammation. This pathway is central to psoriasis pathophysiology and explains why therapies targeting IL-23 or IL-17 can improve psoriasis."
+        },
+        {
+          "id": "W04-C4",
+          "label": "Keratinocyte activation causes epidermal thickening and scale",
+          "idealAnswer": "IL-17 and other inflammatory cytokines stimulate keratinocytes to proliferate more rapidly and to produce additional chemokines and inflammatory mediators. The accelerated keratinocyte turnover leads to epidermal thickening, called acanthosis, and abnormal retention of nuclei in the stratum corneum, called parakeratosis. These changes explain the thick, silvery scale seen on psoriatic plaques."
+        },
+        {
+          "id": "W04-C5",
+          "label": "Neutrophils contribute to microscopic and clinical findings",
+          "idealAnswer": "Inflammatory signals from activated keratinocytes recruit neutrophils into the epidermis. Collections of neutrophils in the stratum corneum are called Munro microabscesses, a classic histologic feature of psoriasis. Neutrophil recruitment is part of the feed-forward inflammatory loop that helps sustain plaque inflammation."
+        }
+      ]
+    },
+    {
+      "id": "NURS-W05-Q01",
+      "week": 5,
+      "weekLabel": "Week 5 — Myocardial Infarction",
+      "questionNumber": 1,
+      "topic": "Myocardial Infarction: Recognizing Acute Deterioration",
+      "releaseDate": "2026-05-26",
+      "deadline": "2026-09-07T08:00:00-04:00",
+      "question": "Taylor Collins is a 58-year-old male in the emergency department who reports chest pressure that began about 3 hours ago while doing yard work. He thought it was indigestion, but it has not gone away. The pain initially was 3/10, with intermittent radiation to the left shoulder and mild nausea. He has hypertension, hyperlipidemia, type 2 diabetes, and a former 30 pack-year smoking history.\n\nInitial assessment: BP 138/82, HR 84 bpm, RR 18, SpO2 98% on room air, temperature 98.4°F, pain 3/10. He is alert and oriented x4, skin warm, dry, and pink, lungs clear bilaterally, regular heart rhythm, no edema, and mild anxiety. Telemetry shows normal sinus rhythm. Initial troponin is negative.\n\nOne hour later, he says: “The pressure is getting worse now. It’s moving into my jaw.” BP 146/88, HR 96 bpm, RR 20, SpO2 97% on room air, pain 6/10. He is more anxious, restless, mildly diaphoretic, and intermittently clutching his chest. Telemetry shows sinus rhythm with new 1 mm ST-segment depression in lead II. Repeat troponin is pending.\n\nThirty minutes later, he says: “This is the worst it’s been. It feels like an elephant is sitting on my chest.” BP 158/94, HR 108 bpm, RR 24, SpO2 95% on room air, pain 9/10. He is pale, diaphoretic, increasingly distressed, guarding his chest, and reports nausea. Telemetry shows sinus tachycardia with 2–3 mm ST-segment elevation in lead II. Troponin is 50 mg/L.\n\nUsing the nursing process, explain what assessment findings matter, what problem is occurring, what nursing actions you should take, what provider interventions you anticipate, and what level of urgency is appropriate.",
+      "concepts": [
+        {
+          "id": "W05-C1",
           "label": "Assessment: gather and interpret pertinent data",
           "idealAnswer": "The student should identify the abnormal and changing assessment findings. Important cues include worsening chest pressure, radiation to the jaw and left shoulder, nausea, diaphoresis, pallor, anxiety, restlessness, chest guarding, increasing pain from 3/10 to 9/10, rising heart rate and respiratory rate, new ST-segment depression progressing to ST-segment elevation, and markedly elevated troponin. The key clinical reasoning point is recognizing that the patient is deteriorating from possible ischemia to acute myocardial infarction."
         },
         {
-          "id": "C2",
+          "id": "W05-C2",
           "label": "Diagnosis / problem identification",
-          "idealAnswer": "The correct patient problem is myocardial infarction, heart attack, or acute coronary syndrome with evolving ST-elevation myocardial infarction features. The student should connect the worsening chest pain, radiation, diaphoresis, dynamic ECG changes, and elevated troponin to myocardial injury. Myocardial infarction occurs when reduced or blocked coronary blood flow causes oxygen deprivation and myocardial cell injury or death."
+          "idealAnswer": "The correct patient problem is myocardial infarction, heart attack, or acute coronary syndrome with evolving STEMI features. The student should connect the worsening chest pain, radiation, diaphoresis, dynamic ECG changes, and elevated troponin to myocardial injury."
         },
         {
-          "id": "C3",
-          "label": "Planning and implementation: nursing monitoring",
-          "idealAnswer": "The nurse should monitor heart rate, blood pressure, pulse oximetry, respiratory rate, pain level, cardiac rhythm, changes in symptoms, skin signs such as pallor or diaphoresis, and evidence of worsening perfusion or distress. Continuous cardiac monitoring is important because acute myocardial infarction can be complicated by dysrhythmias, heart failure, cardiogenic shock, and cardiac arrest."
-        },
-        {
-          "id": "C4",
+          "id": "W05-C3",
           "label": "Planning and implementation: nursing interventions",
-          "idealAnswer": "The nurse should immediately notify the provider, repeat a focused cardiovascular assessment, activate the medical emergency team or chest pain/STEMI pathway according to local protocol, maintain continuous cardiac monitoring, ensure ECG changes are compared with baseline, obtain or prepare for a 12-lead ECG, maintain IV access, reduce patient exertion, reassess pain and vital signs, and prepare the patient for urgent escalation of care."
+          "idealAnswer": "The nurse should maintain continuous cardiac monitoring, repeat a focused cardiovascular assessment, monitor heart rate, blood pressure, pulse oximetry, respirations, and pain level, immediately notify the provider, activate the medical emergency team or STEMI/chest-pain pathway according to local protocol, obtain or prepare for a 12-lead ECG, maintain IV access, compare ECG changes with baseline, and prepare the patient for urgent escalation of care."
         },
         {
-          "id": "C5",
+          "id": "W05-C4",
           "label": "Planning and implementation: anticipated provider interventions",
-          "idealAnswer": "The student should anticipate provider orders for repeat cardiac enzymes or troponin, 12-lead ECG, aspirin, nitroglycerin if appropriate, analgesia, additional antiplatelet or anticoagulant therapy according to local protocol, cardiology consultation, and preparation for cardiac catheterization or reperfusion therapy. STEMI management emphasizes rapid diagnosis and rapid treatment because delay increases the risk of death and permanent myocardial injury."
+          "idealAnswer": "The student should anticipate provider orders for repeat cardiac enzymes or troponin, 12-lead ECG, aspirin, nitroglycerin if appropriate, analgesia, additional antiplatelet or anticoagulant therapy according to protocol, cardiology consultation, and preparation for cardiac catheterization or reperfusion therapy."
         },
         {
-          "id": "C6",
+          "id": "W05-C5",
           "label": "Evaluation of urgency",
-          "idealAnswer": "The most appropriate urgency level is B: Unstable — requires urgent escalation of care. The patient is not simply stable for routine monitoring because he has worsening chest pain, dynamic ECG changes, elevated troponin, diaphoresis, pallor, distress, and tachycardia. He is not described as pulseless, apneic, unconscious, or requiring immediate resuscitation, so emergent resuscitative intervention is not the best answer based on the provided data."
+          "idealAnswer": "The most appropriate urgency level is unstable — requires urgent escalation of care. The patient is not simply stable for routine monitoring because he has worsening chest pain, dynamic ECG changes, elevated troponin, diaphoresis, pallor, distress, and tachycardia. He is not described as pulseless, apneic, or requiring immediate resuscitation, so emergent resuscitative intervention is not the best choice based on the provided data."
         }
       ]
     }
