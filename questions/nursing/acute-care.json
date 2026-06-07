@@ -172,7 +172,49 @@
           "id": "W05-C5",
           "label": "Evaluation of urgency",
           "idealAnswer": "The most appropriate urgency level is unstable — requires urgent escalation of care. The patient is not simply stable for routine monitoring because he has worsening chest pain, dynamic ECG changes, elevated troponin, diaphoresis, pallor, distress, and tachycardia. He is not described as pulseless, apneic, or requiring immediate resuscitation, so emergent resuscitative intervention is not the best choice based on the provided data."
-        }
+        },
+        {
+  "id": "NURS-W06-Q01",
+  "week": 6,
+  "weekLabel": "Week 6 — Acute Stroke",
+  "questionNumber": 1,
+  "topic": "Acute Stroke: Recognizing Neurologic Deterioration",
+  "releaseDate": "2026-06-05",
+  "deadline": "2026-09-21T08:00:00-04:00",
+  "question": "Avery Parker is a 62-year-old female on a medical-surgical unit.\n\nChief complaint: She was admitted from her doctor's office for management of uncontrolled hypertension.\n\nHistory of present illness: She has recorded multiple blood pressure readings above 180 mmHg systolic at home over the previous week. She has reported intermittent headaches over the past several days. On admission, she denied chest pain, shortness of breath, weakness, numbness, vision changes, or speech difficulties. She was admitted for blood pressure management and monitoring.\n\nPast medical history: Hypertension, hyperlipidemia, and type 2 diabetes.\n\nHome medications: Lisinopril, hydrochlorothiazide, metformin, and atorvastatin.\n\nAllergies: No known drug allergies.\n\nPhase 1: Initial assessment\nBP 150/88, HR 82 bpm, RR 18, SpO2 98% on room air, temperature 98.5°F, pain 2/10 headache. She is alert and oriented x4. Speech is clear and appropriate. Pupils are equal, round, and reactive to light. Hand grasps are strong and equal bilaterally. No facial droop is noted. She denies numbness or tingling. She ambulates independently. Skin is warm, dry, and pink. Lungs are clear bilaterally. Heart rhythm is regular. Telemetry shows normal sinus rhythm. Glucose is 128 mg/dL. CBC and CMP are within normal limits.\n\nPhase 2: Worsening symptoms, 1 hour later\nThe patient says: \"My headache is getting worse, and my left hand feels a little clumsy.\" BP 162/96, HR 88 bpm, RR 18, SpO2 97% on room air, pain 5/10 headache. She reports worsening headache and has difficulty manipulating objects with her left hand. Mild left arm weakness is noted during assessment. Speech remains clear. No facial droop is observed. She remains alert and oriented.\n\nPhase 3: Acute deterioration, 30 minutes later\nSpeech becomes increasingly difficult to understand. The patient says: \"Something is wrong with my arm.\" BP 178/100, HR 96 bpm, RR 20, SpO2 96% on room air, pain 6/10 headache. Assessment reveals pronounced left facial droop, left arm drift, left leg weakness, slurred speech, difficulty following complex commands, and increasing frustration and anxiety.\n\nUsing the nursing process, answer the following:\n\n1. What did you find on your focused assessment?\n2. What assessment findings are abnormal?\n3. What has changed from baseline?\n4. Using common medical terminology, what problem is occurring or could occur with this patient?\n5. What assessment data will you monitor?\n6. What nursing actions will you take?\n7. What information do you need to share with the provider?\n8. What diagnostic tests or orders do you anticipate?\n9. What medications or treatments do you anticipate?\n10. Based on the patient's current clinical presentation, which level of urgency is most appropriate?\n\nA. Stable — continue assessment and monitoring of interventions\nB. Unstable — requires urgent escalation of care\nC. Emergent — requires immediate resuscitative intervention",
+  "concepts": [
+    {
+      "id": "W06-C1",
+      "label": "Assessment: recognize acute neurologic deterioration",
+      "idealAnswer": "The student should identify the abnormal and changing neurologic findings: worsening headache, new left hand clumsiness, mild left arm weakness, progression to pronounced left facial droop, left arm drift, left leg weakness, slurred speech, difficulty following complex commands, increasing anxiety and frustration, and rising blood pressure. The key reasoning point is recognizing an acute neurologic change from baseline, especially new unilateral weakness and speech changes."
+    },
+    {
+      "id": "W06-C2",
+      "label": "Diagnosis / problem identification",
+      "idealAnswer": "The likely patient problem is acute stroke, cerebrovascular accident, or suspected acute ischemic stroke. The student should connect the sudden focal neurologic deficits, including unilateral weakness, facial droop, arm drift, slurred speech, and difficulty following commands, with acute interruption of brain perfusion. The student should also recognize that hypertension, diabetes, and hyperlipidemia increase stroke risk."
+    },
+    {
+      "id": "W06-C3",
+      "label": "Planning and implementation: priority monitoring",
+      "idealAnswer": "The nurse should monitor level of consciousness, orientation, speech, facial symmetry, motor strength, arm drift, leg strength, sensation, pupils, ability to follow commands, blood pressure, heart rate, heart rhythm, oxygen saturation, respiratory status, headache severity, and swallowing ability. Frequent focused neurologic assessments are needed because neurologic deficits can progress quickly."
+    },
+    {
+      "id": "W06-C4",
+      "label": "Planning and implementation: nursing interventions",
+      "idealAnswer": "The nurse should immediately activate the stroke team or rapid response process according to facility protocol, notify the provider, document symptom onset and last known well time, perform a focused neurologic assessment, check point-of-care blood glucose, keep the patient NPO until swallowing is evaluated, perform or prepare for a swallow screen, maintain or establish IV access, maintain safety precautions, and prepare the patient for urgent brain imaging and further diagnostic testing."
+    },
+    {
+      "id": "W06-C5",
+      "label": "Planning and implementation: anticipated provider interventions",
+      "idealAnswer": "The student should anticipate provider orders for urgent CT or MRI of the brain, CBC, CMP or BMP, coagulation studies such as PT/INR and PTT, ECG, continuous cardiac monitoring, blood glucose assessment, blood pressure management, and evaluation for acute stroke treatment. Depending on timing, imaging, contraindications, and provider assessment, anticipated treatments may include thrombolytic therapy, antiplatelet therapy, antihypertensive medication, and possible transfer for advanced stroke care or thrombectomy evaluation."
+    },
+    {
+      "id": "W06-C6",
+      "label": "Evaluation of urgency",
+      "idealAnswer": "The most appropriate urgency level is B: Unstable — requires urgent escalation of care. The patient has acute neurologic deterioration with unilateral weakness, facial droop, arm drift, slurred speech, difficulty following commands, and worsening hypertension. This requires immediate stroke-team activation and urgent diagnostic evaluation. She is not described as pulseless, apneic, unconscious, or requiring CPR or immediate resuscitative intervention, so C is not the best answer based on the provided options."
+    }
+  ]
+}
       ]
     }
   ]
