@@ -136,7 +136,6 @@ async function callOpenAI({ system, messages, maxTokens }) {
       model,
       input,
       max_output_tokens: maxTokens,
-      temperature: Number(process.env.AI_TEMPERATURE || 0.25)
     })
   });
 
