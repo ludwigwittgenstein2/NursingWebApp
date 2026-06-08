@@ -352,6 +352,7 @@ let state={
   questions:[],
   selectedQuestionId:'',
   activeQuestionId:'',
+  attempts:{},
   currentPhase:null,
   selfConcepts:[],
   socraticHistory:[],
@@ -738,13 +739,82 @@ function getSelectedQuestion(){
   return null;
 }
 
-function hasInProgressAttempt(){
-  return !!(state.activeQuestionId && state.currentPhase && state.currentPhase!=='complete');
+function cloneAttemptValue(value){
+  return JSON.parse(JSON.stringify(value ?? null));
+}
+
+function isAttemptInProgress(attempt){
+  return !!(attempt && attempt.currentPhase && attempt.currentPhase!=='complete');
+}
+
+function getCurrentAttemptSnapshot(){
+  return {
+    currentPhase:state.currentPhase,
+    selfConcepts:cloneAttemptValue(state.selfConcepts)||[],
+    socraticHistory:cloneAttemptValue(state.socraticHistory)||[],
+    masteredConcepts:cloneAttemptValue(state.masteredConcepts)||{},
+    essayText:state.essayText||'',
+    essayCitations:cloneAttemptValue(state.essayCitations)||{},
+    reflectionText:state.reflectionText||'',
+    reflectionLearned:state.reflectionLearned||'',
+    exerciseStartTime:state.exerciseStartTime||null,
+    exerciseEndTime:state.exerciseEndTime||null
+  };
+}
+
+function saveCurrentAttempt(){
+  const qid=normalizeQuestionId(state.activeQuestionId);
+  if(!qid || !state.currentPhase || state.currentPhase==='complete')return;
+  if(!state.attempts)state.attempts={};
+  state.attempts[qid]=getCurrentAttemptSnapshot();
+}
+
+function restoreAttemptSnapshot(qid,attempt){
+  state.activeQuestionId=qid;
+  state.currentPhase=attempt?.currentPhase || 'selfAssess';
+  state.selfConcepts=Array.isArray(attempt?.selfConcepts)?cloneAttemptValue(attempt.selfConcepts):[];
+  state.socraticHistory=Array.isArray(attempt?.socraticHistory)?cloneAttemptValue(attempt.socraticHistory):[];
+  state.masteredConcepts=attempt?.masteredConcepts?cloneAttemptValue(attempt.masteredConcepts):{};
+  state.essayText=attempt?.essayText||'';
+  state.essayCitations=attempt?.essayCitations?cloneAttemptValue(attempt.essayCitations):{};
+  state.reflectionText=attempt?.reflectionText||'';
+  state.reflectionLearned=attempt?.reflectionLearned||'';
+  state.exerciseStartTime=attempt?.exerciseStartTime||null;
+  state.exerciseEndTime=attempt?.exerciseEndTime||null;
+}
+
+function loadAttemptForQuestion(questionId){
+  const qid=normalizeQuestionId(questionId);
+  if(!state.attempts)state.attempts={};
+  const saved=state.attempts[qid];
+
+  clearActiveAttemptFields();
+  state.selectedQuestionId=qid;
+
+  if(isAttemptInProgress(saved)){
+    restoreAttemptSnapshot(qid,saved);
+  }else{
+    state.activeQuestionId=qid;
+    state.currentPhase='selfAssess';
+  }
+}
+
+function hasInProgressAttempt(questionId){
+  if(!state.attempts)state.attempts={};
+
+  if(questionId){
+    const qid=normalizeQuestionId(questionId);
+    const isActive=sameQuestionId(state.activeQuestionId,qid) && state.currentPhase && state.currentPhase!=='complete';
+    return !!(isActive || isAttemptInProgress(state.attempts[qid]));
+  }
+
+  if(state.activeQuestionId && state.currentPhase && state.currentPhase!=='complete')return true;
+  return Object.values(state.attempts).some(isAttemptInProgress);
 }
 
 function getQuestionStatus(q){
   const completed=isCompleted(q.id);
-  const inProgress=hasInProgressAttempt() && sameQuestionId(state.activeQuestionId,q.id);
+  const inProgress=hasInProgressAttempt(q.id);
   const today=new Date();
   const released=!q.releaseDate || new Date(q.releaseDate+'T00:00:00')<=today;
   const late=isLate(q);
@@ -820,7 +890,7 @@ function clearActiveAttemptFields(){
 
     ${hasInProgressAttempt()?`
       <div class="config-warn">
-        You have an exercise in progress. Continue it before starting another exercise.
+        You have one or more exercises in progress. You can switch between released questions; each question keeps its own saved draft.
       </div>
     `:''}
 
@@ -838,17 +908,8 @@ function renderExerciseCard(q){
   const cls=statusClass(status);
   const locked=status==='locked';
   const completed=status==='complete';
-
-  const qid=normalizeQuestionId(q.id);
-  const activeQuestionId=normalizeQuestionId(state.activeQuestionId);
-  const hasProgress=hasInProgressAttempt();
-
-  // Important: the exercise that is already in progress should show Resume,
-  // not Blocked. Only other exercises should be blocked.
-  const isThisActiveQuestion=hasProgress && sameQuestionId(activeQuestionId,qid);
-  const inProgress=status==='in-progress' || isThisActiveQuestion;
-  const otherInProgress=hasProgress && !inProgress && !completed && !locked;
-  const available=(status==='available' || status==='late') && !otherInProgress;
+  const inProgress=status==='in-progress';
+  const available=status==='available' || status==='late';
 
   let action='';
   let displayStatus=status;
@@ -859,19 +920,12 @@ function renderExerciseCard(q){
     displayCls='amber';
   }
 
-  if(otherInProgress){
-    displayStatus='blocked';
-    displayCls='gray';
-  }
-
   if(locked){
     action=`<button class="btn btn-ghost btn-sm" disabled>Locked</button>`;
   }else if(completed){
     action=`<button class="btn btn-secondary btn-sm" onclick="openQuestion('${escJs(q.id)}')">View</button>`;
   }else if(inProgress){
     action=`<button class="btn btn-amber btn-sm" onclick="openQuestion('${escJs(q.id)}')">Resume</button>`;
-  }else if(otherInProgress){
-    action=`<button class="btn btn-ghost btn-sm" disabled>Blocked</button>`;
   }else if(available){
     action=`<button class="btn btn-primary btn-sm" onclick="openQuestion('${escJs(q.id)}')">Start</button>`;
   }else{
@@ -879,7 +933,7 @@ function renderExerciseCard(q){
   }
 
   return `
-    <div class="exercise-card ${locked||otherInProgress?'locked':''}">
+    <div class="exercise-card ${locked?'locked':''}">
       <div class="exercise-main">
         <div class="exercise-id">${escHtml(q.id)} · Q${escHtml(q.questionNumber || 1)}</div>
         <div class="exercise-topic">${escHtml(q.topic || 'Untitled question')}</div>
@@ -889,7 +943,7 @@ function renderExerciseCard(q){
         </div>
       </div>
       <div class="exercise-actions">
-        <span class="status-pill ${displayCls}">${displayStatus==='blocked'?'Blocked':statusLabel(displayStatus)}</span>
+        <span class="status-pill ${displayCls}">${statusLabel(displayStatus)}</span>
         ${action}
       </div>
     </div>
@@ -910,6 +964,9 @@ function openQuestion(questionId){
     return;
   }
 
+  // Before leaving the current question, preserve its draft.
+  saveCurrentAttempt();
+
   if(status==='complete'){
     state.selectedQuestionId=q.id;
     saveToStorage();
@@ -917,19 +974,11 @@ function openQuestion(questionId){
     return;
   }
 
-  if(hasInProgressAttempt() && !sameQuestionId(state.activeQuestionId,q.id)){
-    toast('You already have an exercise in progress. Please continue or complete it before starting another.','error');
-    return;
-  }
+  // Load this question's own draft, or start a new draft.
+  loadAttemptForQuestion(q.id);
 
-  state.selectedQuestionId=q.id;
-
-  if(!state.activeQuestionId || sameQuestionId(state.activeQuestionId,q.id)){
-    state.activeQuestionId=q.id;
-  }
-
-  if(!state.currentPhase){
-    state.currentPhase='selfAssess';
+  if(!state.exerciseStartTime){
+    state.exerciseStartTime=new Date().toISOString();
   }
 
   saveToStorage();
@@ -1232,6 +1281,9 @@ function completeExercise(q){
   };
 
   state.completedExercises.push(record);
+  if(state.attempts){
+    delete state.attempts[normalizeQuestionId(q.id)];
+  }
   state.currentPhase='complete';
   state.selectedQuestionId=q.id;
   state.activeQuestionId='';
@@ -1304,7 +1356,7 @@ async function sendToAPI(chatId,inputId,history,systemPrompt,userMessage,addUser
 
 function renderChatHistory(history){return history.map(m=>`<div class="msg ${m.role==='user'?'student':'tutor'}"><div class="msg-label">${m.role==='user'?'You':'Tutor'}</div><div class="msg-bubble">${formatMessage(m.content.replace(/CONCEPT_MASTERED:[A-Za-z0-9_-]+:[^\n]*/g,'').trim())}</div></div>`).join('');}
 
-function exportData(){const q=getSelectedQuestion() || getActiveQuestion();const elapsed=state.exerciseStartTime?Math.round((Date.now()-new Date(state.exerciseStartTime))/60000):null;const obj={exportedAt:new Date().toISOString(),version:'1.0',student:{name:state.studentName,uuid:state.studentUUID,courseId:state.courseId,courseName:state.courseName},completedExercises:state.completedExercises,currentSession:{
+function exportData(){const q=getSelectedQuestion() || getActiveQuestion();const elapsed=state.exerciseStartTime?Math.round((Date.now()-new Date(state.exerciseStartTime))/60000):null;const obj={exportedAt:new Date().toISOString(),version:'1.0',student:{name:state.studentName,uuid:state.studentUUID,courseId:state.courseId,courseName:state.courseName},completedExercises:state.completedExercises,inProgressAttempts:state.attempts||{},currentSession:{
   questionId:q?.id||null,
   classId:COURSE_DATA?.classId||'',
   academicYear:COURSE_DATA?.academicYear||'',
@@ -1336,6 +1388,7 @@ function handleImport(event){
       state.courseName=data.student.courseName||'';
       state.completedExercises=data.completedExercises||[];
       state.leitnerCards=data.leitnerCards||[];
+      state.attempts=data.inProgressAttempts||{};
 
       if(data.currentSession){
         state.currentPhase=data.currentSession.phase;
@@ -1360,8 +1413,8 @@ function handleImport(event){
   reader.readAsText(file);
 }
 
-function saveToStorage(){try{localStorage.setItem(`medtutor_student_${state.courseId||'default'}`,JSON.stringify(state));}catch(e){}}
-function loadFromStorage(){try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith('medtutor_student_')){const s=JSON.parse(localStorage.getItem(k));if(s?.studentUUID){Object.assign(state,s);state.questions=[];return;}}}}catch(e){}}
+function saveToStorage(){try{saveCurrentAttempt();localStorage.setItem(`medtutor_student_${state.courseId||'default'}`,JSON.stringify(state));}catch(e){}}
+function loadFromStorage(){try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith('medtutor_student_')){const s=JSON.parse(localStorage.getItem(k));if(s?.studentUUID){Object.assign(state,s);if(!state.attempts)state.attempts={};state.questions=[];return;}}}}catch(e){}}
 
 function showScreen(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
