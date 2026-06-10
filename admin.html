@@ -5,44 +5,56 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Nursing Education Admin</title>
 <style>
-  :root{--bg:#f5f2eb;--surface:#fff;--surface2:#faf8f4;--border:#ddd8cc;--border-dark:#c8c2b4;--ink:#1a1814;--ink2:#4a4540;--ink3:#8a8278;--accent:#2d6a4f;--blue:#1a4a7a;--amber:#8a6a1a;--red:#c0392b;}
+  :root{--bg:#f5f2eb;--surface:#fff;--surface2:#faf8f4;--border:#ddd8cc;--border-dark:#c8c2b4;--ink:#1a1814;--ink2:#4a4540;--ink3:#8a8278;--accent:#2d6a4f;--accent-light:#d8ede3;--blue:#1a4a7a;--blue-light:#e0eaf5;--amber:#8a6a1a;--amber-light:#fdecd5;--red:#c0392b;--red-light:#fce8e6;}
   *{box-sizing:border-box;}
-  body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink);margin:0;padding:24px;}
-  .wrap{max-width:1000px;margin:0 auto;}
+  body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink);margin:0;padding:24px;line-height:1.55;}
+  .wrap{max-width:1180px;margin:0 auto;}
   h1{font-size:28px;margin:0 0 4px;}
-  .sub{color:var(--ink3);font-size:14px;margin-bottom:20px;}
   h2{font-size:18px;margin:0 0 12px;}
+  h3{font-size:15px;margin:18px 0 6px;color:var(--ink2);}
+  .sub{color:var(--ink3);font-size:14px;margin-bottom:20px;}
   .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px;box-shadow:0 2px 12px rgba(0,0,0,0.06);}
+  .scenario-card{background:var(--surface);border:2px solid var(--border);border-radius:14px;padding:18px;margin-bottom:18px;}
+  .scenario-card.active{border-color:var(--accent);}
+  .mini-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px;margin:10px 0;}
   label{display:block;font-size:12px;color:var(--ink3);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px;margin-top:10px;}
-  input,textarea{width:100%;padding:9px 11px;border:1px solid var(--border-dark);border-radius:8px;font-size:14px;font-family:inherit;background:var(--surface2);}
-  textarea{resize:vertical;min-height:60px;}
+  input,textarea,select{width:100%;padding:9px 11px;border:1px solid var(--border-dark);border-radius:8px;font-size:14px;font-family:inherit;background:var(--surface2);color:var(--ink);}
+  textarea{resize:vertical;min-height:70px;}
+  .small-textarea{min-height:46px;}
   button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:10px 16px;font-weight:600;cursor:pointer;font-size:14px;}
-  button.blue{background:var(--blue);} button.amber{background:var(--amber);} button.red{background:var(--red);} button.ghost{background:#fff;color:var(--ink2);border:1px solid var(--border-dark);}
+  button.blue{background:var(--blue);} button.amber{background:var(--amber);} button.red{background:var(--red);} button.ghost{background:#fff;color:var(--ink2);border:1px solid var(--border-dark);} button.small{padding:7px 10px;font-size:12px;}
   button:disabled{opacity:.5;cursor:not-allowed;}
   .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+  .row-between{display:flex;gap:10px;justify-content:space-between;align-items:center;flex-wrap:wrap;}
   .nav a{display:inline-block;text-decoration:none;}
   .nav button{font-size:15px;padding:14px 20px;}
-  .qcard{border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:14px;background:var(--surface2);}
-  .qhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
-  .qhead .qlabel{font-weight:700;color:var(--accent);}
-  .concept{border:1px dashed var(--border-dark);border-radius:8px;padding:10px;margin-top:10px;background:#fff;}
   .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
   .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+  .grid4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;}
   .note{font-size:13px;color:var(--ink3);line-height:1.6;margin-bottom:10px;}
-  .data-item{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);font-size:14px;}
-  .mono{font-family:ui-monospace,monospace;font-size:12px;color:var(--ink3);}
-  .toast{position:fixed;bottom:20px;right:20px;background:var(--surface);border:1px solid var(--accent);border-radius:8px;padding:10px 16px;font-size:13px;box-shadow:0 8px 24px rgba(0,0,0,.15);}
-  @media(max-width:640px){.grid2,.grid3{grid-template-columns:1fr;}}
+  .info{background:var(--blue-light);border:1px solid #b0c8e8;color:var(--blue);border-radius:8px;padding:10px 12px;font-size:13px;line-height:1.55;margin-bottom:12px;}
+  .warn{background:var(--amber-light);border:1px solid #e8dca8;color:var(--amber);border-radius:8px;padding:10px 12px;font-size:13px;line-height:1.55;margin-bottom:12px;}
+  .ok{background:var(--accent-light);border:1px solid #a8d5be;color:var(--accent);border-radius:8px;padding:10px 12px;font-size:13px;line-height:1.55;margin-bottom:12px;}
+  .data-item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);font-size:14px;}
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;color:var(--ink3);}
+  .pill{display:inline-block;border-radius:999px;padding:3px 9px;font-size:11px;font-weight:700;background:var(--accent-light);color:var(--accent);}
+  .pill.blue{background:var(--blue-light);color:var(--blue);} .pill.amber{background:var(--amber-light);color:var(--amber);} .pill.red{background:var(--red-light);color:var(--red);}
+  table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+  th,td{border-bottom:1px solid #eee8dc;padding:8px;font-size:13px;text-align:left;vertical-align:top;}
+  th{background:#ede9e0;font-size:11px;text-transform:uppercase;color:var(--ink2);letter-spacing:.04em;}
+  details summary{cursor:pointer;color:var(--accent);font-weight:700;}
+  pre{white-space:pre-wrap;word-break:break-word;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px;max-height:320px;overflow:auto;}
+  .toast{position:fixed;bottom:20px;right:20px;background:var(--surface);border:1px solid var(--accent);border-radius:8px;padding:10px 16px;font-size:13px;box-shadow:0 8px 24px rgba(0,0,0,.15);z-index:9999;}
+  @media(max-width:760px){.grid2,.grid3,.grid4{grid-template-columns:1fr;}body{padding:14px}.card,.scenario-card{padding:14px}}
 </style>
 </head>
 <body>
 <div class="wrap">
   <h1>Nursing Education Admin</h1>
-  <div class="sub">Manage the app, edit questions, and switch between views. Works offline for demos.</div>
+  <div class="sub">Manage scenarios, competency questions, scoring rubrics, demo config, and local prototype data.</div>
 
   <div class="card nav">
     <h2>Views</h2>
-    <div class="note">Open the other parts of the app:</div>
     <div class="row">
       <a href="index.html"><button class="blue">🎓 Open Student App</button></a>
       <a href="faculty.html"><button class="amber">📊 Open Faculty Dashboard</button></a>
@@ -51,248 +63,400 @@
 
   <div class="card">
     <h2>App Config</h2>
-
-    <div class="note" style="background:#fdf6e3;border:1px solid #e8dca8;border-radius:8px;padding:10px 12px">
-      <strong>Demo vs. live:</strong> Deadlines are real app settings and work everywhere. The faculty password and OAuth ID below are <em>server secrets</em> on a live site — set them as Netlify environment variables (this page shows you exactly what to paste). The values here also drive the <em>offline demo</em> so you can show a gated login.
+    <div class="warn">
+      Keep the current Google/email login for now. The fields below support the prototype and Netlify deployment. No new admin password is added.
     </div>
-
-    <h3 style="margin:18px 0 4px;font-size:15px">Faculty dashboard password</h3>
-    <div class="note">Used to gate the Faculty dashboard in the offline demo on this browser.</div>
     <div class="grid2">
-      <div><label>Demo password</label><input id="cfgFacultyPassword" placeholder="e.g. nursing2026"></div>
-      <div><label>Live: Netlify env variable</label><input class="mono" value="FACULTY_DASHBOARD_PASSWORD" readonly></div>
+      <div>
+        <label>Faculty dashboard demo password</label>
+        <input id="cfgFacultyPassword" placeholder="e.g. rickrejeleene">
+      </div>
+      <div>
+        <label>Google OAuth Client ID</label>
+        <input id="cfgOAuthClientId" placeholder="xxxx.apps.googleusercontent.com">
+      </div>
     </div>
-
-    <h3 style="margin:18px 0 4px;font-size:15px">Google OAuth (sign-in)</h3>
-    <div class="note">For a live site, paste your OAuth Client ID. The email sign-in always works without this; the Google button only fully works once the serverless functions are deployed.</div>
-    <div class="grid2">
-      <div><label>OAuth Client ID</label><input id="cfgOAuthClientId" placeholder="xxxx.apps.googleusercontent.com"></div>
-      <div><label>Live: Netlify env variable</label><input class="mono" value="GOOGLE_OAUTH_CLIENT_ID" readonly></div>
+    <h3>LLM Provider Settings</h3>
+    <div class="grid4">
+      <div><label>Default model provider</label><select id="cfgDefaultProvider"><option value="anthropic">Claude</option><option value="openai">OpenAI (GPT)</option><option value="nemotron">NVIDIA: Nemotron 3 Ultra</option><option value="ollama">Ollama GPT-OSS 20B</option></select></div>
+      <div><label>Ollama URL</label><input id="cfgOllamaUrl" value="http://localhost:11434/api/chat"></div>
+      <div><label>Ollama model</label><input id="cfgOllamaModel" value="gpt-oss:20b"></div>
+      <div><label>Live Netlify function</label><input class="mono" value="/.netlify/functions/evaluate-scenario" readonly></div>
     </div>
-
-    <h3 style="margin:18px 0 4px;font-size:15px">Deadlines</h3>
-    <div class="note">Set a due date per question. Past the deadline, student submissions are flagged <strong>Late</strong> in the student app and faculty dashboard. Leave blank for no deadline.</div>
-    <div id="deadlineList"></div>
-    <div class="row" style="margin-top:8px">
-      <input id="bulkDeadline" type="date" style="max-width:200px">
-      <button class="ghost" onclick="applyBulkDeadline()">Apply to all questions</button>
-    </div>
-
-    <div class="row" style="margin-top:18px;border-top:1px solid var(--border);padding-top:16px">
-      <button onclick="saveConfig()">💾 Save config &amp; deadlines</button>
+    <div class="row" style="margin-top:16px">
+      <button onclick="saveConfig()">💾 Save config</button>
       <button class="blue" onclick="showNetlifyEnv()">📋 Show Netlify env settings</button>
     </div>
-    <pre id="envOutput" class="mono" style="display:none;white-space:pre-wrap;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px;margin-top:12px"></pre>
+    <pre id="envOutput" class="mono" style="display:none"></pre>
   </div>
 
   <div class="card">
-    <h2>Question Set Editor</h2>
-    <div class="note">Edit the exercises students see. <strong>Save</strong> applies them to the Student app on this browser (for demos). <strong>Download JSON</strong> gives you a file to put in <span class="mono">questions/qset_01.json</span> for a real deployment.</div>
+    <div class="row-between">
+      <div>
+        <h2>Scenario & Rubric Editor</h2>
+        <div class="note">This editor matches the assessment-first student app: scenario text → Socratic/competency questions → rubric scoring without per-miss explanations → post-session tutoring targets.</div>
+      </div>
+      <div class="row">
+        <button class="ghost" onclick="loadFromDeployedJson()">↻ Load deployed JSON</button>
+        <button class="ghost" onclick="document.getElementById('importJsonFile').click()">Import JSON…</button>
+        <input type="file" id="importJsonFile" accept=".json" style="display:none" onchange="importJson(event)">
+      </div>
+    </div>
+
+    <div class="info">
+      For this prototype, the student app loads <span class="mono">questions/nursing/acute-care.json</span>. Use <strong>Download acute-care.json</strong>, then replace that file in your project. The local save is only for admin editing/demo backup.
+    </div>
+
     <div class="grid3">
       <div><label>Course ID</label><input id="courseId"></div>
       <div><label>Course Name</label><input id="courseName"></div>
       <div><label>Question Set ID</label><input id="questionSetId"></div>
       <div><label>Class ID</label><input id="classId"></div>
       <div><label>Academic Year</label><input id="academicYear"></div>
+      <div><label>Export file path</label><input class="mono" value="questions/nursing/acute-care.json" readonly></div>
     </div>
 
-    <div id="questions" style="margin-top:16px"></div>
+    <div id="scenarioList" style="margin-top:16px"></div>
 
-    <div class="row" style="margin-top:12px">
-      <button class="ghost" onclick="addQuestion()">+ Add question</button>
+    <div class="row" style="margin-top:14px">
+      <button class="ghost" onclick="addScenario()">+ Add scenario</button>
+      <button onclick="saveQset()">💾 Save locally</button>
+      <button class="blue" onclick="downloadQset()">⬇ Download acute-care.json</button>
+      <button class="amber" onclick="previewJson()">Preview JSON</button>
+      <button class="ghost" onclick="loadSeed()">Reset to MI seed</button>
+      <button class="red" onclick="clearSavedQset()">Clear saved admin copy</button>
     </div>
-
-    <div class="row" style="margin-top:18px;border-top:1px solid var(--border);padding-top:16px">
-      <button onclick="saveQset()">💾 Save (apply to student app)</button>
-      <button class="blue" onclick="downloadQset()">⬇ Download JSON</button>
-      <button class="ghost" onclick="loadSeed()">Reset to sample nursing set</button>
-      <button class="red" onclick="clearQset()">Clear saved set</button>
-    </div>
+    <pre id="jsonPreview" class="mono" style="display:none"></pre>
   </div>
 
   <div class="card">
     <h2>Local Data</h2>
-    <div class="note">Student progress and completed exercises stored in this browser.</div>
+    <div class="note">Shows student data stored in this browser. New assessment-first sessions are stored as <span class="mono">completedSessions</span>; older Socratic submissions are still counted if present.</div>
     <div id="dataList"></div>
     <div class="row" style="margin-top:14px">
-      <button class="red" onclick="clearAllStudentData()">🗑 Clear all student data</button>
+      <button class="blue" onclick="exportAllStudentData()">⬇ Export all local student data</button>
+      <button class="red" onclick="clearAllStudentData()">🗑 Clear all local student data</button>
     </div>
   </div>
 </div>
 
 <script>
+const STORAGE_ADMIN_QSET='nursing_admin_qset';
+const LEGACY_ADMIN_QSET='medtutor_admin_qset';
+const ADMIN_CONFIG_KEY='medtutor_admin_config';
+const STUDENT_PREFIX='medtutor_student_';
+const ASSESSMENT_STORAGE_KEY='medtutor_student_NURS-ACUTE';
+
+const DEFAULT_COMPETENCY_QUESTIONS=[
+  {id:'focusedAssessment',label:'What did you find on your focused assessment?',area:'Assessment'},
+  {id:'abnormalFindings',label:'What assessment findings are abnormal?',area:'Assessment'},
+  {id:'baselineChanges',label:'What has changed from baseline?',area:'Assessment'},
+  {id:'patientProblem',label:'Using common medical terminology, what problem is occurring or could occur with this patient?',area:'Diagnosis / Problem Identification'},
+  {id:'monitoring',label:'What assessment data will you monitor?',area:'Nursing Monitoring'},
+  {id:'nursingActions',label:'What nursing actions will you take?',area:'Nursing Actions'},
+  {id:'providerCommunication',label:'What information do you need to share with the provider?',area:'Communication / Escalation'},
+  {id:'diagnosticsOrders',label:'What diagnostic tests or orders do you anticipate?',area:'Provider Interventions'},
+  {id:'medications',label:'What medications do you anticipate?',area:'Provider Interventions'},
+  {id:'urgency',label:'Based on the patient’s current clinical presentation, which level of urgency is most appropriate? A. Stable, B. Unstable, C. Emergent',area:'Urgency'}
+];
+
+const MI_DEFAULT_RUBRIC={
+  passingThreshold:50,
+  acceptedDiagnoses:['myocardial infarction','heart attack','mi','stemi','acute coronary syndrome','acute mi','acs'],
+  abnormalFindings:[
+    {id:'AF1',expected:'diaphoretic',keywords:['diaphoretic','diaphoresis','sweat'],why:'Tutoring note: connect diaphoresis with sympathetic response and myocardial ischemia.'},
+    {id:'AF2',expected:'pale',keywords:['pale','pallor'],why:'Tutoring note: connect pallor with distress and possible impaired perfusion.'},
+    {id:'AF3',expected:'increasing distress',keywords:['distress','increasing distress','anxiety','restless','clutching','guarding'],why:'Tutoring note: escalating distress is a deterioration cue when paired with chest pain and ECG changes.'},
+    {id:'AF4',expected:'chest pain / worsening chest pressure',keywords:['chest pain','chest pressure','worsening chest','elephant','worst'],why:'Tutoring note: worsening chest pressure is a central cue for evolving acute coronary syndrome.'},
+    {id:'AF5',expected:'nausea',keywords:['nausea','nauseated'],why:'Tutoring note: nausea can accompany myocardial infarction and should not be dismissed.'},
+    {id:'AF6',expected:'sinus tachycardia with ST elevation',keywords:['sinus tachycardia','tachycardia','hr 108','st elevation','st-segment elevation','st segment elevation'],why:'Tutoring note: ST elevation with symptoms indicates urgent myocardial injury concern.'}
+  ],
+  nursingActions:[
+    {id:'NA1',expected:'monitor heart rate',keywords:['heart rate','hr','monitor hr','tachycardia'],why:'Tutoring note: heart-rate trends help detect deterioration.'},
+    {id:'NA2',expected:'monitor blood pressure',keywords:['blood pressure','bp','monitor bp'],why:'Tutoring note: blood-pressure trends help assess stability and medication safety.'},
+    {id:'NA3',expected:'monitor pulse ox / oxygen saturation',keywords:['pulse ox','spo2','oxygen saturation','o2 sat'],why:'Tutoring note: oxygenation is part of ongoing deterioration monitoring.'},
+    {id:'NA4',expected:'monitor respirations',keywords:['respiration','respiratory rate','rr','breathing'],why:'Tutoring note: respiratory changes can signal distress and worsening condition.'},
+    {id:'NA5',expected:'monitor pain level',keywords:['pain','pain level','reassess pain'],why:'Tutoring note: worsening pain is a key cue for escalation.'},
+    {id:'NA6',expected:'get IV access',keywords:['iv access','establish iv','maintain iv','intravenous'],why:'Tutoring note: IV access enables urgent medication and procedure readiness.'},
+    {id:'NA7',expected:'activate medical emergency team / urgent escalation',keywords:['medical emergency team','rapid response','activate','urgent escalation','escalate'],why:'Tutoring note: unstable MI presentation requires urgent escalation.'},
+    {id:'NA8',expected:'keep patient NPO',keywords:['npo','nothing by mouth','keep patient npo'],why:'Tutoring note: NPO prepares the patient for possible urgent procedure/cath lab.'}
+  ],
+  providerInterventions:[
+    {id:'PI1',expected:'cardiac enzymes',keywords:['cardiac enzymes','troponin','repeat troponin'],why:'Tutoring note: cardiac biomarkers support diagnosis and monitoring of myocardial injury.'},
+    {id:'PI2',expected:'12-lead ECG',keywords:['12-lead','12 lead','ecg','ekg'],why:'Tutoring note: 12-lead ECG confirms and tracks ischemic changes.'},
+    {id:'PI3',expected:'aspirin',keywords:['aspirin','asa'],why:'Tutoring note: aspirin is commonly anticipated in ACS care unless contraindicated.'},
+    {id:'PI4',expected:'analgesia',keywords:['analgesia','pain medication','pain control','morphine'],why:'Tutoring note: analgesia helps manage severe ischemic pain.'},
+    {id:'PI5',expected:'nitroglycerin',keywords:['nitroglycerin','nitro'],why:'Tutoring note: nitroglycerin may be anticipated if appropriate and not contraindicated.'},
+    {id:'PI6',expected:'cardiac cath lab or thrombolytic',keywords:['cath lab','cardiac cath','catheterization','thrombolytic','pci','reperfusion'],why:'Tutoring note: urgent reperfusion planning is central in STEMI/acute MI pathways.'}
+  ],
+  urgency:{expected:'B. Unstable — requires urgent escalation of care',keywords:['unstable','b','urgent escalation'],why:'Tutoring note: this is unstable because the patient is deteriorating but is not described as pulseless, apneic, or requiring immediate resuscitation.'}
+};
+
+const MI_SCENARIO_TEXT='Taylor Collins is a 58-year-old male in the emergency department.\n\nChief complaint: "I\'ve had some pressure in my chest since this morning. I thought it was indigestion, but it isn\'t going away."\n\nHistory of present illness: Chest pressure began approximately 3 hours ago while he was doing yard work. The pain was initially 3/10. He reports intermittent radiation to the left shoulder and mild nausea. Symptoms improved slightly with rest but never fully resolved.\n\nPast medical history: Hypertension, hyperlipidemia, type 2 diabetes, and former smoker with a 30 pack-year history. Home medications: Lisinopril, metformin, and atorvastatin. Allergies: No known drug allergies.\n\nPhase 1: Initial assessment\nBP 138/82, HR 84 bpm, RR 18, SpO2 98% room air, temp 98.4°F, pain 3/10. Alert and oriented x4. Skin warm, dry, pink. Lungs clear. Heart rhythm regular. Mild anxiety. Telemetry: normal sinus rhythm. Initial troponin negative.\n\nPhase 2: Worsening symptoms, 1 hour later\nThe patient says: "The pressure is getting worse now. It\'s moving into my jaw." BP 146/88, HR 96, RR 20, SpO2 97%, pain 6/10. Increased anxiety, restlessness, mild diaphoresis, intermittently clutching chest. Telemetry: sinus rhythm with new 1 mm ST-segment depression in lead II. Repeat troponin pending.\n\nPhase 3: Acute deterioration, 30 minutes later\nThe patient says: "This is the worst it\'s been. It feels like an elephant is sitting on my chest." BP 158/94, HR 108, RR 24, SpO2 95%, pain 9/10. Diaphoretic, pale, increasingly distressed, guarding chest, nausea. Telemetry: sinus tachycardia with 2–3 mm ST-segment elevation in lead II. Troponin 50 mg/L, normal less than 12.';
+
 const SEED={
-  courseId:"NURS-101",courseName:"Foundations of Nursing Practice",classId:"NURS101-2026",academicYear:"2025-2026",questionSetId:"qset_01",
-  questions:[
-    {id:"Q1",week:"1",weekLabel:"Week 1 — Patient Assessment",questionNumber:"1",topic:"Recognizing early sepsis in a post-operative patient",question:"A 68-year-old patient is 2 days post-abdominal surgery. Their temperature is 38.6°C, heart rate 112, respiratory rate 24, and blood pressure 98/60. They seem more confused than yesterday. What is happening physiologically, what should the nurse assess and do first, and why does early recognition matter?",releaseDate:"2026-01-01",deadline:"",
-     concepts:[
-       {id:"C1",label:"SIRS / early sepsis criteria",idealAnswer:"The patient meets multiple SIRS criteria (temp >38°C, HR >90, RR >20), which with a likely infection source suggests sepsis."},
-       {id:"C2",label:"Compensatory mechanisms and falling blood pressure",idealAnswer:"Tachycardia and tachypnea are compensatory; borderline-low BP and new confusion suggest compensation is failing."},
-       {id:"C3",label:"Nursing priorities and escalation",idealAnswer:"Reassess vitals and consciousness, ensure oxygenation, IV access, anticipate cultures and fluids, and escalate immediately."}
-     ]},
-    {id:"Q2",week:"2",weekLabel:"Week 2 — Medication Safety",questionNumber:"1",topic:"Safe administration of high-alert medications",question:"You are about to give IV insulin to a patient. Explain the safety principles for high-alert medications, the specific risks of insulin, and the checks a nurse performs to prevent a serious error.",releaseDate:"2026-01-08",deadline:"",
-     concepts:[
-       {id:"C1",label:"High-alert medications and double-checks",idealAnswer:"High-alert meds carry heightened risk; insulin often requires an independent double-check of drug, dose, and pump settings."},
-       {id:"C2",label:"Rights of medication administration",idealAnswer:"The rights structure safe administration; with insulin, units verification and current glucose are critical."},
-       {id:"C3",label:"Hypoglycemia risk and monitoring",idealAnswer:"Main risk is hypoglycemia; check glucose, know onset/peak, monitor for symptoms, keep treatment available."}
-     ]}
-  ]
+  courseId:'NURS-ACUTE',courseName:'Nursing Education: Acute Care Scenarios',classId:'nursing-education',academicYear:'2026-2027',questionSetId:'nursing-acute-care',
+  questions:[{
+    id:'NURS-W01-Q01',week:1,weekLabel:'Week 1 — Acute Coronary Syndrome',questionNumber:1,topic:'Myocardial Infarction: Recognizing Acute Deterioration',releaseDate:'2026-05-22',deadline:null,
+    question:MI_SCENARIO_TEXT,
+    competencyQuestions:DEFAULT_COMPETENCY_QUESTIONS,
+    rubric:MI_DEFAULT_RUBRIC
+  }]
 };
 
 let qset=null;
-let cfg={facultyPassword:'',oauthClientId:''};
+let cfg={facultyPassword:'',oauthClientId:'',defaultProvider:'anthropic',ollamaUrl:'http://127.0.0.1:11434',ollamaModel:'gpt-oss:20b'};
+
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function csvLine(values){return values.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',');}
+function clone(x){return JSON.parse(JSON.stringify(x));}
+function toLines(value){return String(value||'').split('\n').map(s=>s.trim()).filter(Boolean);}
+function fromLines(arr){return (arr||[]).join('\n');}
+function toast(msg){const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),3200);}
+function downloadFile(filename,content,type='application/json'){const blob=new Blob([content],{type});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000);}
 
 function loadConfig(){
-  try{const s=localStorage.getItem('medtutor_admin_config');if(s)cfg=Object.assign(cfg,JSON.parse(s));}catch(e){}
-  document.getElementById('cfgFacultyPassword').value=cfg.facultyPassword||'';
-  document.getElementById('cfgOAuthClientId').value=cfg.oauthClientId||'';
-}
-function renderDeadlines(){
-  const el=document.getElementById('deadlineList');
-  el.innerHTML=qset.questions.map((q,i)=>`
-    <div class="data-item">
-      <div><strong>${esc(q.id||('Q'+(i+1)))}</strong> — ${esc(q.topic||'(no topic)')}</div>
-      <input type="date" value="${esc((q.deadline||'').slice(0,10))}" style="max-width:180px" oninput="setQ(${i},'deadline',this.value)">
-    </div>`).join('') || '<div class="note">Add questions below first.</div>';
-}
-function applyBulkDeadline(){
-  const v=document.getElementById('bulkDeadline').value;
-  if(!v){toast('Pick a date first.');return;}
-  qset.questions.forEach(q=>q.deadline=v);
-  renderDeadlines();toast('Applied to all — remember to Save.');
+  try{const s=localStorage.getItem(ADMIN_CONFIG_KEY);if(s)cfg={...cfg,...JSON.parse(s)};}catch(e){}
+  cfgFacultyPassword.value=cfg.facultyPassword||'';
+  cfgOAuthClientId.value=cfg.oauthClientId||'';
+  cfgDefaultProvider.value=cfg.defaultProvider||'anthropic';
+  cfgOllamaUrl.value=cfg.ollamaUrl||'http://127.0.0.1:11434';
+  cfgOllamaModel.value=cfg.ollamaModel||'gpt-oss:20b';
 }
 function saveConfig(){
-  cfg.facultyPassword=document.getElementById('cfgFacultyPassword').value.trim();
-  cfg.oauthClientId=document.getElementById('cfgOAuthClientId').value.trim();
-  localStorage.setItem('medtutor_admin_config',JSON.stringify(cfg));
-  // deadlines live on the qset — persist it too
-  localStorage.setItem('medtutor_admin_qset',JSON.stringify(qset));
-  toast('Config and deadlines saved.');
+  cfg.facultyPassword=cfgFacultyPassword.value.trim();
+  cfg.oauthClientId=cfgOAuthClientId.value.trim();
+  cfg.defaultProvider=cfgDefaultProvider.value;
+  cfg.ollamaUrl=cfgOllamaUrl.value.trim()||'http://127.0.0.1:11434';
+  cfg.ollamaModel=cfgOllamaModel.value.trim()||'gpt-oss:20b';
+  localStorage.setItem(ADMIN_CONFIG_KEY,JSON.stringify(cfg));
+  toast('Config saved.');
 }
 function showNetlifyEnv(){
-  const out=document.getElementById('envOutput');
+  saveConfig();
   const lines=[
     '# Set these in Netlify → Site settings → Environment variables',
     'FACULTY_DASHBOARD_PASSWORD = '+(cfg.facultyPassword||'(your password)'),
     'GOOGLE_OAUTH_CLIENT_ID = '+(cfg.oauthClientId||'(your client id).apps.googleusercontent.com'),
-    'ANTHROPIC_API_KEY = (your Anthropic API key, for the AI tutor)',
+    'ANTHROPIC_API_KEY = (your Anthropic API key)',
+    'OPENAI_API_KEY = (your OpenAI API key)',
+    'NEMOTRON_API_KEY = (your NVIDIA / Nemotron API key, or use OPENROUTER_API_KEY)',
+    'NEMOTRON_MODEL = nvidia/nemotron-3-ultra-550b-a55b:free',
+    'OPENROUTER_API_KEY = (optional OpenRouter API key for Nemotron)',
+    'OPENROUTER_MODEL = nvidia/nemotron-3-ultra-550b-a55b:free',
+    'OLLAMA_BASE_URL = '+(cfg.ollamaUrl||'http://127.0.0.1:11434'),
+    'OLLAMA_MODEL = '+(cfg.ollamaModel||'gpt-oss:20b'),
     '',
-    '# Deadlines are stored per-question in questions/'+(qset.questionSetId||'qset_01')+'.json',
-    '# Use "Download JSON" in the editor below to get that file.'
+    '# Scenario/rubric content is exported from this page as:',
+    'questions/nursing/acute-care.json'
   ];
-  out.textContent=lines.join('\n');
-  out.style.display='block';
+  envOutput.textContent=lines.join('\n');
+  envOutput.style.display='block';
 }
 
 function loadCurrent(){
-  try{const saved=localStorage.getItem('medtutor_admin_qset');qset=saved?JSON.parse(saved):JSON.parse(JSON.stringify(SEED));}
-  catch(e){qset=JSON.parse(JSON.stringify(SEED));}
-  if(!qset.questions)qset.questions=[];
-  loadConfig();
-  renderMeta();renderQuestions();renderDeadlines();renderData();
+  try{const saved=localStorage.getItem(STORAGE_ADMIN_QSET)||localStorage.getItem(LEGACY_ADMIN_QSET);qset=saved?JSON.parse(saved):clone(SEED);}catch(e){qset=clone(SEED);}
+  if(!Array.isArray(qset.questions)&&Array.isArray(qset.scenarios))qset.questions=qset.scenarios.map(s=>scenarioToQuestion(s));
+  if(!Array.isArray(qset.questions))qset.questions=[];
+  normalizeAll();
+  loadConfig();renderMeta();renderScenarios();renderData();
 }
-function renderMeta(){
-  courseId.value=qset.courseId||'';courseName.value=qset.courseName||'';questionSetId.value=qset.questionSetId||'';
-  classId.value=qset.classId||'';academicYear.value=qset.academicYear||'';
+function normalizeAll(){
+  qset.courseId=qset.courseId||'NURS-ACUTE';qset.courseName=qset.courseName||'Nursing Education: Acute Care Scenarios';qset.classId=qset.classId||'nursing-education';qset.academicYear=qset.academicYear||'2026-2027';qset.questionSetId=qset.questionSetId||'nursing-acute-care';
+  qset.questions=qset.questions.map((q,i)=>normalizeQuestion(q,i));
 }
-function readMeta(){
-  qset.courseId=courseId.value.trim();qset.courseName=courseName.value.trim();qset.questionSetId=questionSetId.value.trim();
-  qset.classId=classId.value.trim();qset.academicYear=academicYear.value.trim();
+function normalizeQuestion(q,i){
+  q=q||{};
+  q.id=q.id||q.scenarioId||`NURS-S${i+1}`;
+  q.week=q.week||i+1;
+  q.weekLabel=q.weekLabel||`Scenario ${i+1}`;
+  q.questionNumber=q.questionNumber||1;
+  q.topic=q.topic||q.title||`Scenario ${i+1}`;
+  q.question=q.question||q.scenarioText||'';
+  q.releaseDate=q.releaseDate||new Date().toISOString().slice(0,10);
+  q.deadline=q.deadline||null;
+  q.competencyQuestions=Array.isArray(q.competencyQuestions)&&q.competencyQuestions.length?q.competencyQuestions:clone(DEFAULT_COMPETENCY_QUESTIONS);
+  q.rubric=q.rubric||clone(MI_DEFAULT_RUBRIC);
+  q.rubric.passingThreshold=Number(q.rubric.passingThreshold||50);
+  q.rubric.acceptedDiagnoses=Array.isArray(q.rubric.acceptedDiagnoses)?q.rubric.acceptedDiagnoses:[];
+  q.rubric.abnormalFindings=Array.isArray(q.rubric.abnormalFindings)?q.rubric.abnormalFindings:[];
+  q.rubric.nursingActions=Array.isArray(q.rubric.nursingActions)?q.rubric.nursingActions:[];
+  q.rubric.providerInterventions=Array.isArray(q.rubric.providerInterventions)?q.rubric.providerInterventions:[];
+  q.rubric.urgency=q.rubric.urgency||{expected:'',keywords:[],why:''};
+  return q;
 }
-function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function scenarioToQuestion(s){return {id:s.id,week:s.week||1,weekLabel:s.weekLabel||s.title,questionNumber:s.questionNumber||1,topic:s.title,question:s.scenarioText,releaseDate:s.releaseDate,deadline:s.deadline,competencyQuestions:s.competencyQuestions,rubric:s.rubric};}
+function readMeta(){qset.courseId=courseId.value.trim();qset.courseName=courseName.value.trim();qset.questionSetId=questionSetId.value.trim();qset.classId=classId.value.trim();qset.academicYear=academicYear.value.trim();}
+function renderMeta(){courseId.value=qset.courseId||'';courseName.value=qset.courseName||'';questionSetId.value=qset.questionSetId||'';classId.value=qset.classId||'';academicYear.value=qset.academicYear||'';}
 
-function renderQuestions(){
-  const el=document.getElementById('questions');
-  el.innerHTML=qset.questions.map((q,qi)=>`
-    <div class="qcard">
-      <div class="qhead"><div class="qlabel">Question ${qi+1}</div>
-        <button class="red" onclick="removeQuestion(${qi})">Remove</button></div>
-      <div class="grid3">
-        <div><label>ID</label><input value="${esc(q.id)}" oninput="setQ(${qi},'id',this.value)"></div>
-        <div><label>Week #</label><input value="${esc(q.week)}" oninput="setQ(${qi},'week',this.value)"></div>
-        <div><label>Question #</label><input value="${esc(q.questionNumber)}" oninput="setQ(${qi},'questionNumber',this.value)"></div>
-      </div>
-      <label>Week label</label><input value="${esc(q.weekLabel)}" oninput="setQ(${qi},'weekLabel',this.value)">
-      <label>Topic</label><input value="${esc(q.topic)}" oninput="setQ(${qi},'topic',this.value)">
-      <label>Question text</label><textarea oninput="setQ(${qi},'question',this.value)">${esc(q.question)}</textarea>
+function renderScenarios(){
+  normalizeAll();
+  scenarioList.innerHTML=qset.questions.map((q,qi)=>renderScenario(q,qi)).join('')||'<div class="note">No scenarios yet.</div>';
+}
+function renderScenario(q,qi){
+  return `<div class="scenario-card" id="scenario_${qi}">
+    <div class="row-between">
+      <div><span class="pill">Scenario ${qi+1}</span> <strong>${esc(q.topic)}</strong> <span class="mono">${esc(q.id)}</span></div>
+      <div class="row"><button class="ghost small" onclick="duplicateScenario(${qi})">Duplicate</button><button class="red small" onclick="removeScenario(${qi})">Remove</button></div>
+    </div>
+    <div class="grid4">
+      <div><label>ID</label><input value="${esc(q.id)}" oninput="setQ(${qi},'id',this.value)"></div>
+      <div><label>Week #</label><input value="${esc(q.week)}" oninput="setQ(${qi},'week',this.value)"></div>
+      <div><label>Question #</label><input value="${esc(q.questionNumber)}" oninput="setQ(${qi},'questionNumber',this.value)"></div>
+      <div><label>Passing threshold %</label><input type="number" min="0" max="100" value="${esc(q.rubric.passingThreshold)}" oninput="setRubric(${qi},'passingThreshold',Number(this.value)||50)"></div>
+    </div>
+    <div class="grid2">
+      <div><label>Week label</label><input value="${esc(q.weekLabel)}" oninput="setQ(${qi},'weekLabel',this.value)"></div>
+      <div><label>Topic / title</label><input value="${esc(q.topic)}" oninput="setQ(${qi},'topic',this.value)"></div>
+    </div>
+    <label>Scenario text</label><textarea rows="12" oninput="setQ(${qi},'question',this.value)">${esc(q.question)}</textarea>
+    <div class="grid2">
+      <div><label>Release date</label><input type="date" value="${esc((q.releaseDate||'').slice(0,10))}" oninput="setQ(${qi},'releaseDate',this.value)"></div>
+      <div><label>Deadline</label><input type="date" value="${esc((q.deadline||'').slice(0,10))}" oninput="setQ(${qi},'deadline',this.value||null)"></div>
+    </div>
+
+    <details open class="mini-card">
+      <summary>Competency Questions</summary>
+      <div id="cq_${qi}" style="margin-top:10px">${renderCompetencyQuestions(q,qi)}</div>
+      <button class="ghost small" onclick="addCompetencyQuestion(${qi})">+ Add competency question</button>
+    </details>
+
+    <details open class="mini-card">
+      <summary>Rubric: Diagnosis</summary>
+      <label>Accepted diagnoses, one per line</label>
+      <textarea class="small-textarea" oninput="setAcceptedDiagnoses(${qi},this.value)">${esc(fromLines(q.rubric.acceptedDiagnoses))}</textarea>
+    </details>
+
+    <details open class="mini-card">
+      <summary>Rubric: Abnormal Findings</summary>
+      <div id="af_${qi}">${renderRubricItems(qi,'abnormalFindings')}</div>
+      <button class="ghost small" onclick="addRubricItem(${qi},'abnormalFindings')">+ Add abnormal finding</button>
+    </details>
+
+    <details open class="mini-card">
+      <summary>Rubric: Nursing Actions</summary>
+      <div id="na_${qi}">${renderRubricItems(qi,'nursingActions')}</div>
+      <button class="ghost small" onclick="addRubricItem(${qi},'nursingActions')">+ Add nursing action</button>
+    </details>
+
+    <details open class="mini-card">
+      <summary>Rubric: Anticipated Provider Interventions</summary>
+      <div id="pi_${qi}">${renderRubricItems(qi,'providerInterventions')}</div>
+      <button class="ghost small" onclick="addRubricItem(${qi},'providerInterventions')">+ Add provider intervention</button>
+    </details>
+
+    <details class="mini-card">
+      <summary>Rubric: Urgency</summary>
       <div class="grid2">
-        <div><label>Release date (YYYY-MM-DD)</label><input value="${esc(q.releaseDate)}" oninput="setQ(${qi},'releaseDate',this.value)"></div>
-        <div><label>Deadline (optional)</label><input value="${esc(q.deadline)}" oninput="setQ(${qi},'deadline',this.value)"></div>
+        <div><label>Expected urgency</label><input value="${esc(q.rubric.urgency.expected)}" oninput="setUrgency(${qi},'expected',this.value)"></div>
+        <div><label>Keywords, comma-separated</label><input value="${esc((q.rubric.urgency.keywords||[]).join(', '))}" oninput="setUrgency(${qi},'keywords',this.value.split(',').map(s=>s.trim()).filter(Boolean))"></div>
       </div>
-      <label style="margin-top:14px">Concepts</label>
-      ${(q.concepts||[]).map((c,ci)=>`
-        <div class="concept">
-          <div class="qhead"><span class="mono">Concept ${ci+1}</span>
-            <button class="red" onclick="removeConcept(${qi},${ci})">✕</button></div>
-          <div class="grid2">
-            <div><label>ID</label><input value="${esc(c.id)}" oninput="setC(${qi},${ci},'id',this.value)"></div>
-            <div><label>Label</label><input value="${esc(c.label)}" oninput="setC(${qi},${ci},'label',this.value)"></div>
-          </div>
-          <label>Ideal understanding (guides the tutor)</label>
-          <textarea oninput="setC(${qi},${ci},'idealAnswer',this.value)">${esc(c.idealAnswer)}</textarea>
-        </div>`).join('')}
-      <div style="margin-top:8px"><button class="ghost" onclick="addConcept(${qi})">+ Add concept</button></div>
-    </div>`).join('') || '<div class="note">No questions yet. Add one below.</div>';
+      <label>Why it matters</label><textarea class="small-textarea" oninput="setUrgency(${qi},'why',this.value)">${esc(q.rubric.urgency.why||'')}</textarea>
+    </details>
+  </div>`;
+}
+function renderCompetencyQuestions(q,qi){
+  return (q.competencyQuestions||[]).map((c,ci)=>`<div class="mini-card">
+    <div class="row-between"><span class="mono">Question ${ci+1}</span><button class="red small" onclick="removeCompetencyQuestion(${qi},${ci})">Remove</button></div>
+    <div class="grid3">
+      <div><label>ID</label><input value="${esc(c.id)}" oninput="setCompetencyQuestion(${qi},${ci},'id',this.value)"></div>
+      <div><label>Area</label><input value="${esc(c.area)}" oninput="setCompetencyQuestion(${qi},${ci},'area',this.value)"></div>
+      <div><label>Label</label><input value="${esc(c.label)}" oninput="setCompetencyQuestion(${qi},${ci},'label',this.value)"></div>
+    </div>
+  </div>`).join('');
+}
+function renderRubricItems(qi,type){
+  const items=qset.questions[qi].rubric[type]||[];
+  return items.map((it,ii)=>`<div class="mini-card">
+    <div class="row-between"><span class="mono">${esc(it.id||'Item '+(ii+1))}</span><button class="red small" onclick="removeRubricItem(${qi},'${type}',${ii})">Remove</button></div>
+    <div class="grid2">
+      <div><label>ID</label><input value="${esc(it.id)}" oninput="setRubricItem(${qi},'${type}',${ii},'id',this.value)"></div>
+      <div><label>Expected response</label><input value="${esc(it.expected)}" oninput="setRubricItem(${qi},'${type}',${ii},'expected',this.value)"></div>
+    </div>
+    <label>Keywords, comma-separated</label><input value="${esc((it.keywords||[]).join(', '))}" oninput="setRubricItem(${qi},'${type}',${ii},'keywords',this.value.split(',').map(s=>s.trim()).filter(Boolean))">
+    <label>Tutoring note / Actions to Support Development (not shown in evaluation)</label><textarea class="small-textarea" oninput="setRubricItem(${qi},'${type}',${ii},'why',this.value)">${esc(it.why||'')}</textarea>
+  </div>`).join('')||'<div class="note">No rubric items yet.</div>';
 }
 
 function setQ(i,f,v){qset.questions[i][f]=v;}
-function setC(qi,ci,f,v){qset.questions[qi].concepts[ci][f]=v;}
-function addQuestion(){
-  const n=qset.questions.length+1;
-  qset.questions.push({id:'Q'+n,week:String(n),weekLabel:'Week '+n,questionNumber:'1',topic:'',question:'',releaseDate:new Date().toISOString().split('T')[0],deadline:'',concepts:[{id:'C1',label:'',idealAnswer:''}]});
-  renderQuestions();renderDeadlines();
-}
-function removeQuestion(i){if(confirm('Remove this question?')){qset.questions.splice(i,1);renderQuestions();renderDeadlines();}}
-function addConcept(qi){if(!qset.questions[qi].concepts)qset.questions[qi].concepts=[];const n=qset.questions[qi].concepts.length+1;qset.questions[qi].concepts.push({id:'C'+n,label:'',idealAnswer:''});renderQuestions();}
-function removeConcept(qi,ci){qset.questions[qi].concepts.splice(ci,1);renderQuestions();}
+function setRubric(i,f,v){qset.questions[i].rubric[f]=v;}
+function setAcceptedDiagnoses(i,value){qset.questions[i].rubric.acceptedDiagnoses=toLines(value);}
+function setUrgency(i,f,v){qset.questions[i].rubric.urgency[f]=v;}
+function setCompetencyQuestion(qi,ci,f,v){qset.questions[qi].competencyQuestions[ci][f]=v;}
+function addCompetencyQuestion(qi){qset.questions[qi].competencyQuestions.push({id:'custom'+(qset.questions[qi].competencyQuestions.length+1),label:'',area:''});renderScenarios();}
+function removeCompetencyQuestion(qi,ci){qset.questions[qi].competencyQuestions.splice(ci,1);renderScenarios();}
+function setRubricItem(qi,type,ii,f,v){qset.questions[qi].rubric[type][ii][f]=v;}
+function addRubricItem(qi,type){const prefix=type==='abnormalFindings'?'AF':(type==='providerInterventions'?'PI':'NA');qset.questions[qi].rubric[type].push({id:prefix+(qset.questions[qi].rubric[type].length+1),expected:'',keywords:[],why:''});renderScenarios();}
+function removeRubricItem(qi,type,ii){qset.questions[qi].rubric[type].splice(ii,1);renderScenarios();}
 
-function validate(){
-  readMeta();
-  if(!qset.questions.length){toast('Add at least one question.');return false;}
+function addScenario(){const n=qset.questions.length+1;qset.questions.push(normalizeQuestion({id:'NURS-S'+String(n).padStart(2,'0'),week:n,weekLabel:'Scenario '+n,questionNumber:1,topic:'New Nursing Scenario',question:'',releaseDate:new Date().toISOString().slice(0,10),deadline:null,competencyQuestions:clone(DEFAULT_COMPETENCY_QUESTIONS),rubric:clone(MI_DEFAULT_RUBRIC)},n-1));renderScenarios();setTimeout(()=>document.getElementById('scenario_'+(n-1))?.scrollIntoView({behavior:'smooth'}),50);}
+function duplicateScenario(i){const copy=clone(qset.questions[i]);copy.id=copy.id+'-COPY';copy.topic=copy.topic+' copy';qset.questions.splice(i+1,0,copy);renderScenarios();}
+function removeScenario(i){if(confirm('Remove this scenario?')){qset.questions.splice(i,1);renderScenarios();}}
+function loadSeed(){if(confirm('Reset editor to the MI assessment seed? Unsaved edits will be lost.')){qset=clone(SEED);renderMeta();renderScenarios();toast('MI seed loaded.');}}
+
+function validateQset(){
+  readMeta();normalizeAll();
+  if(!qset.questions.length){toast('Add at least one scenario.');return false;}
   for(const q of qset.questions){
-    if(!q.id||!q.topic||!q.question){toast('Each question needs an ID, topic, and question text.');return false;}
-    if(!q.concepts||!q.concepts.length){toast('Each question needs at least one concept.');return false;}
-    for(const c of q.concepts){if(!c.id||!c.label){toast('Each concept needs an ID and label.');return false;}}
+    if(!q.id||!q.topic||!q.question){toast('Each scenario needs ID, topic, and scenario text.');return false;}
+    if(!q.competencyQuestions.length){toast(q.id+' needs competency questions.');return false;}
+    if(!q.rubric.acceptedDiagnoses.length){toast(q.id+' needs accepted diagnoses.');return false;}
+    if(!q.rubric.abnormalFindings.length||!q.rubric.nursingActions.length||!q.rubric.providerInterventions.length){toast(q.id+' needs abnormal findings, nursing actions, and provider interventions rubric items.');return false;}
   }
   return true;
 }
-function saveQset(){
-  if(!validate())return;
-  localStorage.setItem('medtutor_admin_qset',JSON.stringify(qset));
-  toast('Saved. The student app on this browser will now use these questions.');
+function saveQset(){if(!validateQset())return;localStorage.setItem(STORAGE_ADMIN_QSET,JSON.stringify(qset));localStorage.setItem(LEGACY_ADMIN_QSET,JSON.stringify(qset));toast('Saved local admin copy. Download JSON to update deployed questions/nursing/acute-care.json.');}
+function downloadQset(){if(!validateQset())return;const clean=clone(qset);clean.questions.forEach(q=>{if(!q.deadline)q.deadline=null;});downloadFile('acute-care.json',JSON.stringify(clean,null,2));toast('Downloaded acute-care.json. Replace questions/nursing/acute-care.json with this file.');}
+function previewJson(){if(!validateQset())return;jsonPreview.textContent=JSON.stringify(qset,null,2);jsonPreview.style.display=jsonPreview.style.display==='none'?'block':'none';}
+function clearSavedQset(){if(confirm('Clear the admin saved copy from this browser?')){localStorage.removeItem(STORAGE_ADMIN_QSET);localStorage.removeItem(LEGACY_ADMIN_QSET);toast('Saved admin copy cleared.');}}
+async function loadFromDeployedJson(){
+  try{
+    const r=await fetch('/questions/nursing/acute-care.json',{cache:'no-store'});
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const data=await r.json();qset=data;if(!Array.isArray(qset.questions)&&Array.isArray(qset.scenarios))qset.questions=qset.scenarios.map(scenarioToQuestion);normalizeAll();renderMeta();renderScenarios();toast('Loaded deployed questions/nursing/acute-care.json.');
+  }catch(e){toast('Could not load deployed JSON: '+e.message);}
 }
-function downloadQset(){
-  if(!validate())return;
-  const clean=JSON.parse(JSON.stringify(qset));
-  clean.questions.forEach(q=>{if(!q.deadline)q.deadline=null;});
-  const blob=new Blob([JSON.stringify(clean,null,2)],{type:'application/json'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=(qset.questionSetId||'qset_01')+'.json';a.click();
-  toast('Downloaded. Place it in questions/ for a real deployment.');
+function importJson(event){
+  const file=event.target.files?.[0];if(!file)return;
+  const reader=new FileReader();reader.onload=e=>{try{const data=JSON.parse(e.target.result);qset=data;if(!Array.isArray(qset.questions)&&Array.isArray(qset.scenarios))qset.questions=qset.scenarios.map(scenarioToQuestion);normalizeAll();renderMeta();renderScenarios();toast('Imported JSON.');}catch(err){toast('Invalid JSON file.');}};reader.readAsText(file);
 }
-function loadSeed(){if(confirm('Reset the editor to the sample nursing set? Unsaved edits will be lost.')){qset=JSON.parse(JSON.stringify(SEED));renderMeta();renderQuestions();renderDeadlines();toast('Sample set loaded. Remember to Save.');}}
-function clearQset(){if(confirm('Remove the saved question set? The student app will revert to its built-in questions.')){localStorage.removeItem('medtutor_admin_qset');toast('Saved set cleared.');}}
 
-function renderData(){
-  const el=document.getElementById('dataList');
-  const items=[];
+function getAllStudentStates(){
+  const out=[];const seen=new Set();
+  try{
+    const main=JSON.parse(localStorage.getItem(ASSESSMENT_STORAGE_KEY)||'null');
+    if(main){out.push(main);seen.add(main.studentUUID||'main');}
+  }catch(e){}
   try{
     for(let i=0;i<localStorage.length;i++){
-      const k=localStorage.key(i);
-      if(k&&k.startsWith('medtutor_student_')){
-        const s=JSON.parse(localStorage.getItem(k));
-        items.push({name:s.studentName||s.googleName||'(unnamed)',email:s.googleEmail||'',count:(s.completedExercises||[]).length});
-      }
+      const k=localStorage.key(i);if(!k||!k.startsWith(STUDENT_PREFIX))continue;
+      const s=JSON.parse(localStorage.getItem(k)||'null');if(!s)continue;
+      const key=s.studentUUID||k;if(seen.has(key))continue;seen.add(key);out.push(s);
     }
   }catch(e){}
-  el.innerHTML=items.length?items.map(it=>`<div class="data-item"><div><strong>${esc(it.name)}</strong> <span class="mono">${esc(it.email)}</span></div><div class="mono">${it.count} completed</div></div>`).join(''):'<div class="note">No student data in this browser yet.</div>';
+  return out;
+}
+function renderData(){
+  const students=getAllStudentStates();
+  if(!students.length){dataList.innerHTML='<div class="note">No student data in this browser yet.</div>';return;}
+  dataList.innerHTML=students.map(s=>{
+    const sessions=Array.isArray(s.completedSessions)?s.completedSessions:[];
+    const old=Array.isArray(s.completedExercises)?s.completedExercises:[];
+    const attempts=sessions.reduce((sum,ss)=>sum+(ss.scenarioAttempts||[]).length,0);
+    const avg=attempts?Math.round(sessions.flatMap(ss=>ss.scenarioAttempts||[]).reduce((sum,a)=>sum+Number(a.evaluation?.scorePercent||0),0)/attempts):0;
+    return `<div class="data-item"><div><strong>${esc(s.studentName||s.googleName||'(unnamed)')}</strong> <span class="mono">${esc(s.employeeId||'no employee ID')} · ${esc(s.googleEmail||s.email||'')}</span></div><div class="mono">${sessions.length} sessions · ${attempts} attempts · avg ${avg}% · ${old.length} old records</div></div>`;
+  }).join('');
+}
+function exportAllStudentData(){
+  const students=getAllStudentStates();
+  const payload={exportedAt:new Date().toISOString(),students};
+  downloadFile('nursing_all_local_student_data.json',JSON.stringify(payload,null,2));
 }
 function clearAllStudentData(){
-  if(!confirm('Delete all student progress stored in this browser? This cannot be undone.'))return;
-  const keys=[];for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith('medtutor_student_'))keys.push(k);}
-  keys.forEach(k=>localStorage.removeItem(k));renderData();toast('All student data cleared.');
+  if(!confirm('Delete all local student progress and sessions in this browser? Export first if needed.'))return;
+  const keys=[];try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&(k.startsWith(STUDENT_PREFIX)||k===ASSESSMENT_STORAGE_KEY))keys.push(k);}}catch(e){}
+  keys.forEach(k=>localStorage.removeItem(k));renderData();toast('Local student data cleared.');
 }
-
-function toast(msg){const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),3000);}
 
 loadCurrent();
 </script>

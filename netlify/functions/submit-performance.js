@@ -1,12 +1,18 @@
 // netlify/functions/submit-performance.js
 //
-// Receives a completed-exercise record from the app and inserts it into a
-// Supabase table using the REST (PostgREST) API.
+// Receives completed assessment-first scenario attempts from NursingWebApp
+// and inserts them into Supabase/PostgREST.
 //
-// Env vars (set in Netlify -> Site settings -> Environment variables):
-//   SUPABASE_URL                e.g. https://yazplthctxldwrpeubxw.supabase.co
-//   SUPABASE_SERVICE_ROLE_KEY   the SECRET service_role / sb_secret_ key
-//   SUPABASE_TABLE              optional, defaults to "performance"
+// This version is backward-compatible with the older Socratic/concept schema.
+// It first tries a rich assessment-first insert. If your existing Supabase
+// table does not yet have those newer columns, it automatically falls back to
+// the older column shape and stores the full payload in raw/full_record where
+// available.
+//
+// Env vars:
+//   SUPABASE_URL
+//   SUPABASE_SERVICE_ROLE_KEY
+//   SUPABASE_TABLE optional, defaults to "performance"
 
 exports.handler = async function (event) {
   if (event.httpMethod !== 'POST') {
@@ -17,16 +23,13 @@ exports.handler = async function (event) {
   const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
   const TABLE = process.env.SUPABASE_TABLE || 'performance';
 
-  // Visible diagnostics in the Netlify function log
   console.log('[submit-performance] start', {
     hasUrl: !!SUPABASE_URL,
     hasKey: !!SERVICE_KEY,
-    keyPrefix: SERVICE_KEY ? SERVICE_KEY.slice(0, 10) : null,
     table: TABLE
   });
 
   if (!SUPABASE_URL || !SERVICE_KEY) {
-    console.error('[submit-performance] MISSING ENV VARS');
     return json(500, {
       ok: false,
       error: 'Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY environment variable.'
@@ -37,96 +40,344 @@ exports.handler = async function (event) {
   try {
     p = JSON.parse(event.body || '{}');
   } catch {
-    console.error('[submit-performance] invalid JSON body');
-    return json(400, { ok: false, error: 'Invalid JSON body' });
+    return json(400, { ok: false, error: 'Invalid JSON body.' });
   }
 
-  const s = (v) => (v === '' || v == null ? null : String(v));
-  const n = (v) => (Number.isFinite(Number(v)) && v !== '' && v != null ? Number(v) : null);
-  const b = (v) => !!v;
-  const j = (v) => (v == null ? null : v);
+  const normalized = normalizePayload(p);
+  const endpoint = `${SUPABASE_URL.replace(/\/$/, '')}/rest/v1/${TABLE}`;
 
-  const row = {
-    student_name: s(p.studentName),
-    student_uuid: s(p.studentUUID),
-    google_sub: s(p.googleSub),
-    google_email: s(p.googleEmail),
-    google_name: s(p.googleName),
-    google_hd: s(p.googleHd),
+  const attempts = [
+    { name: 'assessment-first-rich', row: buildRichRow(normalized) },
+    { name: 'legacy-with-full-record', row: buildLegacyRow(normalized, true) },
+    { name: 'legacy-raw-only', row: buildLegacyRow(normalized, false) }
+  ];
 
-    course_id: s(p.courseId),
-    course_name: s(p.courseName),
-    class_id: s(p.classId),
-    academic_year: s(p.academicYear),
-    question_set_id: s(p.questionSetId),
+  let lastError = null;
 
-    question_id: s(p.questionId),
-    week: s(p.week),
-    week_label: s(p.weekLabel),
-    question_number: s(p.questionNumber),
-    topic: s(p.topic),
-    question: s(p.question),
+  for (const attempt of attempts) {
+    try {
+      console.log('[submit-performance] trying insert shape:', attempt.name);
+      const result = await insertRow(endpoint, SERVICE_KEY, attempt.row);
+      console.log('[submit-performance] insert OK:', attempt.name);
+      return json(200, {
+        ok: true,
+        insertShape: attempt.name,
+        inserted: result
+      });
+    } catch (error) {
+      lastError = error;
+      console.warn('[submit-performance] insert failed:', attempt.name, error.message);
 
-    release_date: s(p.releaseDate),
-    deadline: s(p.deadline),
-    started_at: s(p.startedAt),
-    completed_at: s(p.completedAt),
-    is_late: b(p.isLate),
+      // Only keep retrying when it looks like a schema/column mismatch.
+      // For auth/RLS/network problems, stop early because fallback won't help.
+      if (!looksLikeColumnMismatch(error)) {
+        break;
+      }
+    }
+  }
 
-    total_concepts: n(p.totalConcepts),
-    concepts_mastered: n(p.conceptsMastered),
-    total_exchanges: n(p.totalExchanges),
-    time_minutes: n(p.timeMinutes),
+  return json(500, {
+    ok: false,
+    error: lastError ? lastError.message : 'Supabase insert failed.'
+  });
+};
 
-    self_concepts: j(p.selfConcepts),
-    socratic_history: j(p.socraticHistory),
-    confirmed_roadmap: j(p.confirmedRoadmap),
-    mastered_concepts: j(p.masteredConcepts),
-    essay_text: s(p.essayText),
-    essay_citations: j(p.essayCitations),
-    reflection_text: s(p.reflectionText),
-    reflection_learned: s(p.reflectionLearned),
+function normalizePayload(p) {
+  const evaluation = p.evaluation || {};
+  const answers = p.answers || {};
 
-    raw: p
+  const submittedAt =
+    p.submittedAt ||
+    p.completedAt ||
+    p.completed_at ||
+    new Date().toISOString();
+
+  const scenarioId =
+    p.scenarioId ||
+    p.questionId ||
+    p.question_id ||
+    '';
+
+  const scenarioTitle =
+    p.title ||
+    p.scenarioTitle ||
+    p.topic ||
+    '';
+
+  const scenarioText =
+    p.scenarioText ||
+    p.question ||
+    '';
+
+  const scorePercent = numberOrNull(
+    evaluation.scorePercent ?? p.scorePercent ?? p.score_percent
+  );
+
+  const pass = boolOrNull(evaluation.pass ?? p.pass);
+  const diagnosisCorrect = boolOrNull(evaluation.diagnosisCorrect ?? p.diagnosisCorrect ?? p.diagnosis_correct);
+  const urgencyCorrect = boolOrNull(evaluation.urgencyCorrect ?? p.urgencyCorrect ?? p.urgency_correct);
+
+  const missedAbnormalFindings = arrayOrEmpty(evaluation.missedAbnormalFindings ?? p.missedAbnormalFindings);
+  const missedNursingActions = arrayOrEmpty(evaluation.missedNursingActions ?? p.missedNursingActions);
+  const missedProviderInterventions = arrayOrEmpty(evaluation.missedProviderInterventions ?? p.missedProviderInterventions);
+  const strengths = arrayOrEmpty(evaluation.strengths ?? p.strengths);
+  const improvementAreas = arrayOrEmpty(evaluation.improvementAreas ?? p.improvementAreas);
+  const competencyBreakdown = arrayOrEmpty(evaluation.competencyBreakdown ?? p.competencyBreakdown);
+
+  const totalItems = competencyBreakdown.reduce((sum, b) => sum + Number(b.total || 0), 0);
+  const correctItems = competencyBreakdown.reduce((sum, b) => sum + Number(b.correct || 0), 0);
+
+  const deadline = p.deadline || null;
+  const isLate = typeof p.isLate === 'boolean'
+    ? p.isLate
+    : deadline
+      ? new Date(submittedAt).getTime() > new Date(deadline).getTime()
+      : false;
+
+  const fullRecord = {
+    ...p,
+    scenarioId,
+    title: scenarioTitle,
+    scenarioText,
+    answers,
+    submittedAt,
+    evaluation: {
+      ...evaluation,
+      scorePercent,
+      pass,
+      diagnosisCorrect,
+      urgencyCorrect,
+      missedAbnormalFindings,
+      missedNursingActions,
+      missedProviderInterventions,
+      strengths,
+      improvementAreas,
+      competencyBreakdown
+    }
   };
 
-  const endpoint = `${SUPABASE_URL}/rest/v1/${TABLE}`;
-  console.log('[submit-performance] POST', endpoint, 'student=', row.google_email || row.student_name);
+  return {
+    original: p,
+    fullRecord,
+    evaluation,
+    answers,
+    submittedAt,
+    scenarioId,
+    scenarioTitle,
+    scenarioText,
+    scorePercent,
+    pass,
+    diagnosisCorrect,
+    urgencyCorrect,
+    selectedUrgency: evaluation.selectedUrgency || answers.urgency || '',
+    tutoringRequired: boolOrNull(evaluation.tutoringRequired ?? !pass),
+    missedAbnormalFindings,
+    missedNursingActions,
+    missedProviderInterventions,
+    strengths,
+    improvementAreas,
+    competencyBreakdown,
+    totalItems,
+    correctItems,
+    isLate
+  };
+}
 
-  try {
-    const response = await fetch(endpoint, {
-      method: 'POST',
-      headers: {
-        'content-type': 'application/json',
-        apikey: SERVICE_KEY,
-        authorization: `Bearer ${SERVICE_KEY}`,
-        prefer: 'return=representation'
-      },
-      body: JSON.stringify(row)
-    });
+function buildRichRow(x) {
+  const p = x.original;
 
-    const text = await response.text();
-    let data;
-    try { data = JSON.parse(text); } catch { data = { error: text }; }
+  return {
+    // Demographics / traceability
+    student_name: stringOrNull(p.studentName || p.student?.name),
+    student_uuid: stringOrNull(p.studentUUID || p.student?.uuid),
+    employee_id: stringOrNull(p.employeeId || p.student?.employeeId),
+    email: stringOrNull(p.email || p.googleEmail || p.student?.email),
+    google_sub: stringOrNull(p.googleSub),
+    google_email: stringOrNull(p.googleEmail || p.email || p.student?.email),
+    google_name: stringOrNull(p.googleName || p.studentName || p.student?.name),
+    google_hd: stringOrNull(p.googleHd),
+    department: stringOrNull(p.department || p.demographics?.department),
+    unit: stringOrNull(p.unit || p.demographics?.unit),
+    location: stringOrNull(p.location || p.demographics?.location),
+    role: stringOrNull(p.role || p.demographics?.role),
 
-    console.log('[submit-performance] Supabase status', response.status, 'body', text.slice(0, 500));
+    // Course/session/scenario
+    course_id: stringOrNull(p.courseId),
+    course_name: stringOrNull(p.courseName),
+    class_id: stringOrNull(p.classId),
+    academic_year: stringOrNull(p.academicYear),
+    question_set_id: stringOrNull(p.questionSetId),
+    session_id: stringOrNull(p.sessionId),
+    scenario_id: stringOrNull(x.scenarioId),
+    scenario_title: stringOrNull(x.scenarioTitle),
+    scenario_text: stringOrNull(x.scenarioText),
 
-    if (!response.ok) {
-      console.error('[submit-performance] INSERT FAILED', response.status, text.slice(0, 500));
-      return json(response.status, {
-        ok: false,
-        error: (data && (data.message || data.error)) || 'Supabase insert failed',
-        details: data
-      });
-    }
+    // Legacy aliases for older dashboards
+    question_id: stringOrNull(x.scenarioId),
+    week: stringOrNull(p.week),
+    week_label: stringOrNull(p.weekLabel),
+    question_number: stringOrNull(p.questionNumber),
+    topic: stringOrNull(x.scenarioTitle),
+    question: stringOrNull(x.scenarioText),
 
-    console.log('[submit-performance] INSERT OK');
-    return json(200, { ok: true, inserted: Array.isArray(data) ? data[0] : data });
-  } catch (error) {
-    console.error('[submit-performance] EXCEPTION', error.message);
-    return json(500, { ok: false, error: error.message || 'Server error' });
+    release_date: stringOrNull(p.releaseDate),
+    deadline: stringOrNull(p.deadline),
+    started_at: stringOrNull(p.startedAt),
+    completed_at: stringOrNull(x.submittedAt),
+    submitted_at: stringOrNull(x.submittedAt),
+    is_late: !!x.isLate,
+
+    // Assessment-first evaluation
+    score_percent: x.scorePercent,
+    pass: x.pass,
+    diagnosis_correct: x.diagnosisCorrect,
+    urgency_correct: x.urgencyCorrect,
+    selected_urgency: stringOrNull(x.selectedUrgency),
+    tutoring_required: x.tutoringRequired,
+    missed_abnormal_findings: x.missedAbnormalFindings,
+    missed_nursing_actions: x.missedNursingActions,
+    missed_provider_interventions: x.missedProviderInterventions,
+    strengths: x.strengths,
+    improvement_areas: x.improvementAreas,
+    competency_breakdown: x.competencyBreakdown,
+    answers: x.answers,
+    evaluation: x.fullRecord.evaluation,
+    model_used: stringOrNull(p.modelUsed || x.evaluation.modelUsed),
+
+    // Legacy scoring aliases
+    total_concepts: x.totalItems || null,
+    concepts_mastered: x.correctItems || null,
+    total_exchanges: numberOrNull(p.totalExchanges),
+    time_minutes: numberOrNull(p.timeMinutes),
+
+    full_record: x.fullRecord,
+    raw: x.fullRecord
+  };
+}
+
+function buildLegacyRow(x, includeFullRecord) {
+  const p = x.original;
+
+  const row = {
+    student_name: stringOrNull(p.studentName || p.student?.name),
+    student_uuid: stringOrNull(p.studentUUID || p.student?.uuid),
+    google_sub: stringOrNull(p.googleSub),
+    google_email: stringOrNull(p.googleEmail || p.email || p.student?.email),
+    google_name: stringOrNull(p.googleName || p.studentName || p.student?.name),
+    google_hd: stringOrNull(p.googleHd),
+
+    course_id: stringOrNull(p.courseId),
+    course_name: stringOrNull(p.courseName),
+    class_id: stringOrNull(p.classId),
+    academic_year: stringOrNull(p.academicYear),
+    question_set_id: stringOrNull(p.questionSetId),
+
+    question_id: stringOrNull(x.scenarioId),
+    week: stringOrNull(p.week),
+    week_label: stringOrNull(p.weekLabel),
+    question_number: stringOrNull(p.questionNumber),
+    topic: stringOrNull(x.scenarioTitle),
+    question: stringOrNull(x.scenarioText),
+
+    release_date: stringOrNull(p.releaseDate),
+    deadline: stringOrNull(p.deadline),
+    started_at: stringOrNull(p.startedAt),
+    completed_at: stringOrNull(x.submittedAt),
+    is_late: !!x.isLate,
+
+    total_concepts: x.totalItems || null,
+    concepts_mastered: x.correctItems || null,
+    total_exchanges: numberOrNull(p.totalExchanges),
+    time_minutes: numberOrNull(p.timeMinutes),
+
+    self_concepts: p.selfConcepts || null,
+    socratic_history: p.socraticHistory || null,
+    confirmed_roadmap: p.confirmedRoadmap || null,
+    mastered_concepts: p.masteredConcepts || null,
+    essay_text: stringOrNull(p.essayText),
+    essay_citations: p.essayCitations || null,
+    reflection_text: stringOrNull(p.reflectionText),
+    reflection_learned: stringOrNull(p.reflectionLearned),
+
+    raw: x.fullRecord
+  };
+
+  if (includeFullRecord) {
+    row.full_record = x.fullRecord;
   }
-};
+
+  return row;
+}
+
+async function insertRow(endpoint, serviceKey, row) {
+  const response = await fetch(endpoint, {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+      apikey: serviceKey,
+      authorization: `Bearer ${serviceKey}`,
+      prefer: 'return=representation'
+    },
+    body: JSON.stringify(row)
+  });
+
+  const text = await response.text();
+  let data;
+  try { data = JSON.parse(text); } catch { data = { error: text }; }
+
+  if (!response.ok) {
+    const message = (data && (data.message || data.error || data.details)) || text || 'Supabase insert failed.';
+    const error = new Error(String(message));
+    error.status = response.status;
+    error.data = data;
+    throw error;
+  }
+
+  return Array.isArray(data) ? data[0] : data;
+}
+
+function looksLikeColumnMismatch(error) {
+  const msg = String(error && error.message || '').toLowerCase();
+  const status = Number(error && error.status);
+
+  return (
+    status === 400 &&
+    (
+      msg.includes('column') ||
+      msg.includes('schema cache') ||
+      msg.includes('could not find') ||
+      msg.includes('pgrst204')
+    )
+  );
+}
+
+function stringOrNull(value) {
+  return value === '' || value == null ? null : String(value);
+}
+
+function numberOrNull(value) {
+  const n = Number(value);
+  return Number.isFinite(n) && value !== '' && value != null ? n : null;
+}
+
+function boolOrNull(value) {
+  if (value === true || value === 'true') return true;
+  if (value === false || value === 'false') return false;
+  return null;
+}
+
+function arrayOrEmpty(value) {
+  if (!value) return [];
+  if (Array.isArray(value)) return value;
+  if (typeof value === 'string') {
+    try {
+      const parsed = JSON.parse(value);
+      if (Array.isArray(parsed)) return parsed;
+    } catch {}
+    return value.split(';').map(x => x.trim()).filter(Boolean);
+  }
+  return [];
+}
 
 function json(statusCode, obj) {
   return {

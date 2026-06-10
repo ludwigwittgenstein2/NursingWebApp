@@ -5,1028 +5,262 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Nursing Education Faculty Dashboard</title>
 <style>
-  body {
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    background: #f5f2eb;
-    color: #1a1814;
-    margin: 0;
-    padding: 24px;
-  }
-
-  .wrap {
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-
-  .card {
-    background: #fff;
-    border: 1px solid #ddd8cc;
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 16px;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-  }
-
-  h1 {
-    font-size: 28px;
-    margin: 0 0 4px;
-  }
-
-  .sub {
-    color: #6f675f;
-    font-size: 14px;
-    margin-bottom: 20px;
-  }
-
-  input {
-    padding: 10px 12px;
-    border: 1px solid #c8c2b4;
-    border-radius: 8px;
-    font-size: 14px;
-    width: 280px;
-    max-width: 100%;
-  }
-
-  select {
-    padding: 10px 12px;
-    border: 1px solid #c8c2b4;
-    border-radius: 8px;
-    font-size: 14px;
-    min-width: 180px;
-    background: #fff;
-  }
-
-  .filter-label {
-    display: block;
-    font-size: 12px;
-    color: #6f675f;
-    margin-bottom: 4px;
-  }
-
-  .checkbox-row {
-    display: flex;
-    gap: 6px;
-    align-items: center;
-    font-size: 13px;
-    color: #4a4540;
-    padding-bottom: 10px;
-  }
-
-  .checkbox-row input {
-    width: auto;
-  }
-
-  button {
-    background: #2d6a4f;
-    color: #fff;
-    border: 0;
-    border-radius: 8px;
-    padding: 10px 16px;
-    font-weight: 600;
-    cursor: pointer;
-  }
-
-  button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-
-  .stats {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-    margin-bottom: 16px;
-  }
-
-  .stat {
-    background: #fff;
-    border: 1px solid #ddd8cc;
-    border-radius: 10px;
-    padding: 12px 16px;
-    min-width: 140px;
-  }
-
-  .stat .num {
-    font-size: 22px;
-    font-weight: 700;
-    color: #2d6a4f;
-  }
-
-  .stat .lbl {
-    font-size: 12px;
-    color: #6f675f;
-    text-transform: uppercase;
-    letter-spacing: .04em;
-  }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    background: #fff;
-    border: 1px solid #ddd8cc;
-    border-radius: 12px;
-    overflow: hidden;
-  }
-
-  th, td {
-    border-bottom: 1px solid #eee8dc;
-    padding: 10px;
-    font-size: 13px;
-    text-align: left;
-    vertical-align: top;
-  }
-
-  th {
-    background: #ede9e0;
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: .04em;
-    color: #4a4540;
-  }
-
-  tr:hover td {
-    background: #faf8f4;
-  }
-
-  .mono {
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    font-size: 12px;
-  }
-
-  .pill {
-    display: inline-block;
-    border-radius: 999px;
-    padding: 2px 8px;
-    font-size: 11px;
-    font-weight: 600;
-  }
-
-  .complete {
-    background: #d8ede3;
-    color: #2d6a4f;
-  }
-
-  .late {
-    background: #fce8e6;
-    color: #c0392b;
-  }
-
-  .error {
-    color: #c0392b;
-    margin-top: 12px;
-  }
-
-  details {
-    max-width: 480px;
-  }
-
-  summary {
-    cursor: pointer;
-    color: #2d6a4f;
-    font-weight: 600;
-  }
-
-  pre {
-    white-space: pre-wrap;
-    word-break: break-word;
-    background: #faf8f4;
-    border: 1px solid #ddd8cc;
-    border-radius: 8px;
-    padding: 10px;
-    max-height: 300px;
-    overflow: auto;
-  }
-
-  .detail-section {
-    margin-bottom: 14px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid #eee8dc;
-  }
-
-  .detail-section:last-child {
-    border-bottom: 0;
-  }
-
-  .detail-title {
-    font-size: 12px;
-    color: #6f675f;
-    text-transform: uppercase;
-    letter-spacing: .04em;
-    margin-bottom: 6px;
-    font-weight: 700;
-  }
-
-  .detail-box {
-    background: #faf8f4;
-    border: 1px solid #ddd8cc;
-    border-radius: 8px;
-    padding: 10px;
-    font-size: 13px;
-    line-height: 1.55;
-    white-space: pre-wrap;
-  }
-
-  .chat-line {
-    margin-bottom: 8px;
-  }
-
-  .chat-role {
-    font-weight: 700;
-    color: #2d6a4f;
-  }
+  :root{--bg:#f5f2eb;--surface:#fff;--surface2:#faf8f4;--border:#ddd8cc;--border-dark:#c8c2b4;--ink:#1a1814;--ink2:#4a4540;--ink3:#8a8278;--accent:#2d6a4f;--accent-light:#d8ede3;--blue:#1a4a7a;--blue-light:#e0eaf5;--amber:#8a6a1a;--amber-light:#fdecd5;--red:#c0392b;--red-light:#fce8e6;}
+  *{box-sizing:border-box} body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink);margin:0;padding:24px;line-height:1.55}.wrap{max-width:1280px;margin:0 auto}.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px;box-shadow:0 2px 12px rgba(0,0,0,.06)}h1{font-size:28px;margin:0 0 4px}.sub{color:var(--ink3);font-size:14px;margin-bottom:20px}h2{font-size:19px;margin:0 0 12px}input,select{padding:10px 12px;border:1px solid var(--border-dark);border-radius:8px;font-size:14px;background:#fff;max-width:100%}.filter-label{display:block;font-size:12px;color:var(--ink3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em}button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:10px 16px;font-weight:650;cursor:pointer}button.blue{background:var(--blue)}button.amber{background:var(--amber)}button.ghost{background:#fff;color:var(--ink2);border:1px solid var(--border-dark)}button.red{background:var(--red)}button:disabled{opacity:.5;cursor:not-allowed}.row{display:flex;gap:10px;flex-wrap:wrap;align-items:end}.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px;margin-bottom:16px}.stat{background:#fff;border:1px solid var(--border);border-radius:10px;padding:12px 16px}.stat .num{font-size:24px;font-weight:800;color:var(--accent)}.stat .lbl{font-size:11px;color:var(--ink3);text-transform:uppercase;letter-spacing:.04em}.notice{background:var(--blue-light);border:1px solid #b0c8e8;color:var(--blue);border-radius:8px;padding:12px 16px;font-size:13px;margin-bottom:16px}.error{color:var(--red);margin-top:10px;font-size:13px}.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:12px;color:var(--ink3)}table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden}th,td{border-bottom:1px solid #eee8dc;padding:10px;font-size:13px;text-align:left;vertical-align:top}th{background:#ede9e0;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink2)}tr:hover td{background:var(--surface2)}.pill{display:inline-block;border-radius:999px;padding:3px 8px;font-size:11px;font-weight:700;white-space:nowrap}.pill.green{background:var(--accent-light);color:var(--accent)}.pill.red{background:var(--red-light);color:var(--red)}.pill.blue{background:var(--blue-light);color:var(--blue)}.pill.amber{background:var(--amber-light);color:var(--amber)}details{max-width:560px}summary{cursor:pointer;color:var(--accent);font-weight:700}.detail-section{margin:12px 0;padding-bottom:12px;border-bottom:1px solid #eee8dc}.detail-title{font-size:11px;color:var(--ink3);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px;font-weight:800}.detail-box,pre{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px;font-size:13px;white-space:pre-wrap;word-break:break-word;max-height:320px;overflow:auto}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}.bar{height:8px;background:#eee8dc;border-radius:99px;overflow:hidden;margin-top:5px}.bar-fill{height:100%;background:var(--accent);border-radius:99px}.small{font-size:12px;color:var(--ink3)}@media(max-width:800px){body{padding:12px}.grid2{grid-template-columns:1fr}table{display:block;overflow-x:auto}}
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="card">
     <h1>Nursing Education Faculty Dashboard</h1>
-    <div class="sub">Faculty view of Nursing Education student exercise performance.</div>
+    <div class="sub">Faculty view of nursing assessment sessions, scores, pass/fail status, missed rubric items, and learner trends.</div>
 
     <div id="loginBox">
-      <input type="password" id="password" placeholder="Faculty dashboard password">
-      <button onclick="loadDashboard()">Load dashboard</button>
-      <div id="loginError" class="error"></div>
-
-      <div style="margin-top:14px;padding-top:14px;border-top:1px solid #ddd8cc">
-        <div style="font-size:13px;color:#6f675f;margin-bottom:8px">
-          No server connected? View demo data from this browser, or load student export files.
-        </div>
-        <button onclick="loadDemoDashboard()" style="background:#1a4a7a">View demo data (offline)</button>
-        <button onclick="document.getElementById('facultyImport').click()" style="background:#8a6a1a">Load export files…</button>
+      <div class="row">
+        <div><label class="filter-label">Faculty dashboard password</label><input type="password" id="password" placeholder="Faculty dashboard password"></div>
+        <button onclick="loadDashboard()">Load dashboard</button>
+        <button class="blue" onclick="loadDemoDashboard()">View local/demo data</button>
+        <button class="amber" onclick="document.getElementById('facultyImport').click()">Load student export files…</button>
         <input type="file" id="facultyImport" accept=".json" multiple style="display:none" onchange="importFacultyFiles(event)">
-        <div id="importedCount" style="font-size:12px;color:#6f675f;margin-top:8px"></div>
       </div>
-
-      <div style="margin-top:12px">
-        <a href="admin.html" style="font-size:13px;color:#1a4a7a">← Admin hub</a>
-        ·
-        <a href="index.html" style="font-size:13px;color:#1a4a7a">Student app</a>
-      </div>
+      <div id="loginError" class="error"></div>
+      <div id="importedCount" class="small" style="margin-top:8px"></div>
+      <div style="margin-top:12px"><a href="admin.html" style="color:var(--blue);font-size:13px">← Admin hub</a> · <a href="index.html" style="color:var(--blue);font-size:13px">Student app</a></div>
     </div>
   </div>
 
-  <div id="demoNotice" style="display:none;background:#e0eaf5;border:1px solid #b0c8e8;color:#1a4a7a;border-radius:8px;padding:12px 16px;font-size:13px;margin-bottom:16px">
-    <strong>Offline demo mode.</strong> Showing completed exercises from this browser and any export files you loaded. No live server connected.
-  </div>
+  <div id="demoNotice" class="notice" style="display:none"><strong>Offline/demo mode.</strong> Reading sessions from this browser and any student JSON export files you loaded. No Azure SQL is required.</div>
 
   <div id="dashboard" style="display:none">
     <div class="stats">
-      <div class="stat">
-        <div class="num" id="statRows">0</div>
-        <div class="lbl">Rows</div>
-      </div>
-
-      <div class="stat">
-        <div class="num" id="statStudents">0</div>
-        <div class="lbl">Students</div>
-      </div>
-
-      <div class="stat">
-        <div class="num" id="statQuestions">0</div>
-        <div class="lbl">Questions</div>
-      </div>
-
-      <div class="stat">
-        <div class="num" id="statLate">0</div>
-        <div class="lbl">Late</div>
-      </div>
-
-      <div class="stat">
-        <div class="num" id="statRosterStudents">0</div>
-        <div class="lbl">Roster Students</div>
-      </div>
-
-      <div class="stat">
-        <div class="num" id="statPAs">0</div>
-        <div class="lbl">PAs</div>
-      </div>
+      <div class="stat"><div class="num" id="statAttempts">0</div><div class="lbl">Scenario Attempts</div></div>
+      <div class="stat"><div class="num" id="statStudents">0</div><div class="lbl">Students</div></div>
+      <div class="stat"><div class="num" id="statSessions">0</div><div class="lbl">Sessions</div></div>
+      <div class="stat"><div class="num" id="statAvgScore">0%</div><div class="lbl">Average Score</div></div>
+      <div class="stat"><div class="num" id="statPassRate">0%</div><div class="lbl">Pass Rate</div></div>
+      <div class="stat"><div class="num" id="statDxRate">0%</div><div class="lbl">Diagnosis Correct</div></div>
+      <div class="stat"><div class="num" id="statTutorNeeded">0</div><div class="lbl">Tutoring Needed</div></div>
     </div>
 
     <div class="card">
-      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:end">
-        <div>
-          <label class="filter-label">PA</label>
-          <select id="paFilter" onchange="applyFilters()">
-            <option value="">All PAs</option>
-          </select>
-        </div>
-
-        <div>
-          <label class="filter-label">Class</label>
-          <select id="classFilter" onchange="applyFilters()">
-            <option value="">All classes</option>
-          </select>
-        </div>
-
-        <div>
-          <label class="filter-label">Course</label>
-          <select id="courseFilter" onchange="applyFilters()">
-            <option value="">All courses</option>
-          </select>
-        </div>
-
-        <div>
-          <label class="filter-label">Week / Question</label>
-          <select id="questionFilter" onchange="applyFilters()">
-            <option value="">All questions</option>
-          </select>
-        </div>
-
-        <div>
-          <label class="filter-label">Search</label>
-          <input type="text" id="searchFilter" placeholder="Student, email, topic..." oninput="applyFilters()">
-        </div>
-
-        <label class="checkbox-row">
-          <input type="checkbox" id="lateOnlyFilter" onchange="applyFilters()">
-          Late only
-        </label>
-
-        <button onclick="loadDashboard()">Refresh</button>
+      <div class="row">
+        <div><label class="filter-label">Scenario</label><select id="scenarioFilter" onchange="applyFilters()"><option value="">All scenarios</option></select></div>
+        <div><label class="filter-label">Status</label><select id="statusFilter" onchange="applyFilters()"><option value="">All statuses</option><option value="pass">Pass</option><option value="fail">Needs tutoring</option><option value="dx_wrong">Diagnosis incorrect</option></select></div>
+        <div><label class="filter-label">Model</label><select id="modelFilter" onchange="applyFilters()"><option value="">All models</option></select></div>
+        <div><label class="filter-label">Search</label><input type="text" id="searchFilter" placeholder="Name, employee ID, email..." oninput="applyFilters()"></div>
+        <button onclick="exportFilteredCsv()">⬇ Export CSV</button>
+        <button class="ghost" onclick="loadDemoDashboard()">Refresh local data</button>
       </div>
     </div>
 
+    <div class="grid2">
+      <div id="competencyWrap"></div>
+      <div id="missedWrap"></div>
+    </div>
+
     <div id="tableWrap"></div>
-    <div id="summaryWrap" style="margin-top:16px"></div>
+    <div id="studentSummaryWrap" style="margin-top:16px"></div>
   </div>
 </div>
 
 <script>
-let lastPassword = '';
-let dashboardRows = [];
-let dashboardStudents = [];
-let dashboardPAs = [];
-let importedRows = [];
+let lastPassword='';
+let allRows=[];
+let filteredRows=[];
+let importedRows=[];
 
-function recordToRow(stu, rec) {
+function esc(value){return String(value??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function safeJsonParse(text,fallback=null){try{return JSON.parse(text);}catch(e){return fallback;}}
+function asArray(v){return Array.isArray(v)?v:[];}
+function pct(n){return Math.round(Number(n)||0);}
+function dateText(iso){if(!iso)return '';try{return new Date(iso).toLocaleString();}catch(e){return iso;}}
+function keyStudent(row){return row.studentUUID || row.employeeId || row.email || row.studentName || 'unknown';}
+function getStudentFromState(stu={}){return {studentUUID:stu.studentUUID||'',studentName:stu.studentName||stu.googleName||stu.name||'',employeeId:stu.employeeId||stu.student?.employeeId||'',email:stu.email||stu.googleEmail||stu.student?.email||'',googleEmail:stu.googleEmail||''};}
+
+function attemptToRow(stu,session,attempt,source='local'){
+  const ev=attempt.evaluation||{};
+  const student=session.student || stu || {};
+  const s={...getStudentFromState(stu),...getStudentFromState(student)};
   return {
-    studentName: stu.studentName || stu.googleName || '',
-    googleEmail: stu.googleEmail || '',
-    studentUUID: stu.studentUUID || '',
-    courseId: rec.courseId || stu.courseId || '',
-    courseName: rec.courseName || stu.courseName || '',
-    classId: rec.classId || '',
-    academicYear: rec.academicYear || '',
-    questionId: rec.questionId || '',
-    questionNumber: rec.questionNumber || '',
-    weekLabel: rec.weekLabel || '',
-    topic: rec.topic || '',
-    isLate: String(!!rec.isLate),
-    conceptsMastered: rec.conceptsMastered != null ? rec.conceptsMastered : (rec.masteredConcepts ? Object.keys(rec.masteredConcepts).length : 0),
-    totalConcepts: rec.totalConcepts != null ? rec.totalConcepts : (rec.confirmedRoadmap ? rec.confirmedRoadmap.length : 0),
-    totalExchanges: rec.totalExchanges != null ? rec.totalExchanges : '',
-    timeMinutes: rec.timeMinutes != null ? rec.timeMinutes : '',
-    completedAt: rec.completedAt || '',
-    submittedAt: rec.completedAt || '',
-    fullRecordJson: JSON.stringify(rec)
+    source,
+    studentUUID:s.studentUUID,
+    studentName:s.studentName || student.fullName || '',
+    employeeId:s.employeeId || student.employeeId || '',
+    email:s.email || student.email || '',
+    googleEmail:s.googleEmail || '',
+    sessionId:session.sessionId||'',
+    startedAt:session.startedAt||'',
+    completedAt:session.completedAt||attempt.submittedAt||'',
+    scenarioId:attempt.scenarioId||'',
+    scenarioTitle:attempt.title||attempt.scenarioTitle||'',
+    scorePercent:pct(ev.scorePercent),
+    pass:ev.pass===true,
+    diagnosisCorrect:ev.diagnosisCorrect===true,
+    tutoringRequired:ev.tutoringRequired===true || ev.pass===false || ev.diagnosisCorrect===false || pct(ev.scorePercent)<50,
+    modelUsed:attempt.modelUsed||ev.modelUsed||'',
+    strengths:asArray(ev.strengths),
+    improvementAreas:asArray(ev.improvementAreas),
+    missedAbnormalFindings:asArray(ev.missedAbnormalFindings),
+    missedNursingActions:asArray(ev.missedNursingActions),
+    competencyBreakdown:asArray(ev.competencyBreakdown),
+    answers:attempt.answers||{},
+    raw:{student:s,session,attempt}
   };
 }
 
-function buildRowsFromLocalStorage() {
-  const rows = [];
+function legacyExerciseToRow(stu,rec,source='legacy'){
+  const s=getStudentFromState(stu);
+  const mastered=rec.masteredConcepts?Object.keys(rec.masteredConcepts).length:Number(rec.conceptsMastered||0);
+  const total=Number(rec.totalConcepts||rec.confirmedRoadmap?.length||0);
+  const score=total?Math.round((mastered/total)*100):0;
+  return {
+    source,studentUUID:s.studentUUID,studentName:s.studentName,employeeId:s.employeeId||'',email:s.email||'',googleEmail:s.googleEmail||'',
+    sessionId:rec.sessionId||'',startedAt:rec.startedAt||'',completedAt:rec.completedAt||'',scenarioId:rec.questionId||'',scenarioTitle:rec.topic||'',scorePercent:score,pass:score>=50,diagnosisCorrect:false,tutoringRequired:score<50,modelUsed:rec.modelUsed||'legacy',strengths:[],improvementAreas:[],missedAbnormalFindings:[],missedNursingActions:[],competencyBreakdown:[],answers:{},raw:{student:s,session:{},attempt:rec}
+  };
+}
 
-  try {
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-
-      if (!key || !key.startsWith('medtutor_student_')) continue;
-
-      const stu = JSON.parse(localStorage.getItem(key));
-
-      if (!stu || !Array.isArray(stu.completedExercises)) continue;
-
-      stu.completedExercises.forEach(rec => rows.push(recordToRow(stu, rec)));
-    }
-  } catch (e) {
-    console.warn(e);
-  }
-
+function rowsFromStateObject(stu,source='local'){
+  const rows=[];
+  asArray(stu.completedSessions).forEach(session=>asArray(session.scenarioAttempts).forEach(attempt=>rows.push(attemptToRow(stu,session,attempt,source))));
+  asArray(stu.completedExercises).forEach(rec=>rows.push(legacyExerciseToRow(stu,rec,source)));
   return rows;
 }
 
-function importFacultyFiles(event) {
-  const files = Array.from(event.target.files || []);
-
-  if (!files.length) return;
-
-  let pending = files.length;
-
-  files.forEach(file => {
-    const reader = new FileReader();
-
-    reader.onload = e => {
-      try {
-        const data = JSON.parse(e.target.result);
-
-        const stu = data.student || {
-          studentName: data.studentName,
-          googleEmail: data.googleEmail,
-          studentUUID: data.studentUUID,
-          courseId: data.courseId,
-          courseName: data.courseName
-        };
-
-        const recs = Array.isArray(data.completedExercises) ? data.completedExercises : [];
-
-        recs.forEach(rec => importedRows.push(recordToRow(stu, rec)));
-      } catch (err) {
-        console.warn('Bad export file', err);
-      }
-
-      if (--pending === 0) {
-        const cnt = document.getElementById('importedCount');
-
-        if (cnt) {
-          cnt.textContent = `${importedRows.length} record(s) loaded from files.`;
-        }
-
-        loadDemoDashboard();
-      }
-    };
-
-    reader.readAsText(file);
-  });
+function buildRowsFromLocalStorage(){
+  const rows=[];
+  const seen=new Set();
+  try{
+    const main=safeJsonParse(localStorage.getItem('nursing_assessment_state_v3')||'null');
+    if(main){rows.push(...rowsFromStateObject(main,'local-main'));seen.add('nursing_assessment_state_v3');}
+    for(let i=0;i<localStorage.length;i++){
+      const key=localStorage.key(i); if(!key||seen.has(key))continue;
+      if(key.startsWith('medtutor_student_')){const stu=safeJsonParse(localStorage.getItem(key)||'null'); if(stu)rows.push(...rowsFromStateObject(stu,'local-student'));}
+    }
+  }catch(e){console.warn(e);}
+  return dedupeRows(rows);
 }
 
-function loadDemoDashboard() {
-  // Demo password gate — uses the password set in Admin → App Config, if any.
-  let demoPw = '';
+function dedupeRows(rows){const seen=new Set();return rows.filter(r=>{const k=[r.studentUUID,r.employeeId,r.email,r.sessionId,r.scenarioId,r.completedAt,r.scorePercent].join('|');if(seen.has(k))return false;seen.add(k);return true;});}
 
-  try {
-    const c = JSON.parse(localStorage.getItem('medtutor_admin_config') || '{}');
-    demoPw = c.facultyPassword || '';
-  } catch (e) {}
-
-  if (demoPw) {
-    const typed = (document.getElementById('password')?.value || lastPassword || '').trim();
-
-    if (typed !== demoPw) {
-      const le = document.getElementById('loginError');
-
-      if (le) {
-        le.textContent = 'Enter the faculty password to view the dashboard.';
-      }
-
-      return;
-    }
-  }
-
-  const notice = document.getElementById('demoNotice');
-
-  if (notice) {
-    notice.style.display = 'block';
-  }
-
-  dashboardRows = buildRowsFromLocalStorage().concat(importedRows);
-  dashboardStudents = [];
-  dashboardPAs = [];
-
-  document.getElementById('dashboard').style.display = 'block';
-
-  populateFilters(dashboardRows, dashboardPAs);
-  renderDashboard(dashboardRows, dashboardStudents, dashboardPAs);
-
-  if (!dashboardRows.length) {
-    const tw = document.getElementById('tableWrap');
-
-    if (tw) {
-      tw.innerHTML = '<div class="card">No completed exercises found in this browser yet. Complete an exercise in the student app first, or load export files above.</div>';
-    }
-  }
+function importFacultyFiles(event){
+  const files=Array.from(event.target.files||[]); if(!files.length)return;
+  let pending=files.length;
+  files.forEach(file=>{const reader=new FileReader();reader.onload=e=>{try{const data=JSON.parse(e.target.result);const stu=data.student||data;importedRows.push(...rowsFromStateObject({...data,...stu,completedSessions:data.completedSessions||stu.completedSessions||[],completedExercises:data.completedExercises||stu.completedExercises||[]},'import'));}catch(err){console.warn('Bad export file',file.name,err);} if(--pending===0){document.getElementById('importedCount').textContent=`${importedRows.length} scenario attempt row(s) loaded from student export files.`;loadDemoDashboard();}};reader.readAsText(file);});
 }
 
-async function loadDashboard() {
-  const password = document.getElementById('password')?.value || lastPassword;
-  const loginError = document.getElementById('loginError');
-
-  if (loginError) {
-    loginError.textContent = '';
-  }
-
-  if (!password) {
-    if (loginError) {
-      loginError.textContent = 'Enter the dashboard password.';
-    }
-
-    return;
-  }
-
-  lastPassword = password;
-
-  const button = document.querySelector('button');
-
-  if (button) {
-    button.disabled = true;
-  }
-
-  try {
-    let response;
-
-    try {
-      response = await fetch('/.netlify/functions/faculty-performance', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password })
-      });
-    } catch (networkErr) {
-      // No server reachable at all, for example when opened as a file.
-      loadDemoDashboard();
-      return;
-    }
-
-    const ct = response.headers.get('content-type') || '';
-
-    if (!ct.includes('json')) {
-      // Server returned HTML, likely because the function is not deployed.
-      loadDemoDashboard();
-      return;
-    }
-
-    const data = await response.json().catch(() => ({}));
-
-    if (!response.ok || !data.ok) {
-      throw new Error(data.error || 'Dashboard load failed.');
-    }
-
-    const notice = document.getElementById('demoNotice');
-
-    if (notice) {
-      notice.style.display = 'none';
-    }
-
-    document.getElementById('dashboard').style.display = 'block';
-
-    dashboardRows = data.performance?.rows || [];
-    dashboardStudents = data.students?.rows || [];
-    dashboardPAs = data.pas?.rows || [];
-
-    populateFilters(dashboardRows, dashboardPAs);
-    renderDashboard(dashboardRows, dashboardStudents, dashboardPAs);
-  } catch (err) {
-    if (loginError) {
-      loginError.textContent = err.message || 'Dashboard load failed.';
-    }
-  } finally {
-    if (button) {
-      button.disabled = false;
-    }
-  }
+function checkDemoPassword(){
+  let demoPw='';try{demoPw=(safeJsonParse(localStorage.getItem('medtutor_admin_config')||'{}',{})||{}).facultyPassword||'';}catch(e){}
+  if(!demoPw)return true;
+  const typed=(document.getElementById('password')?.value||lastPassword||'').trim();
+  if(typed!==demoPw){document.getElementById('loginError').textContent='Enter the faculty password to view the dashboard.';return false;}
+  lastPassword=typed;return true;
 }
 
-function populateFilters(rows = [], pasRoster = []) {
-  populatePAFilter(pasRoster);
-  populateClassFilter(rows);
-  populateCourseFilter(rows);
-  populateQuestionFilter(rows);
+function loadDemoDashboard(){
+  document.getElementById('loginError').textContent='';
+  if(!checkDemoPassword())return;
+  document.getElementById('demoNotice').style.display='block';
+  document.getElementById('dashboard').style.display='block';
+  allRows=dedupeRows(buildRowsFromLocalStorage().concat(importedRows));
+  populateFilters(allRows);renderDashboard(allRows);
 }
 
-function setOptions(selectId, options, allLabel) {
-  const select = document.getElementById(selectId);
-
-  if (!select) return;
-
-  const current = select.value;
-
-  select.innerHTML =
-    `<option value="">${esc(allLabel)}</option>` +
-    options.map(opt => {
-      return `<option value="${esc(opt.value)}">${esc(opt.label)}</option>`;
-    }).join('');
-
-  select.value = options.some(opt => opt.value === current) ? current : '';
+async function loadDashboard(){
+  const password=(document.getElementById('password')?.value||lastPassword||'').trim();
+  const loginError=document.getElementById('loginError');loginError.textContent='';
+  if(!password){loginError.textContent='Enter the dashboard password, or click View local/demo data.';return;}
+  lastPassword=password;
+  try{
+    const response=await fetch('/.netlify/functions/faculty-performance',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password})});
+    const ct=response.headers.get('content-type')||'';
+    if(!ct.includes('json')){loadDemoDashboard();return;}
+    const data=await response.json().catch(()=>({}));
+    if(!response.ok||!data.ok)throw new Error(data.error||'Dashboard load failed.');
+    const serverRows=data.assessmentRows||data.rows||data.performance?.rows||[];
+    allRows=serverRows.map(r=>normalizeServerRow(r));
+    document.getElementById('demoNotice').style.display='none';document.getElementById('dashboard').style.display='block';populateFilters(allRows);renderDashboard(allRows);
+  }catch(err){loginError.textContent=(err.message||'Dashboard load failed.')+' You can still use local/demo data or import student export files.';}
 }
 
-function populatePAFilter(pasRoster = []) {
-  const activePAs = pasRoster
-    .filter(pa => String(pa.active || '').toLowerCase() === 'true')
-    .map(pa => {
-      const email = String(pa.paEmail || '').trim();
-
-      return {
-        value: email,
-        label: `${pa.paName || email} (${email})`
-      };
-    })
-    .filter(pa => pa.value)
-    .sort((a, b) => a.label.localeCompare(b.label));
-
-  setOptions('paFilter', activePAs, 'All PAs');
+function normalizeServerRow(r){
+  if(r.evaluation||r.scorePercent!==undefined)return {...r,scorePercent:pct(r.scorePercent),pass:String(r.pass)==='true'||r.pass===true,diagnosisCorrect:String(r.diagnosisCorrect)==='true'||r.diagnosisCorrect===true,strengths:asArray(r.strengths),improvementAreas:asArray(r.improvementAreas),missedAbnormalFindings:asArray(r.missedAbnormalFindings),missedNursingActions:asArray(r.missedNursingActions),competencyBreakdown:asArray(r.competencyBreakdown),raw:r};
+  return legacyExerciseToRow(r,r,'server-legacy');
 }
 
-function populateClassFilter(rows = []) {
-  const values = [...new Set(rows.map(r => r.classId).filter(Boolean))].sort();
-
-  setOptions(
-    'classFilter',
-    values.map(v => ({ value: v, label: v })),
-    'All classes'
-  );
+function populateFilters(rows){
+  setOptions('scenarioFilter',[...new Map(rows.map(r=>[r.scenarioId,{value:r.scenarioId,label:`${r.scenarioId} · ${r.scenarioTitle}`}]).filter(x=>x[0])).values()].sort((a,b)=>a.label.localeCompare(b.label)),'All scenarios');
+  setOptions('modelFilter',[...new Set(rows.map(r=>r.modelUsed).filter(Boolean))].sort().map(v=>({value:v,label:v})),'All models');
 }
+function setOptions(id,options,allLabel){const s=document.getElementById(id);const cur=s.value;s.innerHTML=`<option value="">${esc(allLabel)}</option>`+options.map(o=>`<option value="${esc(o.value)}">${esc(o.label)}</option>`).join('');s.value=options.some(o=>o.value===cur)?cur:'';}
+function applyFilters(){renderDashboard(allRows);}
 
-function populateCourseFilter(rows = []) {
-  const values = [...new Set(rows.map(r => r.courseId).filter(Boolean))].sort();
-
-  setOptions(
-    'courseFilter',
-    values.map(v => ({ value: v, label: v })),
-    'All courses'
-  );
-}
-
-function populateQuestionFilter(rows = []) {
-  const seen = {};
-
-  rows.forEach(r => {
-    const id = String(r.questionId || '').trim();
-
-    if (!id) return;
-
-    const label = `${r.weekLabel || 'Week ?'} · Q${r.questionNumber || '?'} · ${r.topic || id}`;
-
-    seen[id] = label;
-  });
-
-  const options = Object.entries(seen)
-    .map(([value, label]) => ({ value, label }))
-    .sort((a, b) => a.label.localeCompare(b.label));
-
-  setOptions('questionFilter', options, 'All questions');
-}
-
-function applyFilters() {
-  renderDashboard(dashboardRows, dashboardStudents, dashboardPAs);
-}
-
-function renderDashboard(rows, studentsRoster = [], pasRoster = []) {
-  const selectedPA = String(document.getElementById('paFilter')?.value || '').trim().toLowerCase();
-  const selectedClass = String(document.getElementById('classFilter')?.value || '').trim();
-  const selectedCourse = String(document.getElementById('courseFilter')?.value || '').trim();
-  const selectedQuestion = String(document.getElementById('questionFilter')?.value || '').trim();
-  const lateOnly = !!document.getElementById('lateOnlyFilter')?.checked;
-  const searchText = String(document.getElementById('searchFilter')?.value || '').trim().toLowerCase();
-
-  const studentByEmail = {};
-
-  studentsRoster.forEach(s => {
-    const email = String(s.googleEmail || '').trim().toLowerCase();
-
-    if (email) {
-      studentByEmail[email] = s;
-    }
-  });
-
-  const filteredRows = rows.filter(row => {
-    const rowEmail = String(row.googleEmail || '').trim().toLowerCase();
-    const rosterMatch = studentByEmail[rowEmail] || {};
-    const assignedPA = String(rosterMatch.assignedPAEmail || '').trim().toLowerCase();
-
-    if (selectedPA && assignedPA !== selectedPA) return false;
-    if (selectedClass && String(row.classId || '') !== selectedClass) return false;
-    if (selectedCourse && String(row.courseId || '') !== selectedCourse) return false;
-    if (selectedQuestion && String(row.questionId || '') !== selectedQuestion) return false;
-    if (lateOnly && String(row.isLate).toLowerCase() !== 'true') return false;
-
-    if (searchText) {
-      const haystack = [
-        row.studentName,
-        row.googleEmail,
-        row.studentUUID,
-        row.courseId,
-        row.courseName,
-        row.questionId,
-        row.weekLabel,
-        row.topic,
-        assignedPA
-      ].join(' ').toLowerCase();
-
-      if (!haystack.includes(searchText)) return false;
-    }
-
+function getFiltered(rows){
+  const scenario=document.getElementById('scenarioFilter').value;
+  const status=document.getElementById('statusFilter').value;
+  const model=document.getElementById('modelFilter').value;
+  const search=(document.getElementById('searchFilter').value||'').toLowerCase().trim();
+  return rows.filter(r=>{
+    if(scenario&&r.scenarioId!==scenario)return false;
+    if(model&&r.modelUsed!==model)return false;
+    if(status==='pass'&&!r.pass)return false;
+    if(status==='fail'&&r.pass)return false;
+    if(status==='dx_wrong'&&r.diagnosisCorrect)return false;
+    if(search){const hay=[r.studentName,r.employeeId,r.email,r.googleEmail,r.studentUUID,r.scenarioId,r.scenarioTitle,r.modelUsed].join(' ').toLowerCase();if(!hay.includes(search))return false;}
     return true;
   });
+}
 
-  const students = new Set(
-    filteredRows
-      .map(r => r.studentUUID || r.googleEmail || r.studentName)
-      .filter(Boolean)
-  );
+function renderDashboard(rows){
+  filteredRows=getFiltered(rows);
+  const students=new Set(filteredRows.map(keyStudent).filter(Boolean));
+  const sessions=new Set(filteredRows.map(r=>r.sessionId).filter(Boolean));
+  const avg=filteredRows.length?Math.round(filteredRows.reduce((a,r)=>a+pct(r.scorePercent),0)/filteredRows.length):0;
+  const passRate=filteredRows.length?Math.round(filteredRows.filter(r=>r.pass).length/filteredRows.length*100):0;
+  const dxRate=filteredRows.length?Math.round(filteredRows.filter(r=>r.diagnosisCorrect).length/filteredRows.length*100):0;
+  document.getElementById('statAttempts').textContent=filteredRows.length;
+  document.getElementById('statStudents').textContent=students.size;
+  document.getElementById('statSessions').textContent=sessions.size;
+  document.getElementById('statAvgScore').textContent=avg+'%';
+  document.getElementById('statPassRate').textContent=passRate+'%';
+  document.getElementById('statDxRate').textContent=dxRate+'%';
+  document.getElementById('statTutorNeeded').textContent=filteredRows.filter(r=>r.tutoringRequired).length;
+  renderCompetencies(filteredRows);renderMissedItems(filteredRows);renderTable(filteredRows);renderStudentSummary(filteredRows);
+}
 
-  const questions = new Set(
-    filteredRows
-      .map(r => r.questionId)
-      .filter(Boolean)
-  );
-
-  const lateRows = filteredRows.filter(r => String(r.isLate).toLowerCase() === 'true');
-
-  document.getElementById('statRows').textContent = filteredRows.length;
-  document.getElementById('statStudents').textContent = students.size;
-  document.getElementById('statQuestions').textContent = questions.size;
-  document.getElementById('statLate').textContent = lateRows.length;
-  document.getElementById('statRosterStudents').textContent = studentsRoster.length;
-  document.getElementById('statPAs').textContent = pasRoster.length;
-
-  const sorted = [...filteredRows].sort((a, b) => {
-    return String(b.completedAt || b.submittedAt || '').localeCompare(
-      String(a.completedAt || a.submittedAt || '')
-    );
+function renderCompetencies(rows){
+  const map={};
+  rows.forEach(r=>asArray(r.competencyBreakdown).forEach(c=>{const area=c.area||c.competencyArea||c.label||'Unknown';if(!map[area])map[area]={sum:0,n:0};map[area].sum+=Number(c.percent??c.scorePercent??0);map[area].n++;}));
+  const list=Object.entries(map).map(([area,v])=>({area,avg:Math.round(v.sum/v.n),n:v.n})).sort((a,b)=>a.avg-b.avg);
+  document.getElementById('competencyWrap').innerHTML=`<div class="card"><h2>Competency Trends</h2>${list.length?list.map(x=>`<div style="margin-bottom:10px"><strong>${esc(x.area)}</strong><div class="small">Average ${x.avg}% · ${x.n} attempt(s)</div><div class="bar"><div class="bar-fill" style="width:${Math.max(0,Math.min(100,x.avg))}%"></div></div></div>`).join(''):'<div class="small">No competency breakdown available yet.</div>'}</div>`;
+}
+function renderMissedItems(rows){
+  const counts={};
+  rows.forEach(r=>{
+    asArray(r.missedAbnormalFindings).forEach(x=>{const item=x.item||x.expected||String(x);counts['Finding: '+item]=(counts['Finding: '+item]||0)+1;});
+    asArray(r.missedNursingActions).forEach(x=>{const item=x.item||x.expected||String(x);counts['Action: '+item]=(counts['Action: '+item]||0)+1;});
   });
-
-  renderStudentSummary(filteredRows, studentsRoster);
-
-  const tableRows = sorted.map(row => {
-    const payload = parsePayload(row.fullRecordJson);
-    const status = row.completedAt ? 'Complete' : 'In progress';
-    const late = String(row.isLate).toLowerCase() === 'true';
-
-    const rowEmail = String(row.googleEmail || '').trim().toLowerCase();
-    const rosterMatch = studentByEmail[rowEmail] || {};
-    const assignedPA = rosterMatch.assignedPAEmail || '';
-
-    return `
-      <tr>
-        <td>
-          ${esc(row.studentName)}
-          <div class="mono">${esc(row.googleEmail)}</div>
-          ${assignedPA ? `<div class="mono">PA: ${esc(assignedPA)}</div>` : ''}
-        </td>
-        <td class="mono">${esc(row.studentUUID)}</td>
-        <td>
-          ${esc(row.courseId)}
-          <div class="mono">${esc(row.classId)} · ${esc(row.academicYear)}</div>
-        </td>
-        <td>
-          ${esc(row.weekLabel)} · Q${esc(row.questionNumber)}
-          <div class="mono">${esc(row.questionId)}</div>
-        </td>
-        <td>${esc(row.topic)}</td>
-        <td>
-          <span class="pill complete">${esc(status)}</span>
-          ${late ? ' <span class="pill late">Late</span>' : ''}
-        </td>
-        <td>${esc(row.conceptsMastered)} / ${esc(row.totalConcepts)}</td>
-        <td>${esc(row.totalExchanges)}</td>
-        <td>${esc(row.timeMinutes)}m</td>
-        <td>${formatDate(row.completedAt || row.submittedAt)}</td>
-        <td>
-          ${renderDetailViewer(row, payload)}
-        </td>
-      </tr>
-    `;
-  }).join('');
-
-  document.getElementById('tableWrap').innerHTML = `
-    <table>
-      <thead>
-        <tr>
-          <th>Student</th>
-          <th>UUID</th>
-          <th>Course</th>
-          <th>Question</th>
-          <th>Topic</th>
-          <th>Status</th>
-          <th>Concepts</th>
-          <th>Exchanges</th>
-          <th>Time</th>
-          <th>Completed/Saved</th>
-          <th>Details</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${tableRows || '<tr><td colspan="11">No records found.</td></tr>'}
-      </tbody>
-    </table>
-  `;
+  const list=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  document.getElementById('missedWrap').innerHTML=`<div class="card"><h2>Most Missed Items</h2>${list.length?`<table><thead><tr><th>Item</th><th>Misses</th></tr></thead><tbody>${list.map(([item,n])=>`<tr><td>${esc(item)}</td><td>${n}</td></tr>`).join('')}</tbody></table>`:'<div class="small">No missed-item data available yet.</div>'}</div>`;
 }
 
-function renderDetailViewer(row, payload) {
-  const record = payload || row || {};
+function renderTable(rows){
+  const sorted=[...rows].sort((a,b)=>String(b.completedAt).localeCompare(String(a.completedAt)));
+  document.getElementById('tableWrap').innerHTML=`<div class="card"><h2>Scenario Attempts</h2><table><thead><tr><th>Student</th><th>Employee / Email</th><th>Session</th><th>Scenario</th><th>Score</th><th>Pass</th><th>Diagnosis</th><th>Model</th><th>Completed</th><th>Details</th></tr></thead><tbody>${sorted.map(renderRow).join('')||'<tr><td colspan="10">No assessment records found. Complete a student session or import JSON export files.</td></tr>'}</tbody></table></div>`;
+}
+function renderRow(r){return `<tr><td><strong>${esc(r.studentName||'')}</strong><div class="mono">${esc(r.studentUUID||'')}</div></td><td>${esc(r.employeeId||'')}<div class="mono">${esc(r.email||r.googleEmail||'')}</div></td><td class="mono">${esc(r.sessionId||'')}</td><td><strong>${esc(r.scenarioTitle||'')}</strong><div class="mono">${esc(r.scenarioId||'')}</div></td><td><strong>${pct(r.scorePercent)}%</strong></td><td>${r.pass?'<span class="pill green">Pass</span>':'<span class="pill red">Needs tutoring</span>'}</td><td>${r.diagnosisCorrect?'<span class="pill green">Correct</span>':'<span class="pill red">Incorrect</span>'}</td><td><span class="pill blue">${esc(r.modelUsed||'—')}</span></td><td>${dateText(r.completedAt)}</td><td>${renderDetails(r)}</td></tr>`;}
+function renderDetails(r){const ev=r.raw?.attempt?.evaluation||{};return `<details><summary>View Details</summary><div class="detail-section"><div class="detail-title">Strengths</div><div class="detail-box">${esc(asArray(r.strengths).join('\n')||'—')}</div></div><div class="detail-section"><div class="detail-title">Improvement Areas</div><div class="detail-box">${esc(asArray(r.improvementAreas).join('\n')||'—')}</div></div><div class="detail-section"><div class="detail-title">Missed Abnormal Findings</div><div class="detail-box">${esc(asArray(r.missedAbnormalFindings).map(x=>(x.item||x.expected||x)+' — '+(x.whyItMatters||x.why||'')).join('\n')||'—')}</div></div><div class="detail-section"><div class="detail-title">Missed Nursing Actions</div><div class="detail-box">${esc(asArray(r.missedNursingActions).map(x=>(x.item||x.expected||x)+' — '+(x.whyItMatters||x.why||'')).join('\n')||'—')}</div></div><div class="detail-section"><div class="detail-title">Learner Answers</div><div class="detail-box">${esc(Object.entries(r.answers||{}).map(([k,v])=>`${k}: ${v}`).join('\n\n')||'—')}</div></div><details><summary>Raw JSON</summary><pre>${esc(JSON.stringify(r.raw||r,null,2))}</pre></details></details>`;}
 
-  const selfConcepts = Array.isArray(record.selfConcepts) ? record.selfConcepts : [];
-  const socraticHistory = Array.isArray(record.socraticHistory) ? record.socraticHistory : [];
-  const masteredConcepts = record.masteredConcepts || {};
-  const essayCitations = record.essayCitations || {};
-
-  const selfHtml = selfConcepts.length
-    ? selfConcepts.map((c, i) => `
-      <div class="detail-box" style="margin-bottom:8px">
-        <strong>${esc(i + 1)}. ${esc(c.concept || 'Concept')}</strong>
-        <br>${esc(c.knowledge || '')}
-      </div>
-    `).join('')
-    : '<div class="detail-box">No self-assessment saved.</div>';
-
-  const chatHtml = socraticHistory.length
-    ? socraticHistory.map(m => `
-      <div class="chat-line">
-        <span class="chat-role">${esc(m.role === 'user' ? 'Student' : 'Tutor')}:</span>
-        ${esc(m.content || '')}
-      </div>
-    `).join('')
-    : '<div class="detail-box">No Socratic transcript saved for this submission.</div>';
-
-  const masteredHtml = Object.entries(masteredConcepts).length
-    ? Object.entries(masteredConcepts).map(([id, m]) => `
-      <div class="detail-box" style="margin-bottom:8px">
-        <strong>${esc(m.label || id)}</strong>
-        <br>${esc(m.summary || '')}
-        ${m.citation ? `<br><span class="mono">Citation: ${esc(m.citation)}</span>` : ''}
-      </div>
-    `).join('')
-    : '<div class="detail-box">No mastered concept details saved.</div>';
-
-  const citationsHtml = Object.entries(essayCitations).length
-    ? Object.entries(essayCitations).map(([id, citation]) => `
-      <div class="mono">${esc(id)}: ${esc(citation)}</div>
-    `).join('')
-    : '<div class="detail-box">No citations saved.</div>';
-
-  return `
-    <details>
-      <summary>View Details</summary>
-
-      <div class="detail-section" style="margin-top:10px">
-        <div class="detail-title">Question</div>
-        <div class="detail-box">
-          ${esc(record.courseId || row.courseId || '')} · ${esc(record.weekLabel || row.weekLabel || '')} · Q${esc(record.questionNumber || row.questionNumber || '')}
-          <br><strong>${esc(record.topic || row.topic || '')}</strong>
-          <br><span class="mono">${esc(record.questionId || row.questionId || '')}</span>
-        </div>
-      </div>
-
-      <div class="detail-section">
-        <div class="detail-title">Self-assessment</div>
-        ${selfHtml}
-      </div>
-
-      <div class="detail-section">
-        <div class="detail-title">Socratic conversation</div>
-        <div class="detail-box">${chatHtml}</div>
-      </div>
-
-      <div class="detail-section">
-        <div class="detail-title">Mastered concepts</div>
-        ${masteredHtml}
-      </div>
-
-      <div class="detail-section">
-        <div class="detail-title">Essay</div>
-        <div class="detail-box">${esc(record.essayText || row.essayText || 'No essay saved.')}</div>
-      </div>
-
-      <div class="detail-section">
-        <div class="detail-title">Citations</div>
-        <div class="detail-box">${citationsHtml}</div>
-      </div>
-
-      <div class="detail-section">
-        <div class="detail-title">Reflection</div>
-        <div class="detail-box">
-          <strong>Comparison:</strong>
-          <br>${esc(record.reflectionText || row.reflectionText || '')}
-          <br><br><strong>New learning:</strong>
-          <br>${esc(record.reflectionLearned || row.reflectionLearned || '')}
-        </div>
-      </div>
-
-      <details>
-        <summary>Raw JSON</summary>
-        <pre>${esc(JSON.stringify(record || row, null, 2))}</pre>
-      </details>
-    </details>
-  `;
+function renderStudentSummary(rows){
+  const grouped={};rows.forEach(r=>{const k=keyStudent(r);if(!grouped[k])grouped[k]={name:r.studentName,email:r.email,employeeId:r.employeeId,attempts:0,sessions:new Set(),sum:0,pass:0,dx:0,tutor:0,weak:{}};const g=grouped[k];g.attempts++;g.sessions.add(r.sessionId);g.sum+=pct(r.scorePercent);if(r.pass)g.pass++;if(r.diagnosisCorrect)g.dx++;if(r.tutoringRequired)g.tutor++;asArray(r.improvementAreas).forEach(x=>{g.weak[x]=(g.weak[x]||0)+1;});});
+  const list=Object.values(grouped).sort((a,b)=>String(a.name).localeCompare(String(b.name)));
+  document.getElementById('studentSummaryWrap').innerHTML=`<div class="card"><h2>Student Summary</h2><table><thead><tr><th>Student</th><th>Employee ID</th><th>Attempts</th><th>Sessions</th><th>Avg Score</th><th>Pass Rate</th><th>Diagnosis Correct</th><th>Tutoring Needed</th><th>Main Improvement Areas</th></tr></thead><tbody>${list.map(g=>`<tr><td><strong>${esc(g.name||'')}</strong><div class="mono">${esc(g.email||'')}</div></td><td>${esc(g.employeeId||'')}</td><td>${g.attempts}</td><td>${g.sessions.size}</td><td>${Math.round(g.sum/g.attempts)}%</td><td>${Math.round(g.pass/g.attempts*100)}%</td><td>${Math.round(g.dx/g.attempts*100)}%</td><td>${g.tutor}</td><td>${esc(Object.entries(g.weak).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([x,n])=>`${x} (${n})`).join('; ')||'—')}</td></tr>`).join('')||'<tr><td colspan="9">No student summary available.</td></tr>'}</tbody></table></div>`;
 }
 
-function renderStudentSummary(rows, studentsRoster = []) {
-  const wrap = document.getElementById('summaryWrap');
-
-  if (!wrap) return;
-
-  const studentByEmail = {};
-
-  studentsRoster.forEach(s => {
-    const email = String(s.googleEmail || '').trim().toLowerCase();
-
-    if (email) {
-      studentByEmail[email] = s;
-    }
-  });
-
-  const grouped = {};
-
-  rows.forEach(row => {
-    const key = String(row.googleEmail || row.studentUUID || row.studentName || 'unknown')
-      .trim()
-      .toLowerCase();
-
-    if (!grouped[key]) {
-      const rosterMatch = studentByEmail[String(row.googleEmail || '').trim().toLowerCase()] || {};
-
-      grouped[key] = {
-        studentName: row.studentName || rosterMatch.studentName || key,
-        googleEmail: row.googleEmail || rosterMatch.googleEmail || '',
-        assignedPAEmail: rosterMatch.assignedPAEmail || '',
-        completed: 0,
-        late: 0,
-        exchanges: 0,
-        time: 0,
-        questions: new Set(),
-        courses: new Set()
-      };
-    }
-
-    grouped[key].completed += 1;
-
-    if (String(row.isLate).toLowerCase() === 'true') {
-      grouped[key].late += 1;
-    }
-
-    grouped[key].exchanges += Number(row.totalExchanges || 0);
-    grouped[key].time += Number(row.timeMinutes || 0);
-
-    if (row.questionId) {
-      grouped[key].questions.add(row.questionId);
-    }
-
-    if (row.courseId) {
-      grouped[key].courses.add(row.courseId);
-    }
-  });
-
-  const summaries = Object.values(grouped).sort((a, b) => {
-    return a.studentName.localeCompare(b.studentName);
-  });
-
-  const rowsHtml = summaries.map(s => {
-    const avgExchanges = s.completed ? (s.exchanges / s.completed).toFixed(1) : '0';
-    const avgTime = s.completed ? (s.time / s.completed).toFixed(1) : '0';
-
-    return `
-      <tr>
-        <td>
-          ${esc(s.studentName)}
-          <div class="mono">${esc(s.googleEmail)}</div>
-          ${s.assignedPAEmail ? `<div class="mono">PA: ${esc(s.assignedPAEmail)}</div>` : ''}
-        </td>
-        <td>${esc(s.completed)}</td>
-        <td>${esc(s.late)}</td>
-        <td>${esc(avgExchanges)}</td>
-        <td>${esc(avgTime)}m</td>
-        <td>${esc(s.courses.size)}</td>
-        <td>${esc(s.questions.size)}</td>
-      </tr>
-    `;
-  }).join('');
-
-  wrap.innerHTML = `
-    <div class="card">
-      <h2 style="font-size:20px;margin:0 0 12px">Student Summary</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Student</th>
-            <th>Completed</th>
-            <th>Late</th>
-            <th>Avg Exchanges</th>
-            <th>Avg Time</th>
-            <th>Courses</th>
-            <th>Questions</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${rowsHtml || '<tr><td colspan="7">No student summary available.</td></tr>'}
-        </tbody>
-      </table>
-    </div>
-  `;
-}
-
-function parsePayload(text) {
-  if (!text) return null;
-
-  try {
-    return JSON.parse(text);
-  } catch {
-    return { raw: text };
-  }
-}
-
-function formatDate(iso) {
-  if (!iso) return '';
-
-  try {
-    return new Date(iso).toLocaleString();
-  } catch {
-    return iso;
-  }
-}
-
-function esc(value) {
-  return String(value ?? '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
+function exportFilteredCsv(){
+  const headers=['student_name','employee_id','email','session_id','completed_at','scenario_id','scenario_title','score_percent','pass','diagnosis_correct','tutoring_required','model_used','strengths','improvement_areas','missed_abnormal_findings','missed_nursing_actions'];
+  const rows=[headers].concat(filteredRows.map(r=>[r.studentName,r.employeeId,r.email,r.sessionId,r.completedAt,r.scenarioId,r.scenarioTitle,r.scorePercent,r.pass,r.diagnosisCorrect,r.tutoringRequired,r.modelUsed,asArray(r.strengths).join('; '),asArray(r.improvementAreas).join('; '),asArray(r.missedAbnormalFindings).map(x=>x.item||x.expected||x).join('; '),asArray(r.missedNursingActions).map(x=>x.item||x.expected||x).join('; ')]));
+  const csv=rows.map(row=>row.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\n');
+  const blob=new Blob([csv],{type:'text/csv'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='nursing_faculty_dashboard_export_'+new Date().toISOString().slice(0,10)+'.csv';a.click();URL.revokeObjectURL(a.href);
 }
 </script>
 </body>

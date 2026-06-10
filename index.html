@@ -7,137 +7,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
-:root{--bg:#f5f2eb;--bg2:#ede9e0;--surface:#fff;--surface2:#faf8f4;--border:#ddd8cc;--border-dark:#c8c2b4;--ink:#1a1814;--ink2:#4a4540;--ink3:#8a8278;--accent:#2d6a4f;--accent-light:#d8ede3;--accent-dim:rgba(45,106,79,0.12);--amber:#b5610a;--amber-light:#fdecd5;--red:#c0392b;--red-light:#fce8e6;--blue:#1a4a7a;--blue-light:#e0eaf5;--gold:#8a6a1a;--gold-light:#f5edd5;--serif:'Lora',Georgia,serif;--sans:'DM Sans',sans-serif;--mono:'DM Mono',monospace;--radius:8px;--radius-lg:14px;--shadow:0 2px 12px rgba(0,0,0,0.08);--shadow-lg:0 8px 32px rgba(0,0,0,0.12)}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:100vh;font-size:15px;line-height:1.65}
-.screen{display:none;min-height:100vh}.screen.active{display:flex;flex-direction:column}
-.app-header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 28px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;box-shadow:0 1px 4px rgba(0,0,0,0.05)}
-.logo{font-family:var(--serif);font-size:19px;color:var(--ink)}.logo em{color:var(--accent);font-style:normal}
-.header-meta{font-family:var(--mono);font-size:11px;color:var(--ink3)}
-.header-actions{display:flex;gap:8px;align-items:center}
-.btn{font-family:var(--sans);font-size:13px;font-weight:500;border:none;border-radius:var(--radius);cursor:pointer;padding:8px 16px;transition:all 0.15s;display:inline-flex;align-items:center;gap:6px;line-height:1}
-.btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:#235840;transform:translateY(-1px)}
-.btn-secondary{background:var(--surface);color:var(--ink2);border:1px solid var(--border-dark)}.btn-secondary:hover{background:var(--bg2)}
-.btn-ghost{background:transparent;color:var(--ink3);border:1px solid var(--border)}.btn-ghost:hover{background:var(--bg2);color:var(--ink2)}
-.btn-amber{background:var(--amber);color:#fff}.btn-amber:hover{background:#9a520a}
-.btn-sm{padding:6px 12px;font-size:12px}.btn-lg{padding:12px 24px;font-size:15px;font-weight:600}
-.btn:disabled{opacity:0.4;cursor:not-allowed;transform:none!important}
-.content{flex:1;max-width:780px;width:100%;margin:0 auto;padding:32px 24px}
-.content-wide{flex:1;max-width:1100px;width:100%;margin:0 auto;padding:32px 24px}
-.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px;margin-bottom:16px;box-shadow:var(--shadow)}
-.card-title{font-family:var(--serif);font-size:17px;color:var(--ink);margin-bottom:4px}
-.card-subtitle{font-size:13px;color:var(--ink3);margin-bottom:16px}
-.phase-badge{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;font-weight:500;padding:3px 10px;border-radius:20px;letter-spacing:.5px;text-transform:uppercase;margin-bottom:12px}
-.phase-1{background:var(--blue-light);color:var(--blue)}.phase-2{background:var(--amber-light);color:var(--amber)}.phase-3{background:var(--accent-light);color:var(--accent)}.phase-4{background:var(--gold-light);color:var(--gold)}
-.question-box{background:var(--bg2);border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:var(--radius);padding:18px 20px;margin-bottom:20px;font-family:var(--serif);font-size:15px;line-height:1.75;color:var(--ink);white-space:pre-wrap}
-label{display:block;font-size:11px;font-weight:600;color:var(--ink3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:5px}
-input[type=text],textarea{font-family:var(--sans);font-size:14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);color:var(--ink);padding:10px 12px;width:100%;outline:none;transition:border-color .15s,box-shadow .15s;line-height:1.5}
-input:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim)}
-input::placeholder,textarea::placeholder{color:var(--ink3);opacity:.7}
-textarea{resize:vertical;min-height:80px}
-.field-group{margin-bottom:14px}.help-text{font-size:12px;color:var(--ink3);margin-top:4px;line-height:1.5}
-.concept-row{display:grid;grid-template-columns:1fr 2fr auto;gap:10px;align-items:start;margin-bottom:10px;padding:12px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius)}
-.chat-window{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;min-height:300px;max-height:420px;overflow-y:auto;margin-bottom:14px;display:flex;flex-direction:column;gap:12px}
-.msg{display:flex;flex-direction:column;gap:3px;animation:msgIn .2s ease}
-@keyframes msgIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
-.msg-label{font-family:var(--mono);font-size:10px;color:var(--ink3);letter-spacing:.3px}
-.msg-bubble{padding:12px 14px;border-radius:10px;font-size:14px;line-height:1.6;max-width:88%}
-.msg.tutor .msg-bubble{background:var(--surface);border:1px solid var(--border);border-bottom-left-radius:3px;color:var(--ink);align-self:flex-start}
-.msg.student .msg-label{text-align:right}.msg.student .msg-bubble{background:var(--accent);color:#fff;border-bottom-right-radius:3px;align-self:flex-end;margin-left:auto}
-.msg.system .msg-bubble{background:var(--gold-light);border:1px solid #e8d8a0;color:var(--gold);font-family:var(--mono);font-size:12px;align-self:center;text-align:center;width:100%;max-width:100%}
-.chat-input-row{display:flex;gap:8px;align-items:flex-end}.chat-input-row textarea{flex:1;min-height:52px;max-height:120px}
-.roadmap{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
-.roadmap-item{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface);transition:all .2s}
-.roadmap-item.active{border-color:var(--accent);background:var(--accent-light);box-shadow:0 2px 8px rgba(45,106,79,0.15)}
-.roadmap-item.done{border-color:var(--border);background:var(--surface2);opacity:.75}
-.ri-icon{font-size:16px;width:20px;text-align:center;flex-shrink:0}.ri-label{font-size:14px;color:var(--ink);flex:1}.ri-label.done{text-decoration:line-through;color:var(--ink3)}.ri-status{font-family:var(--mono);font-size:10px;color:var(--ink3)}
-.progress-bar-wrap{height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin-bottom:6px}
-.progress-bar-fill{height:100%;background:var(--accent);border-radius:3px;transition:width .4s ease}
-.progress-label{font-family:var(--mono);font-size:11px;color:var(--ink3);margin-bottom:16px}
-.reflection-comparison{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
-.compare-col{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:16px}
-.compare-col h4{font-family:var(--mono);font-size:10px;color:var(--ink3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
-.compare-col ul{list-style:none;display:flex;flex-direction:column;gap:6px}
-.compare-col li{font-size:13px;color:var(--ink2);padding:5px 8px;border-radius:5px;background:var(--surface);border:1px solid var(--border);line-height:1.4}
-.compare-col li.matched{border-color:#a8d5be;background:var(--accent-light)}
-.dashboard-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;margin-bottom:24px}
-.dash-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow)}
-.dash-card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
-.dash-qid{font-family:var(--mono);font-size:11px;color:var(--accent);font-weight:500}
-.dash-topic{font-family:var(--serif);font-size:15px;color:var(--ink);margin-bottom:10px;line-height:1.4}
-.dash-stats{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:10px}
-.dash-stat{display:flex;flex-direction:column;gap:1px}
-.dash-stat-val{font-family:var(--mono);font-size:16px;font-weight:500;color:var(--ink)}
-.dash-stat-lbl{font-size:10px;color:var(--ink3);text-transform:uppercase;letter-spacing:.3px}
-.exercise-course-title{font-family:var(--serif);font-size:22px;color:var(--ink);margin-bottom:4px}
-.exercise-course-sub{font-size:13px;color:var(--ink3);font-family:var(--mono);margin-bottom:18px}
-.week-group{margin-bottom:18px}
-.week-title{font-family:var(--mono);font-size:12px;color:var(--ink3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
-.exercise-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;margin-bottom:10px;box-shadow:var(--shadow);display:flex;justify-content:space-between;gap:16px;align-items:flex-start}
-.exercise-card.locked{opacity:.65}
-.exercise-main{flex:1}
-.exercise-id{font-family:var(--mono);font-size:11px;color:var(--accent);font-weight:500;margin-bottom:3px}
-.exercise-topic{font-family:var(--serif);font-size:16px;color:var(--ink);line-height:1.35;margin-bottom:6px}
-.exercise-meta{font-size:12px;color:var(--ink3);line-height:1.45}
-.status-pill{font-family:var(--mono);font-size:10px;padding:3px 8px;border-radius:999px;white-space:nowrap;text-transform:uppercase;letter-spacing:.3px}
-.status-pill.green{background:var(--accent-light);color:var(--accent)}
-.status-pill.blue{background:var(--blue-light);color:var(--blue)}
-.status-pill.amber{background:var(--amber-light);color:var(--amber)}
-.status-pill.red{background:var(--red-light);color:var(--red)}
-.status-pill.gray{background:var(--bg2);color:var(--ink3)}
-.exercise-actions{display:flex;flex-direction:column;gap:8px;align-items:flex-end}
-.completed-detail-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin:16px 0}
-.completed-detail-item{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px}
-.completed-detail-val{font-family:var(--mono);font-size:17px;color:var(--accent)}
-.completed-detail-lbl{font-size:10px;color:var(--ink3);text-transform:uppercase;letter-spacing:.3px}
-.late-flag{font-family:var(--mono);font-size:10px;background:var(--red-light);color:var(--red);padding:2px 8px;border-radius:20px}
-.on-time-flag{font-family:var(--mono);font-size:10px;background:var(--accent-light);color:var(--accent);padding:2px 8px;border-radius:20px}
-.leitner-boxes{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:24px}
-.leitner-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;text-align:center;cursor:pointer;transition:all .15s}
-.leitner-box:hover{border-color:var(--accent);background:var(--accent-light)}
-.leitner-box .box-num{font-family:var(--mono);font-size:20px;color:var(--accent);font-weight:500}
-.leitner-box .box-count{font-size:12px;color:var(--ink3);margin-top:2px}.leitner-box .box-label{font-size:10px;color:var(--ink3);margin-top:4px}
-.flashcard{perspective:1000px;margin:0 auto 20px;max-width:500px;height:220px;cursor:pointer}
-.fc-inner{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .4s ease}
-.fc-inner.flipped{transform:rotateY(180deg)}
-.fc-face{position:absolute;inset:0;backface-visibility:hidden;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;box-shadow:var(--shadow-lg)}
-.fc-back{transform:rotateY(180deg)}
-.fc-label{font-family:var(--mono);font-size:10px;color:var(--ink3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px}
-.fc-concept{font-family:var(--serif);font-size:17px;color:var(--ink);line-height:1.5}.fc-answer{font-size:13px;color:var(--ink2);line-height:1.6}
-.typing-indicator{display:flex;gap:4px;align-items:center;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:10px;border-bottom-left-radius:3px;width:fit-content}
-.typing-dot{width:6px;height:6px;background:var(--ink3);border-radius:50%;animation:typing 1.2s infinite}
-.typing-dot:nth-child(2){animation-delay:.2s}.typing-dot:nth-child(3){animation-delay:.4s}
-@keyframes typing{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-4px);opacity:1}}
-.onboard-wrap{display:flex;align-items:center;justify-content:center;min-height:100vh;background:var(--bg);padding:24px}
-.onboard-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:40px;max-width:440px;width:100%;box-shadow:var(--shadow-lg);text-align:center}
-.onboard-logo{font-family:var(--serif);font-size:32px;color:var(--ink);margin-bottom:8px}
-.onboard-logo em{color:var(--accent);font-style:normal}
-.onboard-sub{font-size:14px;color:var(--ink3);margin-bottom:28px;line-height:1.6}
-.toast-wrap{position:fixed;bottom:20px;right:20px;display:flex;flex-direction:column;gap:8px;z-index:9000}
-.toast{background:var(--surface);border:1px solid var(--border-dark);border-radius:var(--radius);padding:10px 16px;font-size:13px;color:var(--ink);display:flex;align-items:center;gap:8px;box-shadow:var(--shadow-lg);animation:toastIn .2s ease;max-width:280px}
-.toast.success{border-color:var(--accent)}.toast.error{border-color:var(--red)}
-@keyframes toastIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-.divider{height:1px;background:var(--border);margin:20px 0}
-.stat-row{display:flex;gap:20px;flex-wrap:wrap;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;margin-bottom:16px}
-.stat-item{display:flex;flex-direction:column;gap:1px}
-.stat-val{font-family:var(--mono);font-size:18px;color:var(--accent);font-weight:500}
-.stat-lbl{font-size:10px;color:var(--ink3);text-transform:uppercase;letter-spacing:.3px}
-.no-data{text-align:center;padding:48px 24px;color:var(--ink3);font-size:14px;line-height:1.7}
-.no-data-icon{font-size:40px;margin-bottom:12px;opacity:.5}
-.config-warn{background:var(--amber-light);border:1px solid #f0c080;border-radius:var(--radius);padding:14px 18px;font-size:13px;color:var(--amber);margin-bottom:16px;line-height:1.5}
-.import-zone{border:2px dashed var(--border-dark);border-radius:var(--radius);padding:20px;text-align:center;cursor:pointer;transition:all .15s;margin-top:12px}
-.import-zone:hover{border-color:var(--accent);background:var(--accent-dim)}
-.model-picker{font-family:var(--sans);font-size:12px;color:var(--ink2);background:var(--surface);border:1px solid var(--border-dark);border-radius:var(--radius);padding:6px 10px;cursor:pointer;outline:none}
-.model-picker:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim)}
-.model-status{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;border:1px solid var(--border-dark);border-radius:999px;padding:5px 10px;cursor:pointer;background:var(--surface);color:var(--ink3);white-space:nowrap;user-select:none}
-.model-status .dot{width:8px;height:8px;border-radius:50%;background:var(--ink3);flex-shrink:0}
-.model-status.checking{color:var(--amber);border-color:#f0c080;background:var(--amber-light)}
-.model-status.checking .dot{background:var(--amber);animation:statuspulse 1s infinite}
-.model-status.ok{color:var(--accent);border-color:#a8d5be;background:var(--accent-light)}
-.model-status.ok .dot{background:var(--accent)}
-.model-status.fail{color:var(--red);border-color:#e8b0a8;background:var(--red-light)}
-.model-status.fail .dot{background:var(--red)}
-@keyframes statuspulse{0%,100%{opacity:1}50%{opacity:.35}}
+:root{--bg:#f5f2eb;--bg2:#ede9e0;--surface:#fff;--surface2:#faf8f4;--border:#ddd8cc;--border-dark:#c8c2b4;--ink:#1a1814;--ink2:#4a4540;--ink3:#8a8278;--accent:#2d6a4f;--accent-light:#d8ede3;--accent-dim:rgba(45,106,79,.12);--amber:#b5610a;--amber-light:#fdecd5;--red:#c0392b;--red-light:#fce8e6;--blue:#1a4a7a;--blue-light:#e0eaf5;--gold:#8a6a1a;--gold-light:#f5edd5;--serif:'Lora',Georgia,serif;--sans:'DM Sans',sans-serif;--mono:'DM Mono',monospace;--radius:8px;--radius-lg:14px;--shadow:0 2px 12px rgba(0,0,0,.08);--shadow-lg:0 8px 32px rgba(0,0,0,.12)}
+*{box-sizing:border-box;margin:0;padding:0}body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:100vh;font-size:15px;line-height:1.65}.screen{display:none;min-height:100vh}.screen.active{display:flex;flex-direction:column}.app-header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 28px;min-height:56px;display:flex;align-items:center;justify-content:space-between;gap:14px;position:sticky;top:0;z-index:50;box-shadow:0 1px 4px rgba(0,0,0,.05)}.logo{font-family:var(--serif);font-size:19px;color:var(--ink);white-space:nowrap}.logo em{color:var(--accent);font-style:normal}.header-meta{font-family:var(--mono);font-size:11px;color:var(--ink3);flex:1;text-align:center}.header-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}.btn{font-family:var(--sans);font-size:13px;font-weight:500;border:none;border-radius:var(--radius);cursor:pointer;padding:8px 16px;transition:all .15s;display:inline-flex;align-items:center;gap:6px;line-height:1;text-decoration:none}.btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:#235840;transform:translateY(-1px)}.btn-secondary{background:var(--surface);color:var(--ink2);border:1px solid var(--border-dark)}.btn-secondary:hover{background:var(--bg2)}.btn-ghost{background:transparent;color:var(--ink3);border:1px solid var(--border)}.btn-ghost:hover{background:var(--bg2);color:var(--ink2)}.btn-amber{background:var(--amber);color:#fff}.btn-amber:hover{background:#9a520a}.btn-sm{padding:6px 12px;font-size:12px}.btn-lg{padding:12px 24px;font-size:15px;font-weight:600}.btn:disabled{opacity:.45;cursor:not-allowed;transform:none!important}.content{flex:1;max-width:860px;width:100%;margin:0 auto;padding:32px 24px}.content-wide{flex:1;max-width:1160px;width:100%;margin:0 auto;padding:32px 24px}.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px;margin-bottom:16px;box-shadow:var(--shadow)}.card-title{font-family:var(--serif);font-size:19px;color:var(--ink);margin-bottom:4px}.card-subtitle{font-size:13px;color:var(--ink3);margin-bottom:16px}.phase-badge{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;font-weight:500;padding:3px 10px;border-radius:20px;letter-spacing:.5px;text-transform:uppercase;margin-bottom:12px}.phase-1{background:var(--blue-light);color:var(--blue)}.phase-2{background:var(--amber-light);color:var(--amber)}.phase-3{background:var(--accent-light);color:var(--accent)}.phase-4{background:var(--gold-light);color:var(--gold)}.question-box{background:var(--bg2);border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:var(--radius);padding:18px 20px;margin-bottom:20px;font-family:var(--serif);font-size:15px;line-height:1.75;color:var(--ink);white-space:pre-wrap}label{display:block;font-size:11px;font-weight:600;color:var(--ink3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:5px}input[type=text],input[type=email],textarea,select{font-family:var(--sans);font-size:14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);color:var(--ink);padding:10px 12px;width:100%;outline:none;transition:border-color .15s,box-shadow .15s;line-height:1.5}input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim)}input::placeholder,textarea::placeholder{color:var(--ink3);opacity:.7}textarea{resize:vertical;min-height:90px}.field-group{margin-bottom:14px}.help-text{font-size:12px;color:var(--ink3);margin-top:4px;line-height:1.5}.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}.stat-row{display:flex;gap:14px;flex-wrap:wrap;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;margin-bottom:16px}.stat-item{display:flex;flex-direction:column;gap:1px}.stat-val{font-family:var(--mono);font-size:20px;color:var(--accent);font-weight:500}.stat-lbl{font-size:10px;color:var(--ink3);text-transform:uppercase;letter-spacing:.3px}.scenario-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;margin-bottom:10px;box-shadow:var(--shadow);display:flex;justify-content:space-between;gap:16px;align-items:flex-start}.scenario-card-main{flex:1}.scenario-id{font-family:var(--mono);font-size:11px;color:var(--accent);font-weight:500;margin-bottom:3px}.scenario-topic{font-family:var(--serif);font-size:17px;color:var(--ink);line-height:1.35;margin-bottom:6px}.scenario-meta{font-size:12px;color:var(--ink3);line-height:1.45}.status-pill{font-family:var(--mono);font-size:10px;padding:3px 8px;border-radius:999px;white-space:nowrap;text-transform:uppercase;letter-spacing:.3px}.status-pill.green{background:var(--accent-light);color:var(--accent)}.status-pill.blue{background:var(--blue-light);color:var(--blue)}.status-pill.amber{background:var(--amber-light);color:var(--amber)}.status-pill.red{background:var(--red-light);color:var(--red)}.status-pill.gray{background:var(--bg2);color:var(--ink3)}.onboard-wrap{display:flex;align-items:center;justify-content:center;min-height:100vh;background:var(--bg);padding:24px}.onboard-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:40px;max-width:480px;width:100%;box-shadow:var(--shadow-lg);text-align:center}.onboard-logo{font-family:var(--serif);font-size:32px;color:var(--ink);margin-bottom:8px}.onboard-logo em{color:var(--accent);font-style:normal}.onboard-sub{font-size:14px;color:var(--ink3);margin-bottom:24px;line-height:1.6}.toast-wrap{position:fixed;bottom:20px;right:20px;display:flex;flex-direction:column;gap:8px;z-index:9000}.toast{background:var(--surface);border:1px solid var(--border-dark);border-radius:var(--radius);padding:10px 16px;font-size:13px;color:var(--ink);display:flex;align-items:center;gap:8px;box-shadow:var(--shadow-lg);animation:toastIn .2s ease;max-width:320px}.toast.success{border-color:var(--accent)}.toast.error{border-color:var(--red)}@keyframes toastIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}.divider{height:1px;background:var(--border);margin:20px 0}.config-warn{background:var(--amber-light);border:1px solid #f0c080;border-radius:var(--radius);padding:14px 18px;font-size:13px;color:var(--amber);margin-bottom:16px;line-height:1.5}.success-box{background:var(--accent-light);border:1px solid #a8d5be;border-radius:var(--radius);padding:14px 18px;font-size:13px;color:var(--accent);margin-bottom:16px;line-height:1.5}.error-box{background:var(--red-light);border:1px solid #e8b0a8;border-radius:var(--radius);padding:14px 18px;font-size:13px;color:var(--red);margin-bottom:16px;line-height:1.5}.model-status{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;color:var(--ink3);border:1px solid var(--border);background:var(--surface2);border-radius:999px;padding:5px 9px;white-space:nowrap}.model-dot{width:8px;height:8px;border-radius:999px;background:var(--ink3);box-shadow:0 0 0 2px rgba(0,0,0,.04)}.model-status.ok{color:var(--accent);border-color:#a8d5be;background:var(--accent-light)}.model-status.ok .model-dot{background:var(--accent)}.model-status.bad{color:var(--red);border-color:#e8b0a8;background:var(--red-light)}.model-status.bad .model-dot{background:var(--red)}.model-status.checking{color:var(--amber);border-color:#f0c080;background:var(--amber-light)}.model-status.checking .model-dot{background:var(--amber)}.model-picker{font-family:var(--sans);font-size:12px;color:var(--ink2);background:var(--surface);border:1px solid var(--border-dark);border-radius:var(--radius);padding:6px 10px;cursor:pointer;outline:none;max-width:190px}.chat-window{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;min-height:300px;max-height:460px;overflow-y:auto;margin-bottom:14px;display:flex;flex-direction:column;gap:12px}.msg{display:flex;flex-direction:column;gap:3px}.msg-label{font-family:var(--mono);font-size:10px;color:var(--ink3);letter-spacing:.3px}.msg-bubble{padding:12px 14px;border-radius:10px;font-size:14px;line-height:1.6;max-width:88%}.msg.tutor .msg-bubble{background:var(--surface);border:1px solid var(--border);border-bottom-left-radius:3px;color:var(--ink);align-self:flex-start}.msg.student .msg-label{text-align:right}.msg.student .msg-bubble{background:var(--accent);color:#fff;border-bottom-right-radius:3px;align-self:flex-end;margin-left:auto}.chat-input-row{display:flex;gap:8px;align-items:flex-end}.chat-input-row textarea{flex:1;min-height:52px;max-height:120px}.dashboard-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;margin-bottom:24px}.dash-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow)}.dash-topic{font-family:var(--serif);font-size:15px;color:var(--ink);margin-bottom:10px;line-height:1.4}.dash-stats{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:10px}.dash-stat{display:flex;flex-direction:column;gap:1px}.dash-stat-val{font-family:var(--mono);font-size:16px;font-weight:500;color:var(--ink)}.dash-stat-lbl{font-size:10px;color:var(--ink3);text-transform:uppercase;letter-spacing:.3px}.bar-wrap{height:8px;background:var(--border);border-radius:999px;overflow:hidden;margin:8px 0 2px}.bar-fill{height:100%;background:var(--accent);border-radius:999px}.trend-row{display:grid;grid-template-columns:100px 1fr 60px;gap:10px;align-items:center;margin-bottom:8px}.small-list{margin:8px 0 0 18px;color:var(--ink2);font-size:13px}.small-list li{margin:4px 0}.no-data{text-align:center;padding:48px 24px;color:var(--ink3);font-size:14px;line-height:1.7}.no-data-icon{font-size:40px;margin-bottom:12px;opacity:.5}@media(max-width:760px){.app-header{padding:10px 16px;align-items:flex-start;flex-direction:column}.header-meta{text-align:left}.grid-2{grid-template-columns:1fr}.content,.content-wide{padding:24px 16px}.scenario-card{flex-direction:column}.chat-input-row{flex-direction:column}.chat-input-row button{width:100%;justify-content:center}}
 </style>
 </head>
 <body>
@@ -146,47 +17,23 @@ textarea{resize:vertical;min-height:80px}
   <div class="onboard-wrap">
     <div class="onboard-card">
       <div class="onboard-logo">Nursing <em>Education</em></div>
-      <div class="onboard-sub">Your Nursing Education Tutor.<br>Sign in with your institutional Google account or continue with email to begin.</div>
-
-<div id="returningUserBox" style="display:none;text-align:left;background:var(--accent-light);border:1px solid #a8d5be;border-radius:var(--radius);padding:14px;margin:16px 0;">
-  <div style="font-size:13px;color:var(--accent);font-weight:600;margin-bottom:4px;">Returning user</div>
-  <div id="returningUserName" style="font-size:14px;color:var(--ink);"></div>
-  <div id="returningUserEmail" style="font-size:12px;color:var(--ink3);font-family:var(--mono);"></div>
-</div>
-
-<div id="googleSignInBox" style="display:flex;justify-content:center;margin:20px 0;"></div>
-
-<div id="emailSignInBox" style="text-align:left;margin:16px 0;">
-  <div class="divider"></div>
-  <div style="font-size:12px;color:var(--ink3);margin:12px 0 10px;text-align:center;">Or continue with your email</div>
-  <div class="field-group">
-    <label>Your name</label>
-    <input type="text" id="emailNameInput" placeholder="Jane Doe">
-  </div>
-  <div class="field-group">
-    <label>Email</label>
-    <input type="text" id="emailInput" placeholder="you@example.com">
-  </div>
-  <button class="btn btn-secondary btn-lg" style="width:100%;margin-top:4px;justify-content:center" onclick="continueWithEmail()">Continue with email →</button>
-</div>
-
-<div id="signedInBox" style="display:none;text-align:left;background:var(--accent-light);border:1px solid #a8d5be;border-radius:var(--radius);padding:14px;margin:16px 0;">
-  <div style="font-size:13px;color:var(--accent);font-weight:600;margin-bottom:4px;">Signed in</div>
-  <div id="signedInName" style="font-size:14px;color:var(--ink);"></div>
-  <div id="signedInEmail" style="font-size:12px;color:var(--ink3);font-family:var(--mono);"></div>
-</div>
-      <div id="onboardImportSection" style="display:none">
-        <div class="divider"></div>
-        <div style="font-size:13px;color:var(--ink3);margin-bottom:8px">Returning on a new device? Import your backup file to restore all your progress.</div>
-        <div class="import-zone" onclick="document.getElementById('importFileInput').click()">📁 Click to import backup file</div>
-        <input type="file" id="importFileInput" accept=".json" style="display:none" onchange="handleImport(event)">
+      <div class="onboard-sub">Scenario-based nursing assessment with post-session AI tutoring.</div>
+      <div id="googleSignInBox" style="display:flex;justify-content:center;margin:12px 0 14px"></div>
+      <div id="googleUnavailableText" class="help-text" style="display:none;text-align:center;margin-bottom:12px">Google sign-in is optional for now. Continue below with nurse name, Employee ID, and email.</div>
+      <div id="returningBox" style="display:none;text-align:left;background:var(--accent-light);border:1px solid #a8d5be;border-radius:var(--radius);padding:14px;margin:16px 0;">
+        <div style="font-size:13px;color:var(--accent);font-weight:600;margin-bottom:4px;">Returning user</div>
+        <div id="returningName" style="font-size:14px;color:var(--ink);"></div>
+        <div id="returningMeta" style="font-size:12px;color:var(--ink3);font-family:var(--mono);"></div>
       </div>
-      <button class="btn btn-primary btn-lg" id="beginBtn" style="width:100%;margin-top:20px;justify-content:center" onclick="completeOnboarding()" disabled>Begin →</button>
-
-<button class="btn btn-secondary btn-lg" id="continueBtn" style="display:none;width:100%;margin-top:12px;justify-content:center" onclick="continueExistingUser()">Continue →</button>
-
-<button class="btn btn-ghost btn-sm" id="signOutBtn" style="display:none;width:100%;margin-top:12px;justify-content:center" onclick="signOutAndReset()">Sign out / switch account</button>
-      <div style="margin-top:16px"><button class="btn btn-ghost btn-sm" onclick="toggleImportSection()">Have a backup file?</button></div>
+      <div id="intakeBox" style="text-align:left;margin:16px 0;">
+        <div class="field-group"><label>Nurse full name</label><input type="text" id="nameInput" placeholder="Jane Doe"></div>
+        <div class="field-group"><label>Employee ID</label><input type="text" id="employeeInput" placeholder="Demo ID for prototype"></div>
+        <div class="field-group"><label>Email</label><input type="email" id="emailInput" placeholder="you@example.com"></div>
+        <div class="help-text">Prototype validation only: Employee ID must be entered. Later this will call the Cleveland Clinic HR/directory API or Entra-backed lookup.</div>
+      </div>
+      <button class="btn btn-primary btn-lg" id="beginBtn" style="width:100%;margin-top:12px;justify-content:center" onclick="completeOnboarding()">Begin →</button>
+      <button class="btn btn-secondary btn-lg" id="continueBtn" style="display:none;width:100%;margin-top:12px;justify-content:center" onclick="continueExistingUser()">Continue →</button>
+      <button class="btn btn-ghost btn-sm" id="signOutBtn" style="display:none;width:100%;margin-top:12px;justify-content:center" onclick="signOutAndReset()">Sign out / switch user</button>
     </div>
   </div>
 </div>
@@ -196,17 +43,20 @@ textarea{resize:vertical;min-height:80px}
     <div class="logo">Nursing <em>Education</em></div>
     <div class="header-meta" id="headerMeta"></div>
     <div class="header-actions">
-  <select id="modelPicker" class="model-picker" title="Tutor model" onchange="setLlmProvider(this.value)">
-    <option value="anthropic">Claude</option>
-    <option value="openai">OpenAI (GPT)</option>
-    <option value="oss">NVIDIA: Nemotron 3 Ultra</option>
-  </select>
-  <span id="modelStatus" class="model-status" title="Click to re-check the tutor model" onclick="checkModelStatus()"><span class="dot"></span><span id="modelStatusText">Check status</span></span>
-  <button class="btn btn-ghost btn-sm" onclick="showScreen('screen-dashboard')">📊 My Progress</button>
-  <button class="btn btn-ghost btn-sm" onclick="showScreen('screen-leitner')">🃏 Review Cards</button>
-  <button class="btn btn-secondary btn-sm" onclick="exportData()">⬇ Export</button>
-  <button class="btn btn-ghost btn-sm" onclick="signOutAndReset()">Sign out</button>
-</div>
+      <select id="modelPicker" class="model-picker" title="Tutor model" onchange="setLlmProvider(this.value)">
+          <option value="anthropic">Claude</option>
+          <option value="openai">OpenAI (GPT)</option>
+          <option value="nemotron">NVIDIA: Nemotron 3 Ultra</option>
+          <option value="ollama">Ollama GPT-OSS 20B</option>
+      </select>
+      <button class="model-status" id="modelStatus" type="button" onclick="checkSelectedModelConnection(true)" title="Click to re-check model API connection">
+        <span class="model-dot"></span>
+        <span id="modelStatusText">Not checked</span>
+      </button>
+      <button class="btn btn-ghost btn-sm" onclick="showScreen('screen-dashboard')">📊 My Progress</button>
+      <button class="btn btn-secondary btn-sm" onclick="exportData()">⬇ Export JSON</button>
+      <button class="btn btn-ghost btn-sm" onclick="signOutAndReset()">Sign out</button>
+    </div>
   </div>
   <div class="content" id="mainContent"></div>
 </div>
@@ -217,1229 +67,796 @@ textarea{resize:vertical;min-height:80px}
     <div class="header-meta">My Progress</div>
     <div class="header-actions">
       <button class="btn btn-ghost btn-sm" onclick="showScreen('screen-main')">← Back</button>
-      <button class="btn btn-secondary btn-sm" onclick="exportData()">⬇ Export</button>
+      <button class="btn btn-secondary btn-sm" onclick="exportCSV()">⬇ Export CSV</button>
+      <button class="btn btn-secondary btn-sm" onclick="exportData()">⬇ Export JSON</button>
     </div>
   </div>
   <div class="content-wide" id="dashboardContent"></div>
-</div>
-
-<div id="screen-leitner" class="screen">
-  <div class="app-header">
-    <div class="logo">Nursing <em>Education</em></div>
-    <div class="header-meta">Review Cards</div>
-    <div class="header-actions">
-      <button class="btn btn-ghost btn-sm" onclick="showScreen('screen-main')">← Back</button>
-    </div>
-  </div>
-  <div class="content" id="leitnerContent"></div>
 </div>
 
 <div class="toast-wrap" id="toastWrap"></div>
 
 <script>
 const DEFAULT_QUESTION_SET='nursing/acute-care';
-let GOOGLE_OAUTH_CLIENT_ID='';
+const STORAGE_KEY='medtutor_student_NURS-ACUTE';
+const COURSE_STORAGE_PREFIX='medtutor_student_';
 let COURSE_DATA=null;
+let GOOGLE_OAUTH_CLIENT_ID='';
+let MODEL_STATUS_CACHE={};
+let MODEL_STATUS_TOKEN=0;
 
-// Offline fallback: used when the app can't fetch /questions/*.json
-// (e.g. when index.html is opened directly as a file). Edit this to change
-// the questions when running without a server.
-const EMBEDDED_COURSE={
-  "courseId": "NURS-ACUTE",
-  "courseName": "Nursing Education: Acute Care Scenarios",
-  "classId": "nursing-education",
-  "academicYear": "2026-2027",
-  "questionSetId": "nursing-acute-care",
-  "questions": [
-    {
-      "id": "NURS-W01-Q01",
-      "week": 1,
-      "weekLabel": "Week 1 — Acute Coronary Syndrome",
-      "questionNumber": 1,
-      "topic": "Myocardial Infarction: Recognizing Acute Deterioration",
-      "releaseDate": "2026-05-22",
-      "deadline": "2026-09-07T08:00:00-04:00",
-      "question": "Taylor Collins is a 58-year-old male in the emergency department.\n\nChief complaint: \"I've had some pressure in my chest since this morning. I thought it was indigestion, but it isn't going away.\"\n\nHistory of present illness: Chest pressure began approximately 3 hours ago while he was doing yard work. The pain was initially 3/10. He reports intermittent radiation to the left shoulder and mild nausea. He has no vomiting. His symptoms improved slightly with rest but never fully resolved.\n\nPast medical history: Hypertension, hyperlipidemia, type 2 diabetes, and former smoker with a 30 pack-year history.\n\nHome medications: Lisinopril, metformin, and atorvastatin.\n\nAllergies: No known drug allergies.\n\nPhase 1: Initial assessment\nBP 138/82, HR 84 bpm, RR 18, SpO2 98% on room air, temperature 98.4°F, pain 3/10. He is alert and oriented x4. Skin is warm, dry, and pink. Lungs are clear bilaterally. Heart rhythm is regular. No edema is present. Mild anxiety is noted. Telemetry shows normal sinus rhythm. Initial troponin is negative. CBC and CMP are within normal limits.\n\nPhase 2: Worsening symptoms, 1 hour later\nThe patient says: \"The pressure is getting worse now. It's moving into my jaw.\" BP 146/88, HR 96 bpm, RR 20, SpO2 97% on room air, pain 6/10. He has increased anxiety, restlessness, mild diaphoresis, and is intermittently clutching his chest. Telemetry shows sinus rhythm with new 1 mm ST-segment depression in lead II. Repeat troponin is pending.\n\nPhase 3: Acute deterioration, 30 minutes later\nThe patient says: \"This is the worst it's been. It feels like an elephant is sitting on my chest.\" BP 158/94, HR 108 bpm, RR 24, SpO2 95% on room air, pain 9/10. He is diaphoretic, pale, increasingly distressed, guarding his chest, and reports nausea. Telemetry shows sinus tachycardia with 2–3 mm ST-segment elevation in lead II. Troponin is 50 mg/L, with normal less than 12.\n\nUsing the nursing process, answer the following:\n\n1. What did you find on your focused assessment?\n2. What assessment findings are abnormal?\n3. What has changed from baseline?\n4. Using common medical terminology, what problem is occurring or could occur with this patient?\n5. What assessment data will you monitor?\n6. What nursing actions will you take?\n7. What information do you need to share with the provider?\n8. What diagnostic tests or orders do you anticipate?\n9. What medications do you anticipate?\n10. Based on the patient's current clinical presentation, which level of urgency is most appropriate?\n\nA. Stable — continue assessment and monitoring of interventions\nB. Unstable — requires urgent escalation of care\nC. Emergent — requires immediate resuscitative intervention",
-      "concepts": [
-        {
-          "id": "C1",
-          "label": "Assessment: gather and interpret pertinent data",
-          "idealAnswer": "The student should identify the abnormal and changing assessment findings. Important cues include worsening chest pressure, radiation to the jaw and left shoulder, nausea, diaphoresis, pallor, anxiety, restlessness, chest guarding, increasing pain from 3/10 to 9/10, rising heart rate and respiratory rate, new ST-segment depression progressing to ST-segment elevation, and markedly elevated troponin. The key clinical reasoning point is recognizing that the patient is deteriorating from possible ischemia to acute myocardial infarction."
-        },
-        {
-          "id": "C2",
-          "label": "Diagnosis / problem identification",
-          "idealAnswer": "The correct patient problem is myocardial infarction, heart attack, or acute coronary syndrome with evolving ST-elevation myocardial infarction features. The student should connect the worsening chest pain, radiation, diaphoresis, dynamic ECG changes, and elevated troponin to myocardial injury. Myocardial infarction occurs when reduced or blocked coronary blood flow causes oxygen deprivation and myocardial cell injury or death."
-        },
-        {
-          "id": "C3",
-          "label": "Planning and implementation: nursing monitoring",
-          "idealAnswer": "The nurse should monitor heart rate, blood pressure, pulse oximetry, respiratory rate, pain level, cardiac rhythm, changes in symptoms, skin signs such as pallor or diaphoresis, and evidence of worsening perfusion or distress. Continuous cardiac monitoring is important because acute myocardial infarction can be complicated by dysrhythmias, heart failure, cardiogenic shock, and cardiac arrest."
-        },
-        {
-          "id": "C4",
-          "label": "Planning and implementation: nursing interventions",
-          "idealAnswer": "The nurse should immediately notify the provider, repeat a focused cardiovascular assessment, activate the medical emergency team or chest pain/STEMI pathway according to local protocol, maintain continuous cardiac monitoring, ensure ECG changes are compared with baseline, obtain or prepare for a 12-lead ECG, maintain IV access, reduce patient exertion, reassess pain and vital signs, and prepare the patient for urgent escalation of care."
-        },
-        {
-          "id": "C5",
-          "label": "Planning and implementation: anticipated provider interventions",
-          "idealAnswer": "The student should anticipate provider orders for repeat cardiac enzymes or troponin, 12-lead ECG, aspirin, nitroglycerin if appropriate, analgesia, additional antiplatelet or anticoagulant therapy according to local protocol, cardiology consultation, and preparation for cardiac catheterization or reperfusion therapy. STEMI management emphasizes rapid diagnosis and rapid treatment because delay increases the risk of death and permanent myocardial injury."
-        },
-        {
-          "id": "C6",
-          "label": "Evaluation of urgency",
-          "idealAnswer": "The most appropriate urgency level is B: Unstable — requires urgent escalation of care. The patient is not simply stable for routine monitoring because he has worsening chest pain, dynamic ECG changes, elevated troponin, diaphoresis, pallor, distress, and tachycardia. He is not described as pulseless, apneic, unconscious, or requiring immediate resuscitation, so emergent resuscitative intervention is not the best answer based on the provided data."
-        }
-      ]
-    }
-  ]
+const DEFAULT_COMPETENCY_QUESTIONS=[
+  {id:'focused_assessment',label:'What did you find on your focused assessment?',placeholder:'Describe the most important focused assessment findings.'},
+  {id:'abnormal_findings',label:'What assessment findings are abnormal?',placeholder:'List the abnormal cues and clinical data.'},
+  {id:'baseline_changes',label:'What has changed from baseline?',placeholder:'Compare initial status with later changes in symptoms, vitals, ECG/telemetry, labs, or appearance.'},
+  {id:'diagnosis',label:'Using common medical terminology, what problem is occurring or could occur with this patient?',placeholder:'Name the likely patient problem/condition using common medical terminology.'},
+  {id:'monitoring',label:'What assessment data will you monitor?',placeholder:'List the vital signs, symptoms, telemetry/ECG findings, labs, oxygenation, pain, or other data you would trend.'},
+  {id:'nursing_actions',label:'What nursing actions will you take?',placeholder:'List immediate nursing interventions and escalation steps.'},
+  {id:'provider_communication',label:'What information do you need to share with the provider?',placeholder:'State the key clinical changes/cues you would report to the provider or emergency team.'},
+  {id:'diagnostics',label:'What diagnostic tests/orders do you anticipate?',placeholder:'List anticipated labs, imaging, ECGs, or other orders.'},
+  {id:'medications',label:'What medications do you anticipate?',placeholder:'List anticipated medications or medication classes.'}
+];
+
+const MI_RUBRIC={
+  passingThreshold:50,
+  acceptedDiagnoses:['myocardial infarction','heart attack','mi','stemi','acute coronary syndrome','acs'],
+  expectedUrgency:'unstable',
+  abnormalFindings:[
+    {id:'AF1',label:'diaphoretic',matchAny:['diaphor','sweat'],whyItMatters:'Diaphoresis is a concerning sympathetic response in the setting of chest pain and evolving myocardial ischemia.'},
+    {id:'AF2',label:'pale',matchAny:['pale','pallor'],whyItMatters:'Pallor can indicate physiologic stress or impaired perfusion during acute deterioration.'},
+    {id:'AF3',label:'increasing distress',matchAny:['distress','restless','anxiety','anxious','clutching','guarding'],whyItMatters:'Increasing distress shows the patient is worsening and should not be managed as routine monitoring.'},
+    {id:'AF4',label:'chest pain / worsening chest pressure',matchAny:['chest pain','chest pressure','pressure is getting worse','worsening chest','elephant','pain 9','9/10'],whyItMatters:'Worsening chest pain/pressure is a major cue for acute coronary syndrome and urgent escalation.'},
+    {id:'AF5',label:'nausea',matchAny:['nausea','nauseated'],whyItMatters:'Nausea can accompany myocardial infarction and strengthens the ACS pattern.'},
+    {id:'AF6',label:'sinus tachycardia with ST-segment elevation',matchAny:['sinus tachycardia','tachycard','st elevation','st-segment elevation','st segment elevation','stemi'],whyItMatters:'ST-segment elevation with tachycardia is a critical deterioration cue consistent with evolving myocardial infarction.'}
+  ],
+  nursingActions:[
+    {id:'NA1',label:'monitor heart rate',matchAny:['heart rate','hr','tachycard','cardiac rate'],whyItMatters:'Heart-rate trends help detect worsening pain, stress, dysrhythmia risk, or hemodynamic compromise.'},
+    {id:'NA2',label:'monitor blood pressure',matchAny:['blood pressure','bp'],whyItMatters:'Blood pressure trends guide urgency and medication safety, including nitroglycerin decisions.'},
+    {id:'NA3',label:'monitor pulse ox / oxygen saturation',matchAny:['pulse ox','spo2','oxygen saturation','o2 sat','oxygen'],whyItMatters:'Oxygenation changes can signal worsening cardiopulmonary status.'},
+    {id:'NA4',label:'monitor respirations',matchAny:['respiration','respiratory rate','rr','breathing'],whyItMatters:'Respiratory changes can reflect pain, anxiety, hypoxia, or clinical deterioration.'},
+    {id:'NA5',label:'monitor pain level',matchAny:['pain','pain level','9/10','pain score'],whyItMatters:'Escalating pain is a key cue that the condition is worsening.'},
+    {id:'NA6',label:'get IV access',matchAny:['iv access','intravenous','start iv','line'],whyItMatters:'IV access is needed for medications, fluids if indicated, and urgent interventions.'},
+    {id:'NA7',label:'activate medical emergency team / urgent escalation',matchAny:['activate','medical emergency','rapid response','emergency team','notify provider','provider','escalat','call'],whyItMatters:'Worsening symptoms with ECG changes and elevated troponin require urgent escalation.'},
+    {id:'NA8',label:'keep patient NPO',matchAny:['npo','nothing by mouth','hold food','no oral'],whyItMatters:'NPO status may be needed because urgent procedures such as cath lab intervention may occur.'}
+  ],
+  providerInterventions:[
+    {id:'PI1',label:'cardiac enzymes / repeat troponin',matchAny:['cardiac enzyme','troponin','repeat troponin','enzyme'],whyItMatters:'Cardiac biomarkers help confirm and trend myocardial injury.'},
+    {id:'PI2',label:'12-lead ECG',matchAny:['12-lead','12 lead','ecg','ekg'],whyItMatters:'A 12-lead ECG is needed to confirm and track ischemic or STEMI changes.'},
+    {id:'PI3',label:'aspirin',matchAny:['aspirin','asa'],whyItMatters:'Aspirin is commonly anticipated for suspected acute coronary syndrome unless contraindicated.'},
+    {id:'PI4',label:'analgesia',matchAny:['analges','pain medication','pain control','morphine'],whyItMatters:'Pain control reduces distress and myocardial oxygen demand.'},
+    {id:'PI5',label:'nitroglycerin',matchAny:['nitroglycerin','nitro'],whyItMatters:'Nitroglycerin may be used for ischemic chest pain when clinically appropriate.'},
+    {id:'PI6',label:'cardiac cath lab or thrombolytic',matchAny:['cath lab','catheterization','thrombolytic','reperfusion','pci','cardiology'],whyItMatters:'Reperfusion planning is time-sensitive in suspected STEMI/MI.'}
+  ],
+  actionsToSupportDevelopment:{
+    assessment:'Ask: What information from the history and focused assessment is important now? What is abnormal? Has it improved or worsened? How do these cues connect to the current patient problem?',
+    diagnosis:'Ask: What is the primary diagnosis? Which body system does the abnormal data point to? What data supports that analysis?',
+    actions:'Ask: What nursing interventions can I perform immediately? When should I notify a provider? Whom should I notify of changes in condition?',
+    provider:'Ask: What orders do I anticipate related to this diagnosis? What labs, imaging, and medications are relevant to the immediate problem?',
+    urgency:'Ask: Which patient needs to be seen first? What priorities cannot wait? What assessment data indicates immediate intervention or urgent escalation?'
+  }
 };
 
-let DEMO_NOTICE_SHOWN=false;
-
-async function callClaude(system,messages){
-  try{
-    const r=await fetch('/.netlify/functions/claude-feedback',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({max_tokens:1000, system, messages, provider: state.llmProvider || 'anthropic'})});
-    if(!r.ok)throw new Error(`API ${r.status}`);
-    const ct=r.headers.get('content-type')||'';
-    if(!ct.includes('json'))throw new Error('non-JSON response');
-    const d=await r.json();
-    if(d && typeof d.text==='string' && d.text.trim())return d.text;
-    throw new Error('empty response');
-  }catch(e){
-    // No live AI backend reachable — fall back to the built-in demo tutor
-    // so the full flow can be walked through offline.
-    if(!DEMO_NOTICE_SHOWN){toast('AI tutor not connected — running in demo mode.','info');DEMO_NOTICE_SHOWN=true;}
-    return simulateTutor(system,messages);
-  }
-}
-
-function simulateTutor(system,messages){
-  const q=getSelectedQuestion();
-  if(!q||!q.concepts){return "Thanks for sharing — tell me more about your reasoning here.";}
-  const pending=q.concepts.filter(c=>!state.masteredConcepts[c.id]);
-  if(pending.length===0){return "You've worked through every concept beautifully. Go ahead and write your synthesis essay.";}
-  const assistantTurns=(messages||[]).filter(m=>m.role==='assistant').length;
-  const current=pending[0];
-  if(assistantTurns===0){
-    return `Welcome — let's reason through this case together, one concept at a time.\n\nLet's start with **${current.label}**. In your own words, what do you think is going on here, and why does it matter for this patient?`;
-  }
-  let summary=(current.idealAnswer||'').trim().split('. ')[0];
-  if(summary && !/[.!?]$/.test(summary))summary+='.';
-  if(!summary)summary=`Demonstrated understanding of ${current.label}.`;
-  const next=pending[1];
-  let msg=`That's solid reasoning — you've connected the key ideas well.\n\nCONCEPT_MASTERED:${current.id}:${summary}\n`;
-  if(next){
-    msg+=`\nNow let's look at **${next.label}**. What's your thinking on that one?`;
-  }else{
-    msg+=`\nThat was the final concept — you've mastered them all. Time to write your synthesis essay.`;
-  }
-  return msg;
-}
+const EMBEDDED_COURSE={
+  courseId:'NURS-ACUTE',
+  courseName:'Nursing Education: Acute Care Scenarios',
+  classId:'nursing-education',
+  academicYear:'2026-2027',
+  questionSetId:'nursing-acute-care',
+  questions:[{
+    id:'NURS-W01-Q01',week:1,weekLabel:'Week 1 — Acute Coronary Syndrome',questionNumber:1,
+    topic:'Myocardial Infarction: Recognizing Acute Deterioration',releaseDate:'2026-05-22',deadline:'2026-09-07T08:00:00-04:00',
+    question:'Taylor Collins is a 58-year-old male in the emergency department.\n\nChief complaint: "I\'ve had some pressure in my chest since this morning. I thought it was indigestion, but it isn\'t going away."\n\nHistory of present illness: Chest pressure began approximately 3 hours ago while he was doing yard work. The pain was initially 3/10. He reports intermittent radiation to the left shoulder and mild nausea. His symptoms improved slightly with rest but never fully resolved.\n\nPast medical history: Hypertension, hyperlipidemia, type 2 diabetes, and former smoker with a 30 pack-year history.\n\nPhase 1: Initial assessment\nBP 138/82, HR 84, RR 18, SpO2 98% on room air, temperature 98.4°F, pain 3/10. Alert and oriented x4. Skin warm, dry, and pink. Telemetry shows normal sinus rhythm. Initial troponin is negative.\n\nPhase 2: Worsening symptoms, 1 hour later\nThe patient says: "The pressure is getting worse now. It\'s moving into my jaw." BP 146/88, HR 96, RR 20, SpO2 97%, pain 6/10. Increased anxiety, restlessness, mild diaphoresis, intermittently clutching chest. Telemetry shows sinus rhythm with new 1 mm ST-segment depression in lead II. Repeat troponin pending.\n\nPhase 3: Acute deterioration, 30 minutes later\nThe patient says: "This is the worst it\'s been. It feels like an elephant is sitting on my chest." BP 158/94, HR 108, RR 24, SpO2 95%, pain 9/10. Diaphoretic, pale, increasingly distressed, guarding chest, nausea. Telemetry shows sinus tachycardia with 2–3 mm ST-segment elevation in lead II. Troponin is 50 mg/L; normal is less than 12.\n\nUse the nursing process to answer all competency questions.',
+    competencyQuestions:DEFAULT_COMPETENCY_QUESTIONS,
+    rubric:MI_RUBRIC
+  }]
+};
 
 let state={
-  studentName:'',
-  studentUUID:'',
-  llmProvider:'anthropic',
-  googleSub:'',
-  googleEmail:'',
-  googleName:'',
-  googlePicture:'',
-  googleHd:'',
-  courseId:'',
-  courseName:'',
-  questions:[],
-  selectedQuestionId:'',
-  activeQuestionId:'',
-  attempts:{},
-  currentPhase:null,
-  selfConcepts:[],
-  socraticHistory:[],
-  masteredConcepts:{},
-  essayText:'',
-  essayCitations:{},
-  reflectionText:'',
-  reflectionLearned:'',
-  exerciseStartTime:null,
-  exerciseEndTime:null,
-  completedExercises:[],
-  leitnerCards:[],
-  leitnerSession:null
+  studentName:'',employeeId:'',email:'',studentUUID:'',llmProvider:'anthropic',
+  googleSub:'',googleEmail:'',googleName:'',googlePicture:'',googleHd:'',
+  courseId:'',courseName:'',scenarios:[],
+  activeSession:null,completedSessions:[],completedExercises:[],tutoringSession:null
 };
 
-const PROVIDER_LABELS={anthropic:'Claude',openai:'OpenAI (GPT)',oss:'NVIDIA: Nemotron 3 Ultra'};
-const PROVIDER_SHORT={anthropic:'Claude',openai:'OpenAI',oss:'Nemotron'};
+function generateUUID(){return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return(c==='x'?r:(r&0x3|0x8)).toString(16);});}
 
-function setLlmProvider(value){
-  state.llmProvider=value||'anthropic';
-  saveToStorage();
-  toast('Tutor model: '+(PROVIDER_LABELS[state.llmProvider]||state.llmProvider),'success');
-  checkModelStatus();
-}
 
-function syncModelPicker(){
-  const mp=document.getElementById('modelPicker');
-  if(mp)mp.value=state.llmProvider||'anthropic';
-}
-
-// Live check: pings the selected provider through the backend and shows a
-// green/red status pill in the header. Bypasses the offline demo fallback,
-// so it reflects whether the real model is actually reachable.
-let MODEL_STATUS_SEQ=0;
-function setModelStatusUI(stateClass,text,tooltip){
-  const el=document.getElementById('modelStatus');
-  const txt=document.getElementById('modelStatusText');
-  if(!el)return;
-  el.classList.remove('checking','ok','fail');
-  if(stateClass)el.classList.add(stateClass);
-  if(txt)txt.textContent=text;
-  el.title=tooltip||'Click to re-check the tutor model';
-}
-
-async function checkModelStatus(){
-  const provider=state.llmProvider||'anthropic';
-  const short=PROVIDER_SHORT[provider]||provider;
-  const seq=++MODEL_STATUS_SEQ;
-  setModelStatusUI('checking','Checking '+short+'…','Contacting '+(PROVIDER_LABELS[provider]||provider)+'…');
-
-  const controller=new AbortController();
-  const timer=setTimeout(()=>controller.abort(),25000);
+async function loadPublicConfig(){
   try{
-    const r=await fetch('/.netlify/functions/claude-feedback',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        provider,
-        max_tokens:16,
-        system:'You are a connection test. Reply with exactly: ok',
-        messages:[{role:'user',content:'Reply with the single word ok.'}]
-      }),
-      signal:controller.signal
-    });
-    clearTimeout(timer);
-    if(seq!==MODEL_STATUS_SEQ)return; // a newer check superseded this one
-
-    let d={};
-    try{d=await r.json();}catch(e){}
-
-    if(r.ok && d && typeof d.text==='string' && d.text.trim()){
-      setModelStatusUI('ok',short+' working','Connected — '+(PROVIDER_LABELS[provider]||provider)+' responded. Click to re-check.');
-    }else{
-      const reason=(d && d.error) ? String(d.error) : ('HTTP '+r.status);
-      setModelStatusUI('fail',short+' not working',(PROVIDER_LABELS[provider]||provider)+' error: '+reason+'. Click to re-check.');
+    const response=await fetch('/.netlify/functions/public-config',{cache:'no-store'});
+    const ct=response.headers.get('content-type')||'';
+    if(response.ok && ct.includes('json')){
+      const data=await response.json();
+      GOOGLE_OAUTH_CLIENT_ID=data.googleOAuthClientId||'';
     }
-  }catch(e){
-    clearTimeout(timer);
-    if(seq!==MODEL_STATUS_SEQ)return;
-    const aborted=(e && e.name==='AbortError');
-    setModelStatusUI('fail', short+(aborted?' timed out':' not working'),
-      aborted ? ((PROVIDER_LABELS[provider]||provider)+' took too long to respond (timeout). A smaller/faster model may work better. Click to re-check.')
-              : ('Could not reach the tutor backend: '+String(e&&e.message||e)+'. Click to re-check.'));
+  }catch(e){/* local static server: use Admin config fallback */}
+  if(!GOOGLE_OAUTH_CLIENT_ID){
+    try{const c=JSON.parse(localStorage.getItem('medtutor_admin_config')||'{}');GOOGLE_OAUTH_CLIENT_ID=c.oauthClientId||'';}catch(e){}
   }
 }
-
-function generateUUID(){return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return(c==='x'?r:(r&0x3|0x8)).toString(16);});}
+function renderGoogleSignIn(){
+  const box=document.getElementById('googleSignInBox');
+  const note=document.getElementById('googleUnavailableText');
+  if(!box)return;
+  if(!GOOGLE_OAUTH_CLIENT_ID){box.style.display='none';if(note)note.style.display='block';return;}
+  if(!window.google||!google.accounts||!google.accounts.id){setTimeout(renderGoogleSignIn,200);return;}
+  box.style.display='flex';if(note)note.style.display='none';
+  google.accounts.id.initialize({client_id:GOOGLE_OAUTH_CLIENT_ID,callback:handleGoogleCredential});
+  google.accounts.id.renderButton(box,{theme:'outline',size:'large',type:'standard',text:'signin_with',shape:'rectangular'});
+}
+async function handleGoogleCredential(response){
+  try{
+    let user=null;
+    try{user=await verifyGoogleCredential(response.credential);}catch(e){user=decodeGoogleCredentialForPrototype(response.credential);}
+    if(!user||!user.email)throw new Error('Could not read Google profile.');
+    state.googleSub=user.googleSub||user.sub||'';
+    state.googleEmail=user.email||'';
+    state.googleName=user.name||user.email||'';
+    state.googlePicture=user.picture||'';
+    state.googleHd=user.hd||'';
+    state.email=state.googleEmail||state.email;
+    if(state.googleName&&!state.studentName)state.studentName=state.googleName;
+    const nameInput=document.getElementById('nameInput');
+    const emailInput=document.getElementById('emailInput');
+    if(nameInput&&!nameInput.value)nameInput.value=state.googleName||'';
+    if(emailInput)emailInput.value=state.googleEmail||'';
+    saveToStorage();
+    toast('Google sign-in captured. Enter Employee ID, then begin.','success');
+  }catch(err){toast(err.message||'Google sign-in failed. Continue with email.','error');}
+}
+async function verifyGoogleCredential(credential){
+  const response=await fetch('/.netlify/functions/verify-google-login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({credential})});
+  const data=await response.json().catch(()=>({}));
+  if(!response.ok||!data.ok)throw new Error(data.error||'Google verification unavailable.');
+  return data.user;
+}
+function decodeGoogleCredentialForPrototype(credential){
+  const parts=String(credential||'').split('.');
+  if(parts.length<2)return null;
+  const payload=parts[1].replace(/-/g,'+').replace(/_/g,'/');
+  const json=decodeURIComponent(atob(payload).split('').map(c=>'%'+('00'+c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+  const d=JSON.parse(json);
+  return {googleSub:d.sub,sub:d.sub,email:d.email,name:d.name,picture:d.picture,hd:d.hd};
+}
 
 async function init(){
   loadFromStorage();
   await loadPublicConfig();
   await loadCourse();
-
-  if(state.studentName && state.studentUUID && state.googleSub && state.googleEmail){
-    showScreen('screen-onboard');
+  syncModelPicker();
+  updateHeader();
+  if(state.studentName && state.employeeId){
     renderReturningUser();
   }else{
     showScreen('screen-onboard');
+    const nameInput=document.getElementById('nameInput');
+    const emailInput=document.getElementById('emailInput');
+    if(nameInput && state.studentName)nameInput.value=state.studentName;
+    if(emailInput && (state.email||state.googleEmail))emailInput.value=state.email||state.googleEmail;
     renderGoogleSignIn();
   }
 }
-async function completeOnboarding(){
-  if(!state.googleSub || !state.googleEmail){
-    toast('Please sign in with your institutional Google account or continue with email first.','error');
-    return;
-  }
 
-  if(!state.studentUUID){
-    state.studentUUID=generateUUID();
-  }
-
-  state.studentName=state.googleName || state.googleEmail;
-  await loadCourse();
-  state.selectedQuestionId='';
-  saveToStorage();
-  showScreen('screen-main');
-  renderExerciseNavigator();
-}
-function continueWithEmail(){
-  const name=(document.getElementById('emailNameInput').value||'').trim();
-  const email=(document.getElementById('emailInput').value||'').trim();
-  if(!name){toast('Please enter your name.','error');return;}
-  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){toast('Please enter a valid email address.','error');return;}
-  state.googleSub='email:'+email.toLowerCase();
-  state.googleEmail=email;
-  state.googleName=name;
-  state.googlePicture='';
-  state.googleHd='';
-  state.studentName=name;
-  if(!state.studentUUID){state.studentUUID=generateUUID();}
-  saveToStorage();
-  completeOnboarding();
-}
-
-function renderReturningUser(){
-  const returningUserBox=document.getElementById('returningUserBox');
-  const returningUserName=document.getElementById('returningUserName');
-  const returningUserEmail=document.getElementById('returningUserEmail');
-  const googleSignInBox=document.getElementById('googleSignInBox');
-  const signedInBox=document.getElementById('signedInBox');
-  const beginBtn=document.getElementById('beginBtn');
-  const continueBtn=document.getElementById('continueBtn');
-  const signOutBtn=document.getElementById('signOutBtn');
-
-  if(returningUserBox)returningUserBox.style.display='block';
-  if(returningUserName)returningUserName.textContent=state.googleName || state.studentName || 'Previous user';
-  if(returningUserEmail)returningUserEmail.textContent=state.googleEmail || '';
-
-  const emailSignInBox=document.getElementById('emailSignInBox');
-  if(googleSignInBox)googleSignInBox.style.display='none';
-  if(emailSignInBox)emailSignInBox.style.display='none';
-  if(signedInBox)signedInBox.style.display='none';
-  if(beginBtn)beginBtn.style.display='none';
-  if(continueBtn)continueBtn.style.display='inline-flex';
-  if(signOutBtn)signOutBtn.style.display='inline-flex';
-}
-
-async function continueExistingUser(){
-  await loadCourse();
-  state.selectedQuestionId='';
-  saveToStorage();
-  showScreen('screen-main');
-  renderExerciseNavigator();
-}
-
-function signOutAndReset(){
-  const ok=confirm('Sign out and clear local progress on this device? Make sure you have exported or saved your work if needed.');
-  if(!ok)return;
-
+function loadFromStorage(){
   try{
-    if(window.google && google.accounts && google.accounts.id){
-      google.accounts.id.disableAutoSelect();
+    const existing=localStorage.getItem(STORAGE_KEY) || findFirstMedTutorState();
+    if(existing){
+      const parsed=JSON.parse(existing);
+      state={...state,...parsed};
+      state.completedSessions=Array.isArray(state.completedSessions)?state.completedSessions:[];
+      state.completedExercises=Array.isArray(state.completedExercises)?state.completedExercises:[];
     }
-  }catch(e){}
-
-  clearMedTutorLocalStorage();
-
-  state={
-    studentName:'',
-    studentUUID:'',
-    llmProvider:'anthropic',
-    googleSub:'',
-    googleEmail:'',
-    googleName:'',
-    googlePicture:'',
-    googleHd:'',
-    courseId:'',
-    courseName:'',
-    questions:[],
-    selectedQuestionId:'',
-    activeQuestionId:'',
-    currentPhase:null,
-    selfConcepts:[],
-    socraticHistory:[],
-    masteredConcepts:{},
-    essayText:'',
-    essayCitations:{},
-    reflectionText:'',
-    reflectionLearned:'',
-    exerciseStartTime:null,
-    exerciseEndTime:null,
-    completedExercises:[],
-    leitnerCards:[],
-    leitnerSession:null
-  };
-
-  location.reload();
+  }catch(e){console.warn('Could not load saved state',e);}
 }
-
-function clearMedTutorLocalStorage(){
+function findFirstMedTutorState(){
   try{
-    const keys=[];
     for(let i=0;i<localStorage.length;i++){
       const key=localStorage.key(i);
-      if(key && key.startsWith('medtutor_student_')){
-        keys.push(key);
-      }
+      if(key && key.startsWith(COURSE_STORAGE_PREFIX) && key.includes('NURS'))return localStorage.getItem(key);
     }
-    keys.forEach(key=>localStorage.removeItem(key));
   }catch(e){}
+  return null;
 }
-async function loadPublicConfig(){
+function saveToStorage(){
   try{
-    const response=await fetch('/.netlify/functions/public-config',{cache:'no-store'});
-    const ct=response.headers.get('content-type')||'';
-    if(!response.ok || !ct.includes('application/json')){
-      console.warn('public-config not available — Google sign-in disabled. Use email sign-in.');
-      GOOGLE_OAUTH_CLIENT_ID='';
-      return;
-    }
-    const data=await response.json();
-    GOOGLE_OAUTH_CLIENT_ID=data.googleOAuthClientId || '';
-  }catch(err){
-    // No server config — fall back to an OAuth client id set in the Admin page (if any).
-    try{const c=JSON.parse(localStorage.getItem('medtutor_admin_config')||'{}');GOOGLE_OAUTH_CLIENT_ID=c.oauthClientId||'';}catch(e){GOOGLE_OAUTH_CLIENT_ID='';}
-    if(!GOOGLE_OAUTH_CLIENT_ID)console.warn('public-config not available — Google sign-in disabled. Use email sign-in.');
-  }
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
+    if(state.courseId)localStorage.setItem(`${COURSE_STORAGE_PREFIX}${state.courseId}`,JSON.stringify(state));
+  }catch(e){console.warn('Could not save state',e);}
 }
-function renderGoogleSignIn(){
-  const box=document.getElementById('googleSignInBox');
-  if(!box)return;
-if(!GOOGLE_OAUTH_CLIENT_ID){
-  box.style.display='none';
-  return;
-}
-  if(!window.google || !google.accounts || !google.accounts.id){
-    setTimeout(renderGoogleSignIn,200);
-    return;
-  }
-
-  google.accounts.id.initialize({
-    client_id: GOOGLE_OAUTH_CLIENT_ID,
-    callback: handleGoogleCredential
-  });
-
-  google.accounts.id.renderButton(box,{
-    theme:'outline',
-    size:'large',
-    type:'standard',
-    text:'signin_with',
-    shape:'rectangular'
-  });
-}
-
-async function handleGoogleCredential(response){
-  try{
-    const verified=await verifyGoogleCredential(response.credential);
-
-    state.googleSub=verified.googleSub;
-    state.googleEmail=verified.email;
-    state.googleName=verified.name || verified.email;
-    state.googlePicture=verified.picture || '';
-    state.googleHd=verified.hd || '';
-    state.studentName=state.googleName;
-
-    if(!state.studentUUID){
-      state.studentUUID=generateUUID();
-    }
-
-    const signedInBox=document.getElementById('signedInBox');
-const signedInName=document.getElementById('signedInName');
-const signedInEmail=document.getElementById('signedInEmail');
-const beginBtn=document.getElementById('beginBtn');
-const googleSignInBox=document.getElementById('googleSignInBox');
-
-    if(signedInBox)signedInBox.style.display='block';
-    if(signedInName)signedInName.textContent=state.googleName;
-    if(signedInEmail)signedInEmail.textContent=state.googleEmail;
-    if(beginBtn)beginBtn.disabled=false;
-if(googleSignInBox)googleSignInBox.style.display='none';
-    const continueBtn=document.getElementById('continueBtn');
-    const signOutBtn=document.getElementById('signOutBtn');
-    const returningUserBox=document.getElementById('returningUserBox');
-
-    if(continueBtn)continueBtn.style.display='none';
-    if(signOutBtn)signOutBtn.style.display='inline-flex';
-    if(returningUserBox)returningUserBox.style.display='none';
-
-    saveToStorage();
-    toast('Google sign-in verified.','success');
-  }catch(err){
-    console.error(err);
-    toast(err.message || 'Google sign-in failed.','error');
-  }
-}
-
-async function verifyGoogleCredential(credential){
-  const response=await fetch('/.netlify/functions/verify-google-login',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({credential})
-  });
-
-  const data=await response.json().catch(()=>({}));
-
-  if(!response.ok || !data.ok){
-    throw new Error(data.error || 'Google sign-in verification failed.');
-  }
-
-  return data.user;
-}
-function toggleImportSection(){const s=document.getElementById('onboardImportSection');s.style.display=s.style.display==='none'?'block':'none';}
 
 async function loadCourse(){
   const params=new URLSearchParams(window.location.search);
   const qset=params.get('qset')||DEFAULT_QUESTION_SET;
-
-  // Nursing-only mode:
-  // The student app loads /questions/nursing/acute-care.json by default.
-  // We intentionally do NOT load medtutor_admin_qset from localStorage here,
-  // because an old Admin-page saved set can otherwise override the nursing case.
   try{
     const response=await fetch(`/questions/${qset}.json`,{cache:'no-store'});
     const ct=response.headers.get('content-type')||'';
-    if(!response.ok)throw new Error(`Could not load /questions/${qset}.json (HTTP ${response.status})`);
-    if(!ct.includes('json'))throw new Error(`/questions/${qset}.json is missing — got a non-JSON response. Make sure the questions/ folder is deployed.`);
+    if(!response.ok)throw new Error(`HTTP ${response.status}`);
+    if(!ct.includes('json'))throw new Error('non-JSON response');
     COURSE_DATA=await response.json();
-    state.courseId=COURSE_DATA.courseId;
-    state.courseName=COURSE_DATA.courseName;
-    state.questions=COURSE_DATA.questions||[];
   }catch(e){
-    // Fetch failed (e.g. opened as a file, or questions/ not deployed).
-    // Fall back to the embedded nursing MI case so the app still works.
     COURSE_DATA=EMBEDDED_COURSE;
-    state.courseId=COURSE_DATA.courseId;
-    state.courseName=COURSE_DATA.courseName;
-    state.questions=COURSE_DATA.questions||[];
-    console.warn('Using embedded nursing questions (could not fetch /questions):',e.message);
+    console.warn('Using embedded nursing scenario because /questions could not be loaded:',e.message);
   }
-
-  const m=document.getElementById('headerMeta');
-  if(m){
-    const identity=state.googleEmail || state.studentName || '';
-    m.textContent=`${state.courseId} · ${identity}`;
-  }
-}
-
-function getActiveQuestion(){const today=new Date().toISOString().split('T')[0];let active=null;for(const q of state.questions){if(q.releaseDate<=today)active=q;}return active;}
-function isLate(q){if(!q.deadline)return false;return new Date()>new Date(q.deadline);}
-function isCompleted(qid){return state.completedExercises.some(e=>e.questionId===qid);}
-function countExchanges(){return Math.floor((state.socraticHistory||[]).length/2);}
-function normalizeQuestionId(value){
-  return String(value || '').trim();
-}
-
-function sameQuestionId(a,b){
-  const left=normalizeQuestionId(a);
-  const right=normalizeQuestionId(b);
-  return !!left && !!right && left===right;
-}
-
-function getQuestionById(questionId){
-  const target=normalizeQuestionId(questionId);
-  return state.questions.find(q=>sameQuestionId(q.id,target))||null;
-}
-
-function getSelectedQuestion(){
-  if(state.selectedQuestionId){
-    return getQuestionById(state.selectedQuestionId);
-  }
-  if(state.activeQuestionId){
-    return getQuestionById(state.activeQuestionId);
-  }
-  return null;
-}
-
-function cloneAttemptValue(value){
-  return JSON.parse(JSON.stringify(value ?? null));
-}
-
-function isAttemptInProgress(attempt){
-  return !!(attempt && attempt.currentPhase && attempt.currentPhase!=='complete');
-}
-
-function getCurrentAttemptSnapshot(){
-  return {
-    currentPhase:state.currentPhase,
-    selfConcepts:cloneAttemptValue(state.selfConcepts)||[],
-    socraticHistory:cloneAttemptValue(state.socraticHistory)||[],
-    masteredConcepts:cloneAttemptValue(state.masteredConcepts)||{},
-    essayText:state.essayText||'',
-    essayCitations:cloneAttemptValue(state.essayCitations)||{},
-    reflectionText:state.reflectionText||'',
-    reflectionLearned:state.reflectionLearned||'',
-    exerciseStartTime:state.exerciseStartTime||null,
-    exerciseEndTime:state.exerciseEndTime||null
-  };
-}
-
-function saveCurrentAttempt(){
-  const qid=normalizeQuestionId(state.activeQuestionId);
-  if(!qid || !state.currentPhase || state.currentPhase==='complete')return;
-  if(!state.attempts)state.attempts={};
-  state.attempts[qid]=getCurrentAttemptSnapshot();
-}
-
-function restoreAttemptSnapshot(qid,attempt){
-  state.activeQuestionId=qid;
-  state.currentPhase=attempt?.currentPhase || 'selfAssess';
-  state.selfConcepts=Array.isArray(attempt?.selfConcepts)?cloneAttemptValue(attempt.selfConcepts):[];
-  state.socraticHistory=Array.isArray(attempt?.socraticHistory)?cloneAttemptValue(attempt.socraticHistory):[];
-  state.masteredConcepts=attempt?.masteredConcepts?cloneAttemptValue(attempt.masteredConcepts):{};
-  state.essayText=attempt?.essayText||'';
-  state.essayCitations=attempt?.essayCitations?cloneAttemptValue(attempt.essayCitations):{};
-  state.reflectionText=attempt?.reflectionText||'';
-  state.reflectionLearned=attempt?.reflectionLearned||'';
-  state.exerciseStartTime=attempt?.exerciseStartTime||null;
-  state.exerciseEndTime=attempt?.exerciseEndTime||null;
-}
-
-function loadAttemptForQuestion(questionId){
-  const qid=normalizeQuestionId(questionId);
-  if(!state.attempts)state.attempts={};
-  const saved=state.attempts[qid];
-
-  clearActiveAttemptFields();
-  state.selectedQuestionId=qid;
-
-  if(isAttemptInProgress(saved)){
-    restoreAttemptSnapshot(qid,saved);
-  }else{
-    state.activeQuestionId=qid;
-    state.currentPhase='selfAssess';
-  }
-}
-
-function hasInProgressAttempt(questionId){
-  if(!state.attempts)state.attempts={};
-
-  if(questionId){
-    const qid=normalizeQuestionId(questionId);
-    const isActive=sameQuestionId(state.activeQuestionId,qid) && state.currentPhase && state.currentPhase!=='complete';
-    return !!(isActive || isAttemptInProgress(state.attempts[qid]));
-  }
-
-  if(state.activeQuestionId && state.currentPhase && state.currentPhase!=='complete')return true;
-  return Object.values(state.attempts).some(isAttemptInProgress);
-}
-
-function getQuestionStatus(q){
-  const completed=isCompleted(q.id);
-  const inProgress=hasInProgressAttempt(q.id);
-  const today=new Date();
-  const released=!q.releaseDate || new Date(q.releaseDate+'T00:00:00')<=today;
-  const late=isLate(q);
-
-  if(inProgress)return 'in-progress';
-  if(completed)return 'complete';
-  if(!released)return 'locked';
-  if(late)return 'late';
-  return 'available';
-}
-
-function statusLabel(status){
-  return {
-    'in-progress':'In progress',
-    complete:'Complete',
-    locked:'Locked',
-    late:'Late',
-    available:'Available'
-  }[status]||status;
-}
-
-function statusClass(status){
-  return {
-    'in-progress':'amber',
-    complete:'green',
-    locked:'gray',
-    late:'red',
-    available:'blue'
-  }[status]||'gray';
-}
-
-function groupQuestionsByWeek(){
-  const groups={};
-  for(const q of state.questions){
-    const week=q.week || 'Unspecified';
-    if(!groups[week])groups[week]=[];
-    groups[week].push(q);
-  }
-  return Object.entries(groups)
-    .sort((a,b)=>Number(a[0])-Number(b[0]))
-    .map(([week,questions])=>({
-      week,
-      weekLabel:questions[0].weekLabel || `Week ${week}`,
-      questions:questions.sort((a,b)=>(Number(a.questionNumber||1)-Number(b.questionNumber||1)) || String(a.id).localeCompare(String(b.id)))
-    }));
-}
-
-function clearActiveAttemptFields(){
-  state.currentPhase=null;
-  state.selfConcepts=[];
-  state.socraticHistory=[];
-  state.masteredConcepts={};
-  state.essayText='';
-  state.essayCitations={};
-  state.reflectionText='';
-  state.reflectionLearned='';
-  state.exerciseStartTime=null;
-  state.exerciseEndTime=null;
-}
-  function renderExerciseNavigator(){
-  const el=document.getElementById('mainContent');
-
-  if(!state.questions || state.questions.length===0){
-    el.innerHTML='<div class="no-data"><div class="no-data-icon">📅</div><div>No questions available yet.</div></div>';
-    return;
-  }
-
-  const groups=groupQuestionsByWeek();
-
-  el.innerHTML=`
-    <div class="exercise-course-title">${escHtml(state.courseName || 'Course')}</div>
-    <div class="exercise-course-sub">${escHtml(state.courseId || '')} · ${escHtml(state.googleEmail || state.studentName || '')}</div>
-
-    ${hasInProgressAttempt()?`
-      <div class="config-warn">
-        You have one or more exercises in progress. You can switch between released questions; each question keeps its own saved draft.
-      </div>
-    `:''}
-
-    ${groups.map(group=>`
-      <div class="week-group">
-        <div class="week-title">${escHtml(group.weekLabel)}</div>
-        ${group.questions.map(q=>renderExerciseCard(q)).join('')}
-      </div>
-    `).join('')}
-  `;
-}
-
-function renderExerciseCard(q){
-  const status=getQuestionStatus(q);
-  const cls=statusClass(status);
-  const locked=status==='locked';
-  const completed=status==='complete';
-  const inProgress=status==='in-progress';
-  const available=status==='available' || status==='late';
-
-  let action='';
-  let displayStatus=status;
-  let displayCls=cls;
-
-  if(inProgress){
-    displayStatus='in-progress';
-    displayCls='amber';
-  }
-
-  if(locked){
-    action=`<button class="btn btn-ghost btn-sm" disabled>Locked</button>`;
-  }else if(completed){
-    action=`<button class="btn btn-secondary btn-sm" onclick="openQuestion('${escJs(q.id)}')">View</button>`;
-  }else if(inProgress){
-    action=`<button class="btn btn-amber btn-sm" onclick="openQuestion('${escJs(q.id)}')">Resume</button>`;
-  }else if(available){
-    action=`<button class="btn btn-primary btn-sm" onclick="openQuestion('${escJs(q.id)}')">Start</button>`;
-  }else{
-    action=`<button class="btn btn-ghost btn-sm" disabled>Unavailable</button>`;
-  }
-
-  return `
-    <div class="exercise-card ${locked?'locked':''}">
-      <div class="exercise-main">
-        <div class="exercise-id">${escHtml(q.id)} · Q${escHtml(q.questionNumber || 1)}</div>
-        <div class="exercise-topic">${escHtml(q.topic || 'Untitled question')}</div>
-        <div class="exercise-meta">
-          Released ${formatDate(q.releaseDate)}
-          ${q.deadline?' · Due '+formatDeadline(q.deadline):''}
-        </div>
-      </div>
-      <div class="exercise-actions">
-        <span class="status-pill ${displayCls}">${statusLabel(displayStatus)}</span>
-        ${action}
-      </div>
-    </div>
-  `;
-}
-
-function openQuestion(questionId){
-  const q=getQuestionById(questionId);
-  if(!q){
-    toast('Question not found.','error');
-    return;
-  }
-
-  const status=getQuestionStatus(q);
-
-  if(status==='locked'){
-    toast('This question is not released yet.','error');
-    return;
-  }
-
-  // Before leaving the current question, preserve its draft.
-  saveCurrentAttempt();
-
-  if(status==='complete'){
-    state.selectedQuestionId=q.id;
-    saveToStorage();
-    renderCompletedQuestionDetail(q.id);
-    return;
-  }
-
-  // Load this question's own draft, or start a new draft.
-  loadAttemptForQuestion(q.id);
-
-  if(!state.exerciseStartTime){
-    state.exerciseStartTime=new Date().toISOString();
-  }
-
+  state.courseId=COURSE_DATA.courseId||'NURS-ACUTE';
+  state.courseName=COURSE_DATA.courseName||'Nursing Education';
+  state.scenarios=normalizeScenarios(COURSE_DATA);
   saveToStorage();
-  renderMainScreen();
 }
 
-function escJs(str){
-  return String(str||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'");
-}
-function renderMainScreen(){
-  const q=getSelectedQuestion();
-
-  if(!q){
-    renderExerciseNavigator();
-    return;
-  }
-
-    if(isCompleted(q.id) && !sameQuestionId(state.activeQuestionId,q.id)){
-    renderCompletedQuestionDetail(q.id);
-    return;
-  }
-
-  if(!state.currentPhase || state.currentPhase==='selfAssess'){
-    state.currentPhase='selfAssess';
-    renderSelfAssessPhase(q);
-  }else if(state.currentPhase==='socratic'){
-    renderSocraticPhase(q);
-  }else if(state.currentPhase==='write'){
-    renderWritePhase(q);
-  }else if(state.currentPhase==='reflect'){
-    renderReflectPhase(q);
-  }else if(state.currentPhase==='complete'){
-    renderCompletedQuestionDetail(q.id);
-  }else{
-    renderExerciseNavigator();
-  }
-}
-function getLatestCompletedRecord(questionId){
-  const records=(state.completedExercises||[]).filter(e=>e.questionId===questionId);
-  return records.length ? records[records.length-1] : null;
-}
-
-function renderCompletedQuestionDetail(questionId){
-  const q=getQuestionById(questionId);
-  const record=getLatestCompletedRecord(questionId);
-  const el=document.getElementById('mainContent');
-
-  if(!q){
-    renderExerciseNavigator();
-    return;
-  }
-
-  if(!record){
-    state.selectedQuestionId=q.id;
-    saveToStorage();
-    renderMainScreen();
-    return;
-  }
-
-  const mastered=record.masteredConcepts || {};
-  const conceptsHtml=Object.entries(mastered).map(([id,m])=>`
-    <div style="margin-bottom:10px;padding:10px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius)">
-      <div style="font-family:var(--mono);font-size:11px;color:var(--accent);margin-bottom:3px">${escHtml(m.label || id)}</div>
-      <div style="font-size:12px;color:var(--ink2);line-height:1.6">${escHtml(m.summary || '')}</div>
-      ${m.citation?`<div style="font-size:11px;color:var(--ink3);margin-top:4px">${escHtml(m.citation)}</div>`:''}
-    </div>
-  `).join('');
-
-  el.innerHTML=`
-    <div class="phase-badge phase-3">Completed</div>
-    <div class="card">
-      <div class="card-title">${escHtml(q.topic || record.topic || 'Completed question')}</div>
-      <div class="card-subtitle">
-        ${escHtml(q.id)} · ${escHtml(q.weekLabel || ('Week '+(q.week||'')))} · Q${escHtml(q.questionNumber || 1)}
-      </div>
-
-      <div class="completed-detail-grid">
-        <div class="completed-detail-item">
-          <div class="completed-detail-val">${record.conceptsMastered || 0}/${record.totalConcepts || q.concepts?.length || 0}</div>
-          <div class="completed-detail-lbl">Concepts</div>
-        </div>
-        <div class="completed-detail-item">
-          <div class="completed-detail-val">${record.timeMinutes || '—'}m</div>
-          <div class="completed-detail-lbl">Time</div>
-        </div>
-        <div class="completed-detail-item">
-          <div class="completed-detail-val">${record.totalExchanges || '—'}</div>
-          <div class="completed-detail-lbl">Exchanges</div>
-        </div>
-        <div class="completed-detail-item">
-          <div class="completed-detail-val">${record.isLate?'Late':'On time'}</div>
-          <div class="completed-detail-lbl">Status</div>
-        </div>
-      </div>
-
-      <details open style="margin-top:12px">
-        <summary style="cursor:pointer;color:var(--accent);font-weight:600;margin-bottom:10px">Mastered concepts</summary>
-        <div style="margin-top:10px">${conceptsHtml || '<div class="help-text">No concept details saved.</div>'}</div>
-      </details>
-
-      ${record.essayText?`
-        <details style="margin-top:14px">
-          <summary style="cursor:pointer;color:var(--accent);font-weight:600;margin-bottom:10px">Essay</summary>
-          <div style="white-space:pre-wrap;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px;font-size:13px;line-height:1.7;margin-top:10px">${escHtml(record.essayText)}</div>
-        </details>
-      `:''}
-
-      ${record.reflectionText || record.reflectionLearned?`
-        <details style="margin-top:14px">
-          <summary style="cursor:pointer;color:var(--accent);font-weight:600;margin-bottom:10px">Reflection</summary>
-          <div style="white-space:pre-wrap;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px;font-size:13px;line-height:1.7;margin-top:10px">
-            ${escHtml(record.reflectionText || '')}
-            ${record.reflectionLearned?'\n\n'+escHtml(record.reflectionLearned):''}
-          </div>
-        </details>
-      `:''}
-
-      <div style="display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;margin-top:22px">
-        <button class="btn btn-ghost" onclick="state.selectedQuestionId='';saveToStorage();renderExerciseNavigator()">← Back to exercises</button>
-        <button class="btn btn-secondary" onclick="exportData()">⬇ Export</button>
-        <button class="btn btn-amber" onclick="resetQuestionAttempt('${escJs(q.id)}')">Reset and do again</button>
-      </div>
-    </div>
-  `;
-}
-
-function resetQuestionAttempt(questionId){
-  const q=getQuestionById(questionId);
-  if(!q){
-    toast('Question not found.','error');
-    return;
-  }
-
-  if(hasInProgressAttempt() && !sameQuestionId(state.activeQuestionId,questionId)){
-    toast('You already have a different exercise in progress. Please complete it before resetting another question.','error');
-    return;
-  }
-
-  const ok=confirm('This will clear your current local work for this question and start it again. Your previous completed record will remain in your local history/export. Continue?');
-  if(!ok)return;
-
-  clearActiveAttemptFields();
-  state.selectedQuestionId=questionId;
-  state.activeQuestionId=questionId;
-  state.currentPhase='selfAssess';
-  saveToStorage();
-  renderMainScreen();
-}
-function renderSelfAssessPhase(q){
-  const late=isLate(q);
-  const el=document.getElementById('mainContent');
-
-  el.innerHTML=`
-    <div class="phase-badge phase-1">Phase 1 of 3 · Self Assessment</div>
-    ${late?'<div class="config-warn">⚠ Past deadline — submission will be marked late.</div>':''}
-
-    <div class="card">
-      <div class="card-title">${escHtml(q.topic)}</div>
-      <div class="card-subtitle">${q.id} · Released ${formatDate(q.releaseDate)}${q.deadline?' · Due '+formatDeadline(q.deadline):''}</div>
-      <div class="question-box">${escHtml(q.question)}</div>
-
-      <div style="background:var(--blue-light);border:1px solid #b0c8e8;border-radius:var(--radius);padding:14px 16px;margin-bottom:20px;font-size:13px;color:var(--blue);line-height:1.6">
-        <strong>Before engaging with the tutor</strong>, list the concepts you already know about this question and what you understand about each. This is not graded — it is a record of your starting knowledge. Do not use AI assistance for this step.
-      </div>
-
-      <div id="selfConceptList">
-        ${(state.selfConcepts.length>0?state.selfConcepts:[{concept:'',knowledge:''}]).map((c,i)=>renderSelfConceptRow(i,c)).join('')}
-      </div>
-
-      <button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="addSelfConcept()">+ Add concept</button>
-    </div>
-
-    <div style="display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap">
-      <button class="btn btn-ghost" onclick="state.selectedQuestionId='';saveToStorage();renderExerciseNavigator()">← Back to exercises</button>
-      <button class="btn btn-primary btn-lg" onclick="submitSelfAssessment()">Submit & Begin Learning →</button>
-    </div>
-  `;
-
-  if(!state.exerciseStartTime)state.exerciseStartTime=new Date().toISOString();
-}
-
-function renderSelfConceptRow(i,c={}){return `<div class="concept-row" id="scrow_${i}"><div><label>Concept ${i+1}</label><input type="text" placeholder="e.g. Th1 vs Th2" value="${escHtml(c.concept||'')}" oninput="updateSelfConcept(${i},'concept',this.value)"></div><div><label>What you know</label><textarea rows="2" placeholder="Brief notes…" oninput="updateSelfConcept(${i},'knowledge',this.value)">${escHtml(c.knowledge||'')}</textarea></div><div style="padding-top:22px"><button class="btn btn-ghost btn-sm" onclick="removeSelfConcept(${i})" ${i===0?'disabled':''}>✕</button></div></div>`;}
-
-function addSelfConcept(){state.selfConcepts.push({concept:'',knowledge:''});const el=document.getElementById('selfConceptList');const i=state.selfConcepts.length-1;el.insertAdjacentHTML('beforeend',renderSelfConceptRow(i,state.selfConcepts[i]));saveToStorage();}
-function removeSelfConcept(i){state.selfConcepts.splice(i,1);renderSelfAssessPhase(getSelectedQuestion());saveToStorage();}
-function updateSelfConcept(i,field,value){if(!state.selfConcepts[i])state.selfConcepts[i]={};state.selfConcepts[i][field]=value;saveToStorage();}
-
-function submitSelfAssessment(){const rows=document.querySelectorAll('[id^="scrow_"]');state.selfConcepts=[];rows.forEach(row=>{const inputs=row.querySelectorAll('input,textarea');state.selfConcepts.push({concept:inputs[0].value.trim(),knowledge:inputs[1].value.trim()});});const filled=state.selfConcepts.filter(c=>c.concept.trim());if(filled.length===0){toast('Please add at least one concept','error');return;}state.selfConcepts=filled;state.currentPhase='socratic';if(state.selectedQuestionId){
-  state.activeQuestionId=state.selectedQuestionId;
-}state.socraticHistory=[];state.masteredConcepts={};state.essayText='';state.essayCitations={};saveToStorage();renderMainScreen();}
-
-function renderSocraticPhase(q){const el=document.getElementById('mainContent');const total=q.concepts.length;const doneCount=Object.keys(state.masteredConcepts).length;const pct=Math.round((doneCount/total)*100);const allDone=doneCount>=total;el.innerHTML=`<div class="phase-badge phase-2">Phase 2 of 3 · Concept Mastery</div><div style="display:flex;justify-content:flex-end;margin-bottom:12px">
-  <button class="btn btn-ghost btn-sm" onclick="state.selectedQuestionId='';saveToStorage();renderExerciseNavigator()">← Back to exercises</button>
-</div>${isLate(q)?'<div class="config-warn">⚠ Past deadline — submission will be marked late.</div>':''}<div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:${pct}%"></div></div><div class="progress-label">${doneCount} of ${total} concepts mastered</div><div class="roadmap" style="margin-bottom:20px">${q.concepts.map(c=>{const done=!!state.masteredConcepts[c.id];const summary=state.masteredConcepts[c.id]?.summary||'';return`<div class="roadmap-item ${done?'done':'active'}"><div class="ri-icon">${done?'✓':'○'}</div><div style="flex:1"><div class="ri-label ${done?'done':''}">${escHtml(c.label)}</div>${done&&summary?`<div style="font-size:11px;color:var(--accent);margin-top:2px;font-style:italic">${escHtml(summary)}</div>`:''}</div><div class="ri-status">${done?'Mastered':'Pending'}</div></div>`;}).join('')}</div>${allDone?`<div class="card" style="text-align:center;border-color:var(--accent);background:var(--accent-light)"><div style="font-size:32px;margin-bottom:8px">🎉</div><div style="font-family:var(--serif);font-size:20px;color:var(--accent);margin-bottom:8px">All concepts mastered!</div><div style="font-size:14px;color:var(--ink3);margin-bottom:20px">Now write your synthesis essay to complete the exercise.</div><button class="btn btn-primary btn-lg" onclick="startWritingPhase()">Write Synthesis Essay →</button></div>`:`<div class="card"><div class="card-title">Socratic Dialogue</div><div class="card-subtitle">Work through each concept with the tutor. Each concept is checked off automatically as you demonstrate mastery.</div><div class="chat-window" id="socraticChat">${(state.socraticHistory||[]).length===0?'<div style="text-align:center;padding:20px;color:var(--ink3);font-size:13px">Starting session…</div>':renderChatHistory(state.socraticHistory||[])}</div><div class="chat-input-row"><textarea id="socraticInput" placeholder="Respond to the tutor…" rows="2" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendSocraticMessage();}"></textarea><button class="btn btn-primary" onclick="sendSocraticMessage()">Send</button></div><div class="help-text">Press Enter to send · Shift+Enter for new line</div></div>`}`;if((state.socraticHistory||[]).length===0&&!allDone)startSocraticSession(q);scrollChat('socraticChat');}
-
-function buildSocraticSystemPrompt(q){const selfText=state.selfConcepts.map((c,i)=>`${i+1}. ${c.concept}: ${c.knowledge||'(no notes)'}`).join('\n');const conceptsText=q.concepts.map(c=>{const done=!!state.masteredConcepts[c.id];return`[${done?'MASTERED':'PENDING'}] ${c.id}: ${c.label}\n   Ideal understanding: ${c.idealAnswer}`;}).join('\n\n');const pending=q.concepts.filter(c=>!state.masteredConcepts[c.id]);const next=pending[0];return`You are a warm, knowledgeable Socratic medical tutor working through a clinical case with a student in one continuous conversation.\n\nCLINICAL QUESTION:\n${q.question}\n\nSTUDENT'S PRIOR KNOWLEDGE (start from here — do NOT re-ask things they already wrote):\n${selfText}\n\nCONCEPTS:\n${conceptsText}\n\nYOUR APPROACH:\n- Work through PENDING concepts one at a time in order\n- For each concept, acknowledge what the student already wrote in their self-assessment, then probe deeper with one focused question\n- Keep each concept to 3-5 exchanges — targeted and efficient\n- When the student demonstrates solid understanding, confirm warmly and emit EXACTLY this on its own line:\n  CONCEPT_MASTERED:[exact concept id from the CONCEPTS list]:[one sentence summary of what they demonstrated]\n- The concept id may include letters, numbers, underscores, and hyphens, such as W05-C1. Use the exact id shown in the CONCEPTS list.\n- Immediately move to the next PENDING concept\n- Never re-cover MASTERED concepts\n- This is one flowing tutorial — keep momentum\n\nTONE: Warm, encouraging, intellectually engaged. One focused question at a time.\n\nCURRENT CONCEPT: ${next?next.label:'All done — encourage the student to write their synthesis essay.'}`;}
-
-async function startSocraticSession(q){if(!state.socraticHistory)state.socraticHistory=[];const selfText=state.selfConcepts.map((c,i)=>`${i+1}. ${c.concept}: ${c.knowledge||'(no notes)'}`).join('\n');await sendToAPI('socraticChat','socraticInput',state.socraticHistory,buildSocraticSystemPrompt(q),`Here is what I already knew before starting:\n${selfText}\n\nI am ready to begin.`,false,(reply)=>checkConceptMastered(reply,q));}
-
-async function sendSocraticMessage(){const input=document.getElementById('socraticInput');const text=input.value.trim();if(!text)return;input.value='';const q=getSelectedQuestion();if(!state.socraticHistory)state.socraticHistory=[];await sendToAPI('socraticChat',null,state.socraticHistory,buildSocraticSystemPrompt(q),text,true,(reply)=>checkConceptMastered(reply,q));}
-
-function checkConceptMastered(responseText, q) {
-  const regex = /CONCEPT_MASTERED:([A-Za-z0-9_-]+):([^\n]+)/g;
-
-  let match;
-  let any = false;
-
-  while ((match = regex.exec(responseText)) !== null) {
-    const id = match[1].trim();
-    const summary = match[2].trim();
-
-    const concept = q.concepts.find(c => String(c.id).trim() === id);
-
-    if (concept && !state.masteredConcepts[id]) {
-      state.masteredConcepts[id] = {
-        label: concept.label,
-        summary,
-        completedAt: new Date().toISOString()
-      };
-
-      addLeitnerCard({
-        conceptId: id,
-        questionId: q.id,
-        label: concept.label,
-        paragraph: summary,
-        citation: ''
-      });
-
-      any = true;
-    }
-  }
-
-  if (any) {
-    saveToStorage();
-
-    setTimeout(() => {
-      const allDone = Object.keys(state.masteredConcepts).length >= q.concepts.length;
-      renderSocraticPhase(q);
-      if (!allDone) scrollChat('socraticChat');
-    }, 800);
-  }
-}
-
-function startWritingPhase(){state.currentPhase='write';saveToStorage();renderMainScreen();}
-
-function renderWritePhase(q){const el=document.getElementById('mainContent');const summaries=q.concepts.map((c,i)=>{const m=state.masteredConcepts[c.id];return`<div style="padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:var(--radius);margin-bottom:8px"><div style="font-size:11px;font-family:var(--mono);color:var(--accent);margin-bottom:3px">Concept ${i+1}</div><div style="font-size:13px;font-weight:500;color:var(--ink);margin-bottom:3px">${escHtml(c.label)}</div><div style="font-size:12px;color:var(--ink3);font-style:italic">${escHtml(m?.summary||'')}</div></div>`;}).join('');const citations=q.concepts.map((c,i)=>`<div class="field-group"><label>Citation ${i+1} — ${escHtml(c.label)}</label><input type="text" id="cit_${c.id}" placeholder="Author et al. Journal. Year;Vol:Pages." value="${escHtml((state.essayCitations||{})[c.id]||'')}" oninput="updateCitation('${c.id}',this.value)"></div>`).join('');el.innerHTML=`<div class="phase-badge phase-3">Phase 3 of 3 · Synthesis Essay</div><div style="display:flex;justify-content:flex-end;margin-bottom:12px">
-  <button class="btn btn-ghost btn-sm" onclick="state.selectedQuestionId='';saveToStorage();renderExerciseNavigator()">← Back to exercises</button>
-</div><div class="card"><div class="card-title">Write Your Synthesis Essay</div><div class="card-subtitle">You have mastered all ${q.concepts.length} concepts. Now synthesize them into one integrated essay.</div><div style="background:var(--blue-light);border:1px solid #b0c8e8;border-radius:var(--radius);padding:14px 16px;margin-bottom:20px;font-size:13px;color:var(--blue);line-height:1.6"><strong>What to write:</strong> One integrated essay addressing the full clinical question. Weave all the concepts together — show how the immunology connects to the patient's presentation and treatment decisions. This is a cohesive clinical argument, not a list of paragraphs.</div><div style="margin-bottom:20px"><div style="font-size:11px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px">Your Mastered Concepts — use as your guide</div>${summaries}</div><div class="field-group"><label>Your Synthesis Essay</label><textarea id="essayText" rows="14" placeholder="Write your integrated essay here…" oninput="state.essayText=this.value;saveToStorage();">${escHtml(state.essayText||'')}</textarea><div class="help-text">Thorough and integrated — show clinical reasoning.</div></div><div style="margin-top:20px"><div style="font-size:11px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px">Citations</div><div style="font-size:12px;color:var(--ink3);margin-bottom:12px">At least one primary literature citation per concept.</div>${citations}</div><button class="btn btn-primary btn-lg" style="width:100%;justify-content:center;margin-top:8px" onclick="submitEssay()">Submit Essay & Reflect →</button></div>`;}
-
-function updateCitation(id,val){if(!state.essayCitations)state.essayCitations={};state.essayCitations[id]=val;saveToStorage();}
-
-function submitEssay(){const essay=document.getElementById('essayText').value.trim();if(essay.length<150){toast('Please write a more complete essay','error');return;}const q=getSelectedQuestion();const cits=state.essayCitations||{};if(q.concepts.filter(c=>cits[c.id]?.trim()).length===0){toast('Please provide at least one citation','error');return;}q.concepts.forEach(c=>{const i=state.leitnerCards.findIndex(lc=>lc.conceptId===c.id&&lc.questionId===q.id);if(i>=0)state.leitnerCards[i].citation=cits[c.id]||'';if(state.masteredConcepts[c.id])state.masteredConcepts[c.id].citation=cits[c.id]||'';});state.essayText=essay;state.currentPhase='reflect';saveToStorage();renderMainScreen();}
-
-function renderReflectPhase(q){const el=document.getElementById('mainContent');const initList=state.selfConcepts.map(c=>`<li>${escHtml(c.concept)}${c.knowledge?': '+escHtml(c.knowledge.substring(0,80))+'…':''}</li>`).join('');const mastList=q.concepts.map(c=>`<li class="matched">${escHtml(c.label)}${state.masteredConcepts[c.id]?.summary?`<div style="font-size:11px;color:var(--ink3);font-style:italic;margin-top:2px">${escHtml(state.masteredConcepts[c.id].summary)}</div>`:''}</li>`).join('');el.innerHTML=`<div class="phase-badge phase-4">Reflection</div><div style="display:flex;justify-content:flex-end;margin-bottom:12px">
-  <button class="btn btn-ghost btn-sm" onclick="state.selectedQuestionId='';saveToStorage();renderExerciseNavigator()">← Back to exercises</button>
-</div><div class="card"><div class="card-title">Look Back — Reflect on Your Learning</div><div class="card-subtitle">Compare where you started to where you ended up.</div><div class="reflection-comparison"><div class="compare-col"><h4>Your Initial List</h4><ul>${initList}</ul></div><div class="compare-col"><h4>Concepts Mastered</h4><ul>${mastList}</ul></div></div><div class="field-group"><label>How does your initial list compare to what you learned?</label><textarea id="reflectionText" rows="4" placeholder="What did you already know? What was missing?" oninput="state.reflectionText=this.value;saveToStorage();">${escHtml(state.reflectionText||'')}</textarea></div><div class="field-group"><label>What are the most important things you learned that you did NOT already know?</label><textarea id="reflectionLearned" rows="4" placeholder="Be specific — which concepts surprised you?" oninput="state.reflectionLearned=this.value;saveToStorage();">${escHtml(state.reflectionLearned||'')}</textarea></div><button class="btn btn-primary btn-lg" style="width:100%;justify-content:center" id="completeBtn">Complete Exercise & Export →</button></div>`;document.getElementById('completeBtn').onclick=()=>completeExercise(q);}
-
-function completeExercise(q){
-  const rt=document.getElementById('reflectionText').value.trim();
-  const rl=document.getElementById('reflectionLearned').value.trim();
-
-  if(rt.length<40||rl.length<40){
-    toast('Please write a more complete reflection','error');
-    return;
-  }
-
-  state.reflectionText=rt;
-  state.reflectionLearned=rl;
-  state.exerciseEndTime=new Date().toISOString();
-
-  const record={
-    questionId:q.id,
-    classId:COURSE_DATA?.classId||'',
-    academicYear:COURSE_DATA?.academicYear||'',
-    questionSetId:COURSE_DATA?.questionSetId||'',
-    courseId:state.courseId||'',
-    courseName:state.courseName||'',
-    week:q.week||'',
-    weekLabel:q.weekLabel||'',
-    questionNumber:q.questionNumber||'',
-    topic:q.topic,
-    question:q.question,
-    releaseDate:q.releaseDate,
+function normalizeScenarios(course){
+  const raw=Array.isArray(course.scenarios)?course.scenarios:(course.questions||[]);
+  return raw.map((q,i)=>({
+    id:q.id||`SCENARIO-${i+1}`,
+    title:q.title||q.topic||`Scenario ${i+1}`,
+    week:q.week||i+1,
+    weekLabel:q.weekLabel||`Scenario ${i+1}`,
+    releaseDate:q.releaseDate||'',
     deadline:q.deadline||null,
-    startedAt:state.exerciseStartTime,
-    completedAt:state.exerciseEndTime,
-    isLate:isLate(q),
-    selfConcepts:[...state.selfConcepts],
-    socraticHistory:[...(state.socraticHistory||[])],
-    confirmedRoadmap:q.concepts.map(c=>({id:c.id,label:c.label})),
-    masteredConcepts:{...state.masteredConcepts},
-    essayText:state.essayText||'',
-    essayCitations:{...(state.essayCitations||{})},
-    totalConcepts:q.concepts.length,
-    conceptsMastered:Object.keys(state.masteredConcepts).length,
-    totalExchanges:countExchanges(),
-    timeMinutes:Math.round((new Date(state.exerciseEndTime)-new Date(state.exerciseStartTime))/60000),
-    reflectionText:state.reflectionText,
-    reflectionLearned:state.reflectionLearned
-  };
+    scenarioText:q.scenarioText||q.question||'',
+    competencyQuestions:Array.isArray(q.competencyQuestions)&&q.competencyQuestions.length?q.competencyQuestions:DEFAULT_COMPETENCY_QUESTIONS,
+    rubric:q.rubric||MI_RUBRIC,
+    sourceQuestion:q
+  }));
+}
 
-  state.completedExercises.push(record);
-  if(state.attempts){
-    delete state.attempts[normalizeQuestionId(q.id)];
-  }
-  state.currentPhase='complete';
-  state.selectedQuestionId=q.id;
-  state.activeQuestionId='';
+function completeOnboarding(){
+  const name=(document.getElementById('nameInput')?.value||state.googleName||'').trim();
+  const emp=(document.getElementById('employeeInput')?.value||'').trim();
+  const email=(document.getElementById('emailInput')?.value||state.googleEmail||'').trim();
+  if(!name){toast('Please enter the nurse full name.','error');return;}
+  if(!emp){toast('Please enter an Employee ID.','error');return;}
+  if(email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){toast('Please enter a valid email or leave it blank.','error');return;}
+  state.studentName=name;
+  state.employeeId=emp;
+  state.email=email;
+  if(!state.studentUUID)state.studentUUID=generateUUID();
   saveToStorage();
-
-  submitPerformance(record)
-    .then(() => {
-      toast('Exercise complete! Data saved to the database.','success');
-    })
-    .catch((err) => {
-      console.error(err);
-      toast('Exercise complete, but the database save failed. Please export your data as backup.','error');
-    })
-    .finally(() => {
-      exportData();
-      renderMainScreen();
-    });
+  showScreen('screen-main');
+  renderHome();
 }
-  async function submitPerformance(record) {
-  const payload = {
-  studentName: state.studentName,
-  studentUUID: state.studentUUID,
-  googleSub: state.googleSub || '',
-  googleEmail: state.googleEmail || '',
-  googleName: state.googleName || '',
-  googleHd: state.googleHd || '',
-  courseId: state.courseId,
-  courseName: state.courseName,
-  ...record
-};
-
-  const response = await fetch('/.netlify/functions/submit-performance', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(payload)
-  });
-
-  const data = await response.json().catch(() => ({}));
-
-  if (!response.ok || !data.ok) {
-    throw new Error(data.error || JSON.stringify(data) || 'Database save failed');
-  }
-
-  return data;
+function renderReturningUser(){
+  showScreen('screen-onboard');
+  document.getElementById('intakeBox').style.display='none';
+  document.getElementById('beginBtn').style.display='none';
+  document.getElementById('continueBtn').style.display='inline-flex';
+  document.getElementById('signOutBtn').style.display='inline-flex';
+  document.getElementById('returningBox').style.display='block';
+  document.getElementById('returningName').textContent=state.studentName||'Previous user';
+  document.getElementById('returningMeta').textContent=`Employee ID: ${state.employeeId||'—'}${state.email?' · '+state.email:''}`;
+}
+function continueExistingUser(){showScreen('screen-main');renderHome();}
+function signOutAndReset(){
+  if(!confirm('Sign out and clear local progress on this device? Export your data first if needed.'))return;
+  try{if(window.google&&google.accounts&&google.accounts.id)google.accounts.id.disableAutoSelect();}catch(e){}
+  try{
+    Object.keys(localStorage).filter(k=>k.startsWith(COURSE_STORAGE_PREFIX)).forEach(k=>localStorage.removeItem(k));
+    localStorage.removeItem(STORAGE_KEY);
+  }catch(e){}
+  location.reload();
 }
 
-function renderCompletedState(q){const record=state.completedExercises.find(e=>e.questionId===q.id);const el=document.getElementById('mainContent');el.innerHTML=`<div style="text-align:center;padding:40px 0 24px"><div style="font-size:48px;margin-bottom:12px">✓</div><div style="font-family:var(--serif);font-size:24px;margin-bottom:8px">${escHtml(q.topic)} — Complete</div><div style="font-size:14px;color:var(--ink3);margin-bottom:24px">${record?`Completed ${formatDeadline(record.completedAt)} · ${record.conceptsMastered}/${record.totalConcepts} concepts · ${record.timeMinutes}m · ${record.totalExchanges} exchanges`:''} ${record?.isLate?'· <span style="color:var(--red)">Late</span>':''}</div><div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><button class="btn btn-secondary" onclick="showScreen('screen-dashboard')">📊 My Progress</button><button class="btn btn-secondary" onclick="showScreen('screen-leitner')">🃏 Review Cards</button><button class="btn btn-primary" onclick="exportData()">⬇ Export</button></div></div>`;}
+function renderHome(){
+  updateHeader();
+  const el=document.getElementById('mainContent');
+  const active=state.activeSession && !state.activeSession.completed;
+  const scenarioCount=state.scenarios.length;
+  const lastSession=getLatestSession();
+  el.innerHTML=`
+    <div class="phase-badge phase-1">Assessment-first prototype</div>
+    <div class="card">
+      <div class="card-title">${escHtml(state.courseName)}</div>
+      <div class="card-subtitle">${escHtml(state.courseId)} · ${escHtml(state.studentName)} · Employee ID ${escHtml(state.employeeId)}</div>
+      <div class="stat-row">
+        <div class="stat-item"><div class="stat-val">${scenarioCount}</div><div class="stat-lbl">Scenarios</div></div>
+        <div class="stat-item"><div class="stat-val">${state.completedSessions.length}</div><div class="stat-lbl">Completed sessions</div></div>
+        <div class="stat-item"><div class="stat-val">${lastSession?Math.round(getSessionAverage(lastSession))+'%':'—'}</div><div class="stat-lbl">Last average</div></div>
+        <div class="stat-item"><div class="stat-val">${lastSession?countWeakScenarios(lastSession):'—'}</div><div class="stat-lbl">Weak scenarios</div></div>
+      </div>
+      <div class="success-box"><strong>Current flow:</strong> answer all competency questions first. The app evaluates silently after each scenario. Tutoring starts only after the whole assessment session is complete.</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px">
+        ${active?`<button class="btn btn-amber btn-lg" onclick="renderCurrentScenario()">Resume Assessment →</button>`:`<button class="btn btn-primary btn-lg" onclick="startAssessmentSession()">Start Assessment Session →</button>`}
+        ${lastSession?`<button class="btn btn-secondary btn-lg" onclick="renderSessionResults('${escJs(lastSession.sessionId)}')">View Last Results</button>`:''}
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Available scenarios</div>
+      <div class="card-subtitle">Add 6–8 scenarios later in <span style="font-family:var(--mono)">questions/nursing/acute-care.json</span>. This page will automatically walk through all of them.</div>
+      ${state.scenarios.map((s,i)=>`
+        <div class="scenario-card">
+          <div class="scenario-card-main">
+            <div class="scenario-id">Scenario ${i+1} · ${escHtml(s.id)}</div>
+            <div class="scenario-topic">${escHtml(s.title)}</div>
+            <div class="scenario-meta">${escHtml(s.weekLabel||'')} ${s.deadline?' · Due '+formatDeadline(s.deadline):''}</div>
+          </div>
+          <span class="status-pill blue">Ready</span>
+        </div>
+      `).join('')}
+    </div>`;
+}
 
-function renderDashboard(){const el=document.getElementById('dashboardContent');const q=getSelectedQuestion() || getActiveQuestion();const ipm=Object.keys(state.masteredConcepts).length;const ipt=q?q.concepts.length:0;const hasActive=state.currentPhase&&state.currentPhase!=='complete'&&q&&!isCompleted(q?.id);const cm=state.completedExercises.reduce((n,e)=>n+e.conceptsMastered,0);const tm=cm+ipm;const tt=state.completedExercises.reduce((n,e)=>n+(e.timeMinutes||0),0);const te=state.completedExercises.reduce((n,e)=>n+(e.totalExchanges||0),0);const elapsed=state.exerciseStartTime?Math.round((Date.now()-new Date(state.exerciseStartTime))/60000):0;const ipc=hasActive?`<div class="dash-card" style="border-color:var(--amber);border-width:2px"><div class="dash-card-header"><div><div class="dash-qid">${q.id}</div><div class="dash-topic">${escHtml(q.topic)}</div></div><span style="font-family:var(--mono);font-size:10px;background:var(--amber-light);color:var(--amber);padding:2px 8px;border-radius:20px">In Progress</span></div><div class="dash-stats"><div class="dash-stat"><div class="dash-stat-val">${ipm}/${ipt}</div><div class="dash-stat-lbl">Concepts</div></div><div class="dash-stat"><div class="dash-stat-val">${elapsed}m</div><div class="dash-stat-lbl">Time</div></div><div class="dash-stat"><div class="dash-stat-val">${countExchanges()}</div><div class="dash-stat-lbl">Exchanges</div></div></div><div style="font-size:11px;color:var(--ink3);margin-bottom:10px;font-family:var(--mono)">Phase: ${{selfAssess:'Self Assessment',socratic:'Concept Mastery',write:'Synthesis Essay',reflect:'Reflection'}[state.currentPhase]||state.currentPhase}</div>${ipm>0?`<details style="font-size:13px"><summary style="cursor:pointer;color:var(--accent);font-size:12px;font-weight:500;margin-bottom:8px">Mastered so far</summary><div style="margin-top:8px">${Object.entries(state.masteredConcepts).map(([id,m])=>`<div style="margin-bottom:8px;padding:8px;background:var(--surface2);border-radius:var(--radius);border:1px solid var(--border)"><div style="font-size:11px;color:var(--accent);font-family:var(--mono)">${escHtml(m.label||id)}</div><div style="font-size:12px;color:var(--ink3);font-style:italic;margin-top:2px">${escHtml(m.summary||'')}</div></div>`).join('')}</div></details>`:''}<button class="btn btn-amber btn-sm" style="margin-top:8px" onclick="showScreen('screen-main')">Resume →</button></div>`:'';el.innerHTML=`<div style="margin-bottom:24px"><div style="font-family:var(--serif);font-size:26px;margin-bottom:4px">${escHtml(state.studentName)}</div><div style="font-family:var(--mono);font-size:11px;color:var(--ink3);margin-bottom:16px">${state.courseId} · ID: ${state.studentUUID}</div><div class="stat-row"><div class="stat-item"><div class="stat-val">${state.completedExercises.length}</div><div class="stat-lbl">Completed</div></div><div class="stat-item"><div class="stat-val">${tm}</div><div class="stat-lbl">Concepts</div></div><div class="stat-item"><div class="stat-val">${tt+elapsed}m</div><div class="stat-lbl">Time</div></div><div class="stat-item"><div class="stat-val">${te+countExchanges()}</div><div class="stat-lbl">Exchanges</div></div><div class="stat-item"><div class="stat-val">${state.leitnerCards.length}</div><div class="stat-lbl">Cards</div></div></div></div><div class="dashboard-grid">${ipc}${state.completedExercises.map(e=>renderDashCard(e)).join('')}</div>${!hasActive&&state.completedExercises.length===0?'<div class="no-data"><div class="no-data-icon">📚</div>No data yet.</div>':''}<div style="margin-top:32px;padding-top:20px;border-top:1px solid var(--border)"><div style="font-size:12px;color:var(--ink3);margin-bottom:8px">Portfolio view for advisor sharing and annual review.</div><button class="btn btn-secondary btn-sm" onclick="exportData()">⬇ Export</button></div>`;}
-
-function renderDashCard(e){return `<div class="dash-card"><div class="dash-card-header"><div><div class="dash-qid">${e.questionId}</div><div class="dash-topic">${escHtml(e.topic)}</div></div>${e.isLate?'<span class="late-flag">Late</span>':'<span class="on-time-flag">On Time</span>'}</div><div class="dash-stats"><div class="dash-stat"><div class="dash-stat-val">${e.conceptsMastered}/${e.totalConcepts}</div><div class="dash-stat-lbl">Concepts</div></div><div class="dash-stat"><div class="dash-stat-val">${e.timeMinutes||'—'}m</div><div class="dash-stat-lbl">Time</div></div><div class="dash-stat"><div class="dash-stat-val">${e.totalExchanges||'—'}</div><div class="dash-stat-lbl">Exchanges</div></div></div><div style="font-size:11px;color:var(--ink3);margin-bottom:10px;font-family:var(--mono)">Completed ${formatDeadline(e.completedAt)}</div><details style="font-size:13px"><summary style="cursor:pointer;color:var(--accent);font-size:12px;font-weight:500;margin-bottom:8px">View details</summary><div style="margin-top:8px">${Object.entries(e.masteredConcepts||{}).map(([id,m])=>`<div style="margin-bottom:10px;padding:10px;background:var(--surface2);border-radius:var(--radius);border:1px solid var(--border)"><div style="font-size:11px;color:var(--accent);font-family:var(--mono);margin-bottom:3px">${escHtml(m.label||id)}</div><div style="font-size:12px;color:var(--ink3);font-style:italic">${escHtml(m.summary||'')}</div>${m.citation?`<div style="font-size:11px;color:var(--ink3);margin-top:3px">${escHtml(m.citation)}</div>`:''}</div>`).join('')}${e.reflectionText?`<div style="margin-top:10px"><div style="font-size:10px;color:var(--ink3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px">Reflection</div><div style="font-size:12px;color:var(--ink2);line-height:1.6">${escHtml(e.reflectionText)}</div></div>`:''}</div></details></div>`;}
-
-function addLeitnerCard(data){const i=state.leitnerCards.findIndex(c=>c.conceptId===data.conceptId&&c.questionId===data.questionId);if(i>=0){state.leitnerCards[i]={...state.leitnerCards[i],...data};}else{state.leitnerCards.push({...data,box:1,nextReview:new Date().toISOString(),addedAt:new Date().toISOString()});}saveToStorage();}
-
-function renderLeitner(){const el=document.getElementById('leitnerContent');const boxes=[1,2,3,4,5];const today=new Date().toISOString();const due=state.leitnerCards.filter(c=>c.nextReview<=today);const bc=boxes.map(b=>state.leitnerCards.filter(c=>c.box===b).length);if(state.leitnerSession){renderLeitnerSession(el);return;}el.innerHTML=`<div style="margin-bottom:24px"><div style="font-family:var(--serif);font-size:24px;margin-bottom:4px">Spaced Review</div><div style="font-size:13px;color:var(--ink3)">Leitner System · ${state.leitnerCards.length} cards · ${due.length} due today</div></div><div class="leitner-boxes">${boxes.map((b,i)=>`<div class="leitner-box"><div class="box-num">${b}</div><div class="box-count">${bc[i]}</div><div class="box-label">${['Daily','Every 2d','Every 4d','Weekly','Retired'][i]}</div></div>`).join('')}</div>${state.leitnerCards.length===0?'<div class="no-data"><div class="no-data-icon">🃏</div>Complete exercises to earn review cards.</div>':due.length===0?'<div class="card" style="text-align:center;padding:32px"><div style="font-size:32px;margin-bottom:12px">✓</div><div style="font-family:var(--serif);font-size:18px">All caught up!</div></div>':`<div class="card" style="text-align:center;padding:24px"><div style="font-family:var(--serif);font-size:18px;margin-bottom:8px">${due.length} card${due.length!==1?'s':''} due</div><button class="btn btn-primary btn-lg" onclick="startLeitnerSession()">Start Review →</button></div>`}<div class="card" style="margin-top:16px"><div class="card-title" style="margin-bottom:12px">All Cards</div>${state.leitnerCards.map(c=>`<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)"><div style="font-family:var(--mono);font-size:11px;color:var(--accent);width:16px;text-align:center">${c.box}</div><div style="flex:1"><div style="font-size:13px;color:var(--ink)">${escHtml(c.label)}</div><div style="font-size:11px;color:var(--ink3)">${c.questionId}</div></div><div style="font-size:11px;color:var(--ink3);font-family:var(--mono)">Due ${formatDate(c.nextReview)}</div></div>`).join('')}</div>`;}
-
-function startLeitnerSession(){const today=new Date().toISOString();const due=state.leitnerCards.filter(c=>c.nextReview<=today);state.leitnerSession={cards:[...due],index:0,flipped:false,results:[]};renderLeitner();}
-
-function renderLeitnerSession(el){const s=state.leitnerSession;if(s.index>=s.cards.length){const correct=s.results.filter(r=>r).length;el.innerHTML=`<div style="text-align:center;padding:60px 0"><div style="font-size:48px;margin-bottom:16px">🎉</div><div style="font-family:var(--serif);font-size:24px;margin-bottom:8px">Session Complete</div><div style="font-size:14px;color:var(--ink3);margin-bottom:24px">${correct} of ${s.cards.length} correct</div><button class="btn btn-primary" onclick="endLeitnerSession()">Back to Deck</button></div>`;return;}const card=s.cards[s.index];el.innerHTML=`<div style="margin-bottom:16px"><div style="font-size:13px;color:var(--ink3)">Card ${s.index+1} of ${s.cards.length} · Box ${card.box}</div><div class="progress-bar-wrap" style="margin:8px 0 0"><div class="progress-bar-fill" style="width:${(s.index/s.cards.length)*100}%"></div></div></div><div class="flashcard" onclick="flipCard()"><div class="fc-inner ${s.flipped?'flipped':''}" id="fcInner"><div class="fc-face fc-front"><div class="fc-label">Concept — tap to reveal</div><div class="fc-concept">${escHtml(card.label)}</div></div><div class="fc-face fc-back"><div class="fc-label">What you demonstrated</div><div class="fc-answer">${escHtml((card.paragraph||'').substring(0,200))}…</div></div></div></div>${s.flipped?`<div style="display:flex;gap:10px;justify-content:center;margin-top:12px"><button class="btn btn-secondary" onclick="leitnerAnswer(false)">✕ Missed it</button><button class="btn btn-primary" onclick="leitnerAnswer(true)">✓ Got it</button></div>`:`<div style="text-align:center"><button class="btn btn-secondary" onclick="flipCard()">Reveal Answer</button></div>`}`;}
-
-function flipCard(){state.leitnerSession.flipped=true;document.getElementById('fcInner')?.classList.add('flipped');renderLeitner();}
-
-function leitnerAnswer(correct){const s=state.leitnerSession;const i=state.leitnerCards.findIndex(c=>c.conceptId===s.cards[s.index].conceptId);if(i>=0){const card=state.leitnerCards[i];const intervals=[1,2,4,7,30];card.box=correct?Math.min(card.box+1,5):1;const next=new Date();next.setDate(next.getDate()+intervals[card.box-1]);card.nextReview=next.toISOString();saveToStorage();}s.results.push(correct);s.index++;s.flipped=false;renderLeitner();}
-
-function endLeitnerSession(){state.leitnerSession=null;renderLeitner();}
-
-async function sendToAPI(chatId,inputId,history,systemPrompt,userMessage,addUserMsg=true,callback=null){if(addUserMsg&&userMessage){history.push({role:'user',content:userMessage});const chatEl=document.getElementById(chatId);if(chatEl){chatEl.insertAdjacentHTML('beforeend',`<div class="msg student"><div class="msg-label">You</div><div class="msg-bubble">${escHtml(userMessage)}</div></div>`);scrollChat(chatId);}saveToStorage();}const chatEl=document.getElementById(chatId);if(chatEl){chatEl.insertAdjacentHTML('beforeend','<div id="typingIndicator"><div class="msg tutor"><div class="msg-label">Tutor</div><div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div></div>');scrollChat(chatId);}try{let messages=history.slice(-20).map(m=>({role:m.role,content:m.content}));if(messages.length===0)messages=[{role:'user',content:userMessage||'Please begin.'}];if(messages[messages.length-1].role!=='user')messages.push({role:'user',content:'Please continue.'});const reply=await callClaude(systemPrompt,messages);document.getElementById('typingIndicator')?.remove();history.push({role:'assistant',content:reply});saveToStorage();if(chatEl){const disp=reply.replace(/CONCEPT_MASTERED:[A-Za-z0-9_-]+:[^\n]*/g,'').replace(/ROADMAP_CONFIRMED/g,'').trim();chatEl.insertAdjacentHTML('beforeend',`<div class="msg tutor"><div class="msg-label">Tutor</div><div class="msg-bubble">${formatMessage(disp)}</div></div>`);scrollChat(chatId);}if(callback)callback(reply);}catch(e){document.getElementById('typingIndicator')?.remove();if(chatEl)chatEl.insertAdjacentHTML('beforeend',`<div class="msg system"><div class="msg-bubble">Error: ${e.message}</div></div>`);toast(`Error: ${e.message}`,'error');}if(inputId){const inp=document.getElementById(inputId);if(inp){inp.value='';inp.focus();}}}
-
-function renderChatHistory(history){return history.map(m=>`<div class="msg ${m.role==='user'?'student':'tutor'}"><div class="msg-label">${m.role==='user'?'You':'Tutor'}</div><div class="msg-bubble">${formatMessage(m.content.replace(/CONCEPT_MASTERED:[A-Za-z0-9_-]+:[^\n]*/g,'').trim())}</div></div>`).join('');}
-
-function exportData(){const q=getSelectedQuestion() || getActiveQuestion();const elapsed=state.exerciseStartTime?Math.round((Date.now()-new Date(state.exerciseStartTime))/60000):null;const obj={exportedAt:new Date().toISOString(),version:'1.0',student:{name:state.studentName,uuid:state.studentUUID,courseId:state.courseId,courseName:state.courseName},completedExercises:state.completedExercises,inProgressAttempts:state.attempts||{},currentSession:{
-  questionId:q?.id||null,
-  classId:COURSE_DATA?.classId||'',
-  academicYear:COURSE_DATA?.academicYear||'',
-  questionSetId:COURSE_DATA?.questionSetId||'',
-  courseId:state.courseId||'',
-  courseName:state.courseName||'',
-  week:q?.week||'',
-  weekLabel:q?.weekLabel||'',
-  questionNumber:q?.questionNumber||'',
-  topic:q?.topic||null,
-  phase:state.currentPhase,selfConcepts:state.selfConcepts,socraticHistory:state.socraticHistory,masteredConcepts:state.masteredConcepts,essayText:state.essayText||'',essayCitations:state.essayCitations||{},totalConcepts:q?q.concepts.length:0,conceptsMastered:Object.keys(state.masteredConcepts).length,reflectionText:state.reflectionText,reflectionLearned:state.reflectionLearned,exerciseStartTime:state.exerciseStartTime,exportedAt:new Date().toISOString(),timeMinutes:elapsed,totalExchanges:countExchanges(),isLate:q?isLate(q):false},leitnerCards:state.leitnerCards};const json=JSON.stringify(obj,null,2);const dateStr=new Date().toISOString().split('T')[0];const fn=`${state.courseId}_${state.studentName.replace(/\s+/g,'_')}_${state.studentUUID.substring(0,8)}_${dateStr}.json`;const ex=document.getElementById('exportModal');if(ex)ex.remove();const modal=document.createElement('div');modal.id='exportModal';modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px';modal.innerHTML=`<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:28px;max-width:600px;width:100%;max-height:80vh;display:flex;flex-direction:column;gap:16px;box-shadow:var(--shadow-lg)"><div style="display:flex;justify-content:space-between;align-items:flex-start"><div><div style="font-family:var(--serif);font-size:18px;margin-bottom:4px">Export Your Data</div><div style="font-size:12px;color:var(--ink3);font-family:var(--mono)">${fn}</div></div><button class="btn btn-ghost btn-sm" onclick="document.getElementById('exportModal').remove()">✕</button></div><div style="background:var(--blue-light);border:1px solid #b0c8e8;border-radius:var(--radius);padding:12px 14px;font-size:13px;color:var(--blue);line-height:1.6"><strong>How to save:</strong> Copy to clipboard, paste into a text file, save as <code style="font-family:var(--mono);font-size:11px">${fn}</code>, email to faculty.</div><textarea id="exportTextarea" readonly style="flex:1;min-height:240px;font-family:var(--mono);font-size:11px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px;color:var(--ink2);resize:none" onclick="this.select()">${json}</textarea><div style="display:flex;gap:10px"><button class="btn btn-primary" style="flex:1;justify-content:center" onclick="copyExport()">📋 Copy to Clipboard</button><button class="btn btn-ghost" onclick="document.getElementById('exportModal').remove()">Close</button></div></div>`;document.body.appendChild(modal);}
-
-function copyExport(){const ta=document.getElementById('exportTextarea');if(!ta)return;ta.select();navigator.clipboard.writeText(ta.value).then(()=>toast('Copied — paste into a text file and save as .json','success')).catch(()=>{document.execCommand('copy');toast('Copied','success');});}
-
-function handleImport(event){
-  const file=event.target.files[0];
-  if(!file)return;
-
-  const reader=new FileReader();
-
-  reader.onload=e=>{
-    try{
-      const data=JSON.parse(e.target.result);
-      if(!data.student?.uuid)throw new Error('Invalid');
-
-      state.studentName=data.student.name;
-      state.studentUUID=data.student.uuid;
-      state.courseId=data.student.courseId||'';
-      state.courseName=data.student.courseName||'';
-      state.completedExercises=data.completedExercises||[];
-      state.leitnerCards=data.leitnerCards||[];
-      state.attempts=data.inProgressAttempts||{};
-
-      if(data.currentSession){
-        state.currentPhase=data.currentSession.phase;
-        state.selfConcepts=data.currentSession.selfConcepts||[];
-        state.socraticHistory=data.currentSession.socraticHistory||[];
-        state.masteredConcepts=data.currentSession.masteredConcepts||{};
-        state.essayText=data.currentSession.essayText||'';
-        state.essayCitations=data.currentSession.essayCitations||{};
-        state.reflectionText=data.currentSession.reflectionText||'';
-        state.reflectionLearned=data.currentSession.reflectionLearned||'';
-        state.exerciseStartTime=data.currentSession.exerciseStartTime||null;
-      }
-
-            saveToStorage();
-      toast('Backup restored. Please sign in with Google to continue.','success');
-      setTimeout(()=>location.reload(),800);
-    }catch(err){
-      toast('Invalid backup file','error');
-    }
+function startAssessmentSession(){
+  if(!state.scenarios.length){toast('No scenarios available.','error');return;}
+  if(state.activeSession && !state.activeSession.completed && !confirm('You already have an assessment in progress. Start over?'))return;
+  state.activeSession={
+    sessionId:generateUUID(),startedAt:new Date().toISOString(),completedAt:null,currentScenarioIndex:0,
+    scenarioAttempts:[],completed:false
   };
-
-  reader.readAsText(file);
+  state.tutoringSession=null;
+  saveToStorage();
+  renderCurrentScenario();
 }
-
-function saveToStorage(){try{saveCurrentAttempt();localStorage.setItem(`medtutor_student_${state.courseId||'default'}`,JSON.stringify(state));}catch(e){}}
-function loadFromStorage(){try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith('medtutor_student_')){const s=JSON.parse(localStorage.getItem(k));if(s?.studentUUID){Object.assign(state,s);if(!state.attempts)state.attempts={};state.questions=[];return;}}}}catch(e){}}
-
-function showScreen(id){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-
-  if(id==='screen-main'){
-    syncModelPicker();
-    checkModelStatus();
-    if(state.selectedQuestionId || state.activeQuestionId){
-      renderMainScreen();
-    }else{
-      renderExerciseNavigator();
-    }
+function getActiveScenario(){
+  if(!state.activeSession)return null;
+  return state.scenarios[state.activeSession.currentScenarioIndex]||null;
+}
+function renderCurrentScenario(){
+  const session=state.activeSession;
+  const scenario=getActiveScenario();
+  if(!session||!scenario){renderHome();return;}
+  showScreen('screen-main');
+  updateHeader();
+  const idx=session.currentScenarioIndex;
+  const total=state.scenarios.length;
+  const saved=session.draftAnswers&&session.draftAnswers[scenario.id]?session.draftAnswers[scenario.id]:{};
+  document.getElementById('mainContent').innerHTML=`
+    <div class="phase-badge phase-1">Scenario ${idx+1} of ${total} · Assessment</div>
+    <div class="card">
+      <div class="card-title">${escHtml(scenario.title)}</div>
+      <div class="card-subtitle">${escHtml(scenario.id)} · Answer all competency questions before submitting.</div>
+      <div class="question-box">${escHtml(scenario.scenarioText)}</div>
+      <div class="config-warn"><strong>No tutoring during assessment.</strong> Your answers will be scored silently after submission. Tutoring activates only after all scenarios are completed.</div>
+      ${scenario.competencyQuestions.map(q=>`
+        <div class="field-group">
+          <label>${escHtml(q.label)}</label>
+          <textarea id="answer_${escAttr(q.id)}" rows="4" placeholder="${escAttr(q.placeholder||'Enter your answer...')}" oninput="saveScenarioDraft()">${escHtml(saved[q.id]||'')}</textarea>
+        </div>
+      `).join('')}
+      <div class="field-group">
+        <label>Urgency level</label>
+        <select id="answer_urgency" onchange="saveScenarioDraft()">
+          <option value="">Select one</option>
+          <option value="stable" ${saved.urgency==='stable'?'selected':''}>Stable — continue assessment and monitoring</option>
+          <option value="unstable" ${saved.urgency==='unstable'?'selected':''}>Unstable — requires urgent escalation of care</option>
+          <option value="emergent" ${saved.urgency==='emergent'?'selected':''}>Emergent — requires immediate resuscitative intervention</option>
+        </select>
+      </div>
+      <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:18px">
+        <button class="btn btn-ghost" onclick="renderHome()">← Save and exit</button>
+        <button class="btn btn-primary btn-lg" id="submitScenarioBtn" onclick="submitScenarioAssessment()">Submit Scenario →</button>
+      </div>
+    </div>`;
+}
+function saveScenarioDraft(){
+  const session=state.activeSession;
+  const scenario=getActiveScenario();
+  if(!session||!scenario)return;
+  const answers=collectScenarioAnswers(scenario,false);
+  if(!session.draftAnswers)session.draftAnswers={};
+  session.draftAnswers[scenario.id]=answers;
+  saveToStorage();
+}
+function collectScenarioAnswers(scenario,requireAll=true){
+  const answers={};
+  scenario.competencyQuestions.forEach(q=>{answers[q.id]=(document.getElementById(`answer_${q.id}`)?.value||'').trim();});
+  answers.urgency=(document.getElementById('answer_urgency')?.value||'').trim();
+  if(requireAll){
+    const missing=scenario.competencyQuestions.filter(q=>!answers[q.id]).map(q=>q.label);
+    if(missing.length)throw new Error('Please answer all competency questions before submitting.');
+    if(!answers.urgency)throw new Error('Please select an urgency level.');
   }
+  return answers;
+}
+async function submitScenarioAssessment(){
+  const session=state.activeSession;
+  const scenario=getActiveScenario();
+  if(!session||!scenario)return;
+  let answers;
+  try{answers=collectScenarioAnswers(scenario,true);}catch(e){toast(e.message,'error');return;}
+  const btn=document.getElementById('submitScenarioBtn');
+  if(btn){btn.disabled=true;btn.textContent='Evaluating silently…';}
+  try{
+    const evaluation=await evaluateScenario(scenario,answers);
+    const attempt={scenarioId:scenario.id,title:scenario.title,scenarioText:scenario.scenarioText,answers,evaluation,submittedAt:new Date().toISOString(),modelUsed:evaluation.modelUsed||'local-rubric-fallback'};
+    session.scenarioAttempts.push(attempt);
+    if(session.draftAnswers)delete session.draftAnswers[scenario.id];
+    const next=session.currentScenarioIndex+1;
+    if(next<state.scenarios.length){
+      session.currentScenarioIndex=next;
+      saveToStorage();
+      toast('Scenario submitted and evaluated. Continue to the next scenario.','success');
+      renderCurrentScenario();
+    }else{
+      completeAssessmentSession();
+    }
+  }catch(e){
+    console.error(e);
+    toast('Evaluation failed. Please try again.','error');
+    if(btn){btn.disabled=false;btn.textContent='Submit Scenario →';}
+  }
+}
+async function evaluateScenario(scenario,answers){
+  const payload={scenario,answers,rubric:scenario.rubric,provider:state.llmProvider||'anthropic'};
+  try{
+    const controller=new AbortController();
+    const timer=setTimeout(()=>controller.abort(),8000);
+    const r=await fetch('/.netlify/functions/evaluate-scenario',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),signal:controller.signal});
+    clearTimeout(timer);
+    if(r.ok){
+      const data=await r.json();
+      if(data && typeof data.scorePercent==='number' && typeof data.diagnosisCorrect==='boolean')return normalizeEvaluation(data,'ai');
+    }
+  }catch(e){console.warn('AI evaluation unavailable; using local rubric fallback.',e.message||e);}
+  return normalizeEvaluation(evaluateScenarioLocally(scenario,answers),'local-rubric-fallback');
+}
+function normalizeEvaluation(e,modelUsed){
+  const scorePercent=Number.isFinite(e.scorePercent)?Math.max(0,Math.min(100,Math.round(e.scorePercent))):0;
+  const diagnosisCorrect=!!e.diagnosisCorrect;
+  const pass=diagnosisCorrect && scorePercent>=50;
+  return {...e,scorePercent,diagnosisCorrect,pass,modelUsed:e.modelUsed||modelUsed,tutoringRequired:!pass};
+}
+function evaluateScenarioLocally(scenario,answers){
+  const rubric=scenario.rubric||MI_RUBRIC;
+  const allText=Object.values(answers).join(' ').toLowerCase();
+  const diagnosisText=(answers.diagnosis||allText).toLowerCase();
+  const diagnosisCorrect=(rubric.acceptedDiagnoses||[]).some(term=>phraseHit(diagnosisText,term));
+  const findingResults=scoreItemList(rubric.abnormalFindings||[],allText);
+  const actionResults=scoreItemList(rubric.nursingActions||[],allText);
+  const providerResults=scoreItemList(rubric.providerInterventions||[],allText);
+  const correctItems=findingResults.correct.length+actionResults.correct.length+providerResults.correct.length;
+  const totalItems=(rubric.abnormalFindings||[]).length+(rubric.nursingActions||[]).length+(rubric.providerInterventions||[]).length;
+  const scorePercent=totalItems?Math.round((correctItems/totalItems)*100):0;
+  const urgencyCorrect=(answers.urgency||'').toLowerCase()===(rubric.expectedUrgency||'').toLowerCase();
+  const strengths=[];
+  if(diagnosisCorrect)strengths.push('Correctly identified the likely patient problem/condition.');
+  if(findingResults.correct.length)strengths.push(`Recognized ${findingResults.correct.length} expected abnormal finding(s).`);
+  if(actionResults.correct.length)strengths.push(`Identified ${actionResults.correct.length} expected nursing action(s).`);
+  if(providerResults.correct.length)strengths.push(`Anticipated ${providerResults.correct.length} expected provider intervention(s).`);
+  if(urgencyCorrect)strengths.push('Correctly selected the urgency level as unstable.');
+  const improvementAreas=[];
+  if(!diagnosisCorrect)improvementAreas.push('Diagnosis/problem identification');
+  if(findingResults.missed.length)improvementAreas.push('Recognition of abnormal findings');
+  if(actionResults.missed.length)improvementAreas.push('Nursing actions and escalation');
+  if(providerResults.missed.length)improvementAreas.push('Anticipated provider interventions');
+  if(!urgencyCorrect)improvementAreas.push('Urgency classification');
+  return {
+    diagnosisCorrect,
+    correctDiagnosisIdentified:diagnosisCorrect?'myocardial infarction / heart attack / MI / STEMI / ACS':'Not detected by rubric',
+    scorePercent,
+    pass:diagnosisCorrect && scorePercent>=(rubric.passingThreshold||50),
+    urgencyCorrect,
+    selectedUrgency:answers.urgency||'',
+    missedAbnormalFindings:findingResults.missed,
+    missedNursingActions:actionResults.missed,
+    missedProviderInterventions:providerResults.missed,
+    correctAbnormalFindings:findingResults.correct,
+    correctNursingActions:actionResults.correct,
+    correctProviderInterventions:providerResults.correct,
+    strengths:strengths.length?strengths:['Submitted a complete response for evaluation.'],
+    improvementAreas:improvementAreas.length?improvementAreas:['Continue strengthening explanation depth and clinical prioritization.'],
+    competencyBreakdown:[
+      {area:'Assessment / Abnormal Findings',correct:findingResults.correct.length,total:(rubric.abnormalFindings||[]).length,percent:percent(findingResults.correct.length,(rubric.abnormalFindings||[]).length)},
+      {area:'Nursing Actions',correct:actionResults.correct.length,total:(rubric.nursingActions||[]).length,percent:percent(actionResults.correct.length,(rubric.nursingActions||[]).length)},
+      {area:'Anticipated Provider Interventions',correct:providerResults.correct.length,total:(rubric.providerInterventions||[]).length,percent:percent(providerResults.correct.length,(rubric.providerInterventions||[]).length)},
+      {area:'Diagnosis',correct:diagnosisCorrect?1:0,total:1,percent:diagnosisCorrect?100:0},
+      {area:'Urgency',correct:urgencyCorrect?1:0,total:1,percent:urgencyCorrect?100:0}
+    ],
+    actionsToSupportDevelopment:rubric.actionsToSupportDevelopment||{}
+  };
+}
+function scoreItemList(items,text){
+  const correct=[];const missed=[];
+  items.forEach(item=>{
+    const hit=(item.matchAny||[]).some(term=>phraseHit(text,term));
+    const obj={id:item.id,item:item.label,expected:item.label};
+    if(hit)correct.push(obj);else missed.push(obj);
+  });
+  return {correct,missed};
+}
+function phraseHit(text,term){
+  const t=String(term||'').toLowerCase().trim();
+  if(!t)return false;
+  if(t==='mi')return /\bmi\b/i.test(text);
+  if(t==='acs')return /\bacs\b/i.test(text);
+  return text.includes(t);
+}
+function percent(n,d){return d?Math.round((n/d)*100):0;}
 
-  if(id==='screen-dashboard')renderDashboard();
-  if(id==='screen-leitner')renderLeitner();
+function completeAssessmentSession(){
+  const session=state.activeSession;
+  session.completed=true;
+  session.completedAt=new Date().toISOString();
+  state.completedSessions.push(JSON.parse(JSON.stringify(session)));
+  appendCompletedExerciseRecords(session);
+  state.tutoringSession=null;
+  saveToStorage();
+  submitPerformanceRecords(session).catch(e=>console.warn('Database submit unavailable',e));
+  toast('Assessment session complete.','success');
+  renderSessionResults(session.sessionId);
+}
+function appendCompletedExerciseRecords(session){
+  session.scenarioAttempts.forEach(attempt=>{
+    const e=attempt.evaluation||{};
+    const existing=(state.completedExercises||[]).some(x=>x.sessionId===session.sessionId&&x.questionId===attempt.scenarioId);
+    if(existing)return;
+    state.completedExercises.push({
+      sessionId:session.sessionId,questionId:attempt.scenarioId,courseId:state.courseId,courseName:state.courseName,
+      topic:attempt.title,question:attempt.scenarioText,startedAt:session.startedAt,completedAt:attempt.submittedAt,
+      scorePercent:e.scorePercent,pass:e.pass,diagnosisCorrect:e.diagnosisCorrect,tutoringRequired:e.tutoringRequired,
+      totalConcepts:(e.competencyBreakdown||[]).reduce((n,b)=>n+(b.total||0),0),
+      conceptsMastered:(e.competencyBreakdown||[]).reduce((n,b)=>n+(b.correct||0),0),
+      totalExchanges:0,timeMinutes:Math.max(1,Math.round((new Date(attempt.submittedAt)-new Date(session.startedAt))/60000)),
+      strengths:e.strengths||[],improvementAreas:e.improvementAreas||[],
+      missedAbnormalFindings:e.missedAbnormalFindings||[],missedNursingActions:e.missedNursingActions||[],missedProviderInterventions:e.missedProviderInterventions||[],
+      competencyBreakdown:e.competencyBreakdown||[],evaluation:e,answers:attempt.answers,modelUsed:attempt.modelUsed||e.modelUsed||''
+    });
+  });
+}
+async function submitPerformanceRecords(session){
+  if(!session||!session.scenarioAttempts)return;
+  for(const attempt of session.scenarioAttempts){
+    try{
+      const payload={studentName:state.studentName,studentUUID:state.studentUUID,employeeId:state.employeeId,email:state.email,courseId:state.courseId,courseName:state.courseName,sessionId:session.sessionId,...attempt,evaluation:attempt.evaluation};
+      await fetch('/.netlify/functions/submit-performance',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    }catch(e){/* optional prototype endpoint */}
+  }
 }
 
+function renderSessionResults(sessionId){
+  const session=(state.completedSessions||[]).find(s=>s.sessionId===sessionId)||state.activeSession||getLatestSession();
+  if(!session){renderHome();return;}
+  showScreen('screen-main');
+  const targets=buildTutoringTargets(session);
+  const avg=Math.round(getSessionAverage(session));
+  const passCount=session.scenarioAttempts.filter(a=>a.evaluation?.pass).length;
+  document.getElementById('mainContent').innerHTML=`
+    <div class="phase-badge phase-3">Assessment complete</div>
+    <div class="card">
+      <div class="card-title">Session Results</div>
+      <div class="card-subtitle">Completed ${formatDeadline(session.completedAt)} · ${session.scenarioAttempts.length} scenario(s)</div>
+      <div class="stat-row">
+        <div class="stat-item"><div class="stat-val">${avg}%</div><div class="stat-lbl">Average score</div></div>
+        <div class="stat-item"><div class="stat-val">${passCount}/${session.scenarioAttempts.length}</div><div class="stat-lbl">Passed</div></div>
+        <div class="stat-item"><div class="stat-val">${targets.length}</div><div class="stat-lbl">Needs tutoring</div></div>
+      </div>
+      ${session.scenarioAttempts.map(a=>renderAttemptResult(a)).join('')}
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:20px">
+        ${targets.length?`<button class="btn btn-primary btn-lg" onclick="startPostSessionTutoring('${escJs(session.sessionId)}')">Begin Tutoring on Weak Areas →</button>`:`<div class="success-box" style="width:100%"><strong>Great work.</strong> You met the passing threshold for all assessed scenarios.</div>`}
+        <button class="btn btn-secondary btn-lg" onclick="showScreen('screen-dashboard')">View Dashboard</button>
+        <button class="btn btn-ghost btn-lg" onclick="renderHome()">Back to Home</button>
+      </div>
+    </div>`;
+}
+function renderAttemptResult(a){
+  const e=a.evaluation||{};
+  const pill=e.pass?'<span class="status-pill green">Pass</span>':'<span class="status-pill red">Needs tutoring</span>';
+  const dx=e.diagnosisCorrect?'<span class="status-pill green">Diagnosis correct</span>':'<span class="status-pill red">Diagnosis missed</span>';
+  return `<div class="scenario-card">
+    <div class="scenario-card-main">
+      <div class="scenario-id">${escHtml(a.scenarioId)} · ${escHtml(e.modelUsed||a.modelUsed||'')}</div>
+      <div class="scenario-topic">${escHtml(a.title)}</div>
+      <div class="bar-wrap"><div class="bar-fill" style="width:${Number(e.scorePercent)||0}%"></div></div>
+      <div class="scenario-meta">Score ${Number(e.scorePercent)||0}% · ${(e.improvementAreas||[]).join(', ')||'No major gaps detected'}</div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">${pill}${dx}</div>
+  </div>`;
+}
+function buildTutoringTargets(session){
+  return (session?.scenarioAttempts||[]).filter(a=>!a.evaluation?.pass || !a.evaluation?.diagnosisCorrect || (a.evaluation?.scorePercent||0)<50).map(a=>({
+    scenarioId:a.scenarioId,title:a.title,scenarioText:a.scenarioText,answers:a.answers,evaluation:a.evaluation,
+    strengths:a.evaluation?.strengths||[],improvementAreas:a.evaluation?.improvementAreas||[],
+    missedAbnormalFindings:a.evaluation?.missedAbnormalFindings||[],missedNursingActions:a.evaluation?.missedNursingActions||[],missedProviderInterventions:a.evaluation?.missedProviderInterventions||[],
+    actionsToSupportDevelopment:a.evaluation?.actionsToSupportDevelopment||{}
+  }));
+}
+function startPostSessionTutoring(sessionId){
+  const session=(state.completedSessions||[]).find(s=>s.sessionId===sessionId)||getLatestSession();
+  const targets=buildTutoringTargets(session);
+  if(!targets.length){toast('No tutoring required for this session.','success');return;}
+  state.tutoringSession={tutoringId:generateUUID(),sessionId:session.sessionId,targets,history:[{role:'assistant',content:buildInitialTutorMessage(targets)}],startedAt:new Date().toISOString()};
+  saveToStorage();
+  renderPostSessionTutor();
+}
+
+function itemName(x){
+  if(x == null) return '';
+  if(typeof x === 'string') return x;
+  return x.item || x.expected || x.label || x.name || String(x);
+}
+function itemWhy(x){
+  if(!x || typeof x === 'string') return '';
+  return x.whyItMatters || x.why || x.explanation || '';
+}
+
+function buildInitialTutorMessage(targets){
+  const first=targets[0];
+  const missed=[...(first.missedAbnormalFindings||[]).slice(0,3),...(first.missedNursingActions||[]).slice(0,3),...(first.missedProviderInterventions||[]).slice(0,3)].map(itemName).filter(Boolean);
+  return `Let’s review only the areas that need support.\n\nFirst scenario: ${first.title}.\n\nStrengths: ${(first.strengths||[]).join(' ')||'You completed the scenario response.'}\n\nImprovement focus: ${(first.improvementAreas||[]).join(', ')||'clinical reasoning depth'}.\n\nKey missed items to discuss: ${missed.join('; ')||'none listed'}.\n\nTo start: what details in this scenario would make you escalate care urgently rather than simply continue routine monitoring?`;
+}
+function renderPostSessionTutor(){
+  const t=state.tutoringSession;
+  if(!t){renderHome();return;}
+  showScreen('screen-main');
+  document.getElementById('mainContent').innerHTML=`
+    <div class="phase-badge phase-4">Post-session tutoring</div>
+    <div class="card">
+      <div class="card-title">Tutor: Weak Areas Only</div>
+      <div class="card-subtitle">The tutor uses scenario-specific missed findings, missed actions, and rubric development targets.</div>
+      ${t.targets.map(target=>`
+        <details style="margin-bottom:10px" ${t.targets.length===1?'open':''}>
+          <summary style="cursor:pointer;color:var(--accent);font-weight:600">${escHtml(target.title)} · ${target.evaluation.scorePercent}%</summary>
+          <div style="margin-top:10px" class="config-warn">${escHtml((target.improvementAreas||[]).join(', ')||'Needs review')}</div>
+        </details>
+      `).join('')}
+      <div class="chat-window" id="tutorChat">${renderChatHistory(t.history||[])}</div>
+      <div class="chat-input-row">
+        <textarea id="tutorInput" rows="2" placeholder="Ask a follow-up question or answer the tutor..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendTutorMessage();}"></textarea>
+        <button class="btn btn-primary" onclick="sendTutorMessage()">Send</button>
+      </div>
+      <div class="help-text">Press Enter to send · Shift+Enter for new line</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px">
+        <button class="btn btn-secondary" onclick="showScreen('screen-dashboard')">View Dashboard</button>
+        <button class="btn btn-ghost" onclick="renderHome()">Finish Tutoring</button>
+      </div>
+    </div>`;
+  scrollChat('tutorChat');
+}
+async function sendTutorMessage(){
+  const input=document.getElementById('tutorInput');
+  const text=(input?.value||'').trim();
+  if(!text)return;
+  input.value='';
+  const t=state.tutoringSession;
+  t.history.push({role:'user',content:text});
+  saveToStorage();
+  renderPostSessionTutor();
+  try{
+    const reply=await callTutor(buildTutorSystemPrompt(t.targets),t.history);
+    t.history.push({role:'assistant',content:reply});
+  }catch(e){
+    t.history.push({role:'assistant',content:simulateTutorReply(t.targets,text)});
+  }
+  saveToStorage();
+  renderPostSessionTutor();
+}
+function buildTutorSystemPrompt(targets){
+  return `You are a nursing education tutor. The learner has completed the assessment. Tutor only the failed or weak scenarios below. Separate strengths from improvement areas. Reference scenario details. In tutoring, you may explain why missed abnormal findings, nursing actions, and anticipated provider interventions matter clinically. Ask one follow-up question at a time. Do not re-test every scenario.\n\nTutoring targets:\n${JSON.stringify(targets,null,2)}`;
+}
+async function callTutor(system,messages){
+  const r=await fetch('/.netlify/functions/claude-feedback',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({provider:state.llmProvider||'anthropic',max_tokens:900,system,messages})});
+  if(!r.ok)throw new Error('Tutor API failed');
+  const d=await r.json();
+  if(d&&d.text)return d.text;
+  throw new Error('Tutor API returned empty response');
+}
+function simulateTutorReply(targets,userText){
+  const target=targets[0]||{};
+  const e=target.evaluation||{};
+  const missed=[...(e.missedAbnormalFindings||[]),...(e.missedNursingActions||[])];
+  const first=missed[0];
+  if(first){return `Good question. In ${target.title||'the scenario'}, one key missed item was **${first.item||first.expected}**. ${first.whyItMatters||'This matters because it changes the urgency of nursing response.'}\n\nThink back to the patient details. Which cue told you that this was no longer routine monitoring?`;}
+  return 'Let’s connect the scenario details to nursing action. What finding made the patient unstable, and what should the nurse do first?';
+}
+
+function renderDashboard(){
+  const sessions=state.completedSessions||[];
+  const attempts=sessions.flatMap(s=>(s.scenarioAttempts||[]).map(a=>({...a,sessionId:s.sessionId,completedAt:s.completedAt})));
+  const avg=sessions.length?Math.round(sessions.reduce((n,s)=>n+getSessionAverage(s),0)/sessions.length):0;
+  const passed=attempts.filter(a=>a.evaluation?.pass).length;
+  const weak=attempts.length-passed;
+  const byArea=aggregateCompetencyBreakdown(attempts);
+  const el=document.getElementById('dashboardContent');
+  el.innerHTML=`
+    <div style="margin-bottom:24px"><div style="font-family:var(--serif);font-size:26px;margin-bottom:4px">${escHtml(state.studentName)}</div><div style="font-family:var(--mono);font-size:11px;color:var(--ink3);margin-bottom:16px">${escHtml(state.courseId)} · Employee ID ${escHtml(state.employeeId)} · ID ${escHtml(state.studentUUID)}</div>
+      <div class="stat-row"><div class="stat-item"><div class="stat-val">${sessions.length}</div><div class="stat-lbl">Sessions</div></div><div class="stat-item"><div class="stat-val">${attempts.length}</div><div class="stat-lbl">Scenarios</div></div><div class="stat-item"><div class="stat-val">${sessions.length?avg+'%':'—'}</div><div class="stat-lbl">Average</div></div><div class="stat-item"><div class="stat-val">${passed}/${attempts.length||0}</div><div class="stat-lbl">Passed</div></div><div class="stat-item"><div class="stat-val">${weak}</div><div class="stat-lbl">Weak areas</div></div></div>
+    </div>
+    ${!sessions.length?'<div class="no-data"><div class="no-data-icon">📊</div>No completed sessions yet.</div>':`
+      <div class="card"><div class="card-title">Score Trend</div><div class="card-subtitle">Each row is a completed assessment session.</div>${sessions.map((s,i)=>`<div class="trend-row"><div style="font-family:var(--mono);font-size:11px;color:var(--ink3)">Session ${i+1}</div><div class="bar-wrap"><div class="bar-fill" style="width:${Math.round(getSessionAverage(s))}%"></div></div><div style="font-family:var(--mono);font-size:12px;color:var(--ink2)">${Math.round(getSessionAverage(s))}%</div></div>`).join('')}</div>
+      <div class="card"><div class="card-title">Per-area Performance</div><div class="card-subtitle">Aggregated across all completed scenarios.</div>${byArea.map(b=>`<div class="trend-row"><div style="font-family:var(--mono);font-size:10px;color:var(--ink3)">${escHtml(b.area.substring(0,16))}</div><div class="bar-wrap"><div class="bar-fill" style="width:${b.percent}%"></div></div><div style="font-family:var(--mono);font-size:12px;color:var(--ink2)">${b.percent}%</div></div>`).join('')}</div>
+      <div class="dashboard-grid">${attempts.map(a=>renderDashboardCard(a)).join('')}</div>
+    `}`;
+}
+function renderDashboardCard(a){
+  const e=a.evaluation||{};
+  return `<div class="dash-card"><div style="display:flex;justify-content:space-between;gap:8px;margin-bottom:8px"><div style="font-family:var(--mono);font-size:11px;color:var(--accent)">${escHtml(a.scenarioId)}</div>${e.pass?'<span class="status-pill green">Pass</span>':'<span class="status-pill red">Needs work</span>'}</div><div class="dash-topic">${escHtml(a.title)}</div><div class="dash-stats"><div class="dash-stat"><div class="dash-stat-val">${e.scorePercent||0}%</div><div class="dash-stat-lbl">Score</div></div><div class="dash-stat"><div class="dash-stat-val">${e.diagnosisCorrect?'Yes':'No'}</div><div class="dash-stat-lbl">Diagnosis</div></div></div><div class="help-text"><strong>Strengths:</strong> ${(e.strengths||[]).join(' ')||'—'}<br><strong>Improvement:</strong> ${(e.improvementAreas||[]).join(', ')||'—'}</div></div>`;
+}
+function aggregateCompetencyBreakdown(attempts){
+  const map={};
+  attempts.forEach(a=>(a.evaluation?.competencyBreakdown||[]).forEach(b=>{if(!map[b.area])map[b.area]={area:b.area,correct:0,total:0};map[b.area].correct+=Number(b.correct)||0;map[b.area].total+=Number(b.total)||0;}));
+  return Object.values(map).map(b=>({...b,percent:percent(b.correct,b.total)})).sort((a,b)=>a.percent-b.percent);
+}
+function getLatestSession(){return (state.completedSessions||[]).length?state.completedSessions[state.completedSessions.length-1]:null;}
+function getSessionAverage(session){const arr=session?.scenarioAttempts||[];return arr.length?arr.reduce((n,a)=>n+(Number(a.evaluation?.scorePercent)||0),0)/arr.length:0;}
+function countWeakScenarios(session){return buildTutoringTargets(session).length;}
+
+function exportData(){
+  const obj={exportedAt:new Date().toISOString(),version:'assessment-first-v2',student:{name:state.studentName,employeeId:state.employeeId,email:state.email,uuid:state.studentUUID,googleSub:state.googleSub,googleEmail:state.googleEmail,courseId:state.courseId,courseName:state.courseName},completedSessions:state.completedSessions,completedExercises:state.completedExercises,activeSession:state.activeSession};
+  downloadFile(`nursing_education_export_${new Date().toISOString().slice(0,10)}.json`,JSON.stringify(obj,null,2),'application/json');
+}
+function exportCSV(){
+  const rows=[['student_name','employee_id','session_id','completed_at','scenario_id','scenario_title','score_percent','pass','diagnosis_correct','strengths','improvement_areas','missed_abnormal_findings','missed_nursing_actions']];
+  (state.completedSessions||[]).forEach(s=>(s.scenarioAttempts||[]).forEach(a=>{const e=a.evaluation||{};rows.push([state.studentName,state.employeeId,s.sessionId,s.completedAt,a.scenarioId,a.title,e.scorePercent,e.pass,e.diagnosisCorrect,(e.strengths||[]).join('; '),(e.improvementAreas||[]).join('; '),(e.missedAbnormalFindings||[]).map(x=>x.item).join('; '),(e.missedNursingActions||[]).map(x=>x.item).join('; ')]);}));
+  const csv=rows.map(r=>r.map(v=>`"${String(v??'').replace(/"/g,'""')}"`).join(',')).join('\n');
+  downloadFile(`nursing_education_results_${new Date().toISOString().slice(0,10)}.csv`,csv,'text/csv');
+}
+function downloadFile(filename,content,type){const blob=new Blob([content],{type});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+
+function setLlmProvider(value){
+  state.llmProvider=value||'anthropic';
+  saveToStorage();
+  syncModelPicker();
+  toast('Tutor/evaluator model set to '+providerLabel(state.llmProvider),'success');
+  checkSelectedModelConnection(true);
+}
+function syncModelPicker(){
+  const mp=document.getElementById('modelPicker');
+  if(mp)mp.value=state.llmProvider||'anthropic';
+  renderModelStatus();
+}
+function providerLabel(p){return {anthropic:'Claude',openai:'OpenAI (GPT)',nemotron:'NVIDIA: Nemotron 3 Ultra',ollama:'Ollama GPT-OSS 20B'}[p]||p;}
+function updateHeader(){
+  const m=document.getElementById('headerMeta');
+  if(m)m.textContent=`${state.courseId||'NURS-ACUTE'} · ${state.studentName||''}`;
+  syncModelPicker();
+}
+function renderModelStatus(){
+  const box=document.getElementById('modelStatus');
+  const txt=document.getElementById('modelStatusText');
+  if(!box||!txt)return;
+  const provider=state.llmProvider||'anthropic';
+  const cached=MODEL_STATUS_CACHE[provider];
+  box.classList.remove('ok','bad','checking');
+  if(!cached){txt.textContent='Not checked';box.title='Click to check '+providerLabel(provider)+' connection';return;}
+  box.classList.add(cached.status);
+  txt.textContent=cached.text;
+  box.title=cached.detail||('Click to re-check '+providerLabel(provider));
+}
+function setModelStatus(provider,status,text,detail){
+  MODEL_STATUS_CACHE[provider]={status,text,detail,checkedAt:new Date().toISOString()};
+  if((state.llmProvider||'anthropic')===provider)renderModelStatus();
+}
+async function checkSelectedModelConnection(force=false){
+  const provider=state.llmProvider||'anthropic';
+  if(!force&&MODEL_STATUS_CACHE[provider]){renderModelStatus();return;}
+  const token=++MODEL_STATUS_TOKEN;
+  setModelStatus(provider,'checking','Checking...',providerLabel(provider)+' connection check in progress');
+  try{
+    const controller=new AbortController();
+    const timer=setTimeout(()=>controller.abort(),9000);
+    const r=await fetch('/.netlify/functions/claude-feedback',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      signal:controller.signal,
+      body:JSON.stringify({
+        provider,
+        max_tokens:256,
+        system:'Connection check. Reply with the single word OK.',
+        messages:[{role:'user',content:'OK'}]
+      })
+    });
+    clearTimeout(timer);
+    let data={};
+    try{data=await r.json();}catch(e){}
+    if(token!==MODEL_STATUS_TOKEN)return;
+    if(r.ok&&data&&typeof data.text==='string'&&data.text.trim()){
+      setModelStatus(provider,'ok','Connected to '+providerLabel(provider),`${providerLabel(provider)} responded using ${data.model||'configured model'}`);
+    }else{
+      const msg=(data&&((data.error&&data.error.message)||data.error||data.details))||`HTTP ${r.status}`;
+      setModelStatus(provider,'bad','Not connected',`${providerLabel(provider)} check failed: ${typeof msg==='string'?msg:JSON.stringify(msg)}`);
+    }
+  }catch(e){
+    if(token!==MODEL_STATUS_TOKEN)return;
+    setModelStatus(provider,'bad','Not connected',`${providerLabel(provider)} check failed: ${e.message||e}`);
+  }
+}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');updateHeader();if(id==='screen-main')setTimeout(()=>checkSelectedModelConnection(false),150);if(id==='screen-dashboard')renderDashboard();}
+function renderChatHistory(history){return (history||[]).map(m=>`<div class="msg ${m.role==='user'?'student':'tutor'}"><div class="msg-label">${m.role==='user'?'You':'Tutor'}</div><div class="msg-bubble">${formatMessage(m.content||'')}</div></div>`).join('');}
 function scrollChat(id){const el=document.getElementById(id);if(el)setTimeout(()=>{el.scrollTop=el.scrollHeight;},50);}
-function formatMessage(text){return escHtml(text).replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\*(.*?)\*/g,'<em>$1</em>').replace(/\n\n/g,'</p><p>').replace(/\n/g,'<br>').replace(/^/,'<p>').replace(/$/,'</p>');}
-function escHtml(str){return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function formatDate(iso){if(!iso)return'—';try{return new Date(iso).toLocaleDateString('en-US',{month:'short',day:'numeric'});}catch(e){return'—';}}
+function formatMessage(text){return escHtml(text).replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n\n/g,'</p><p>').replace(/\n/g,'<br>').replace(/^/,'<p>').replace(/$/,'</p>');}
+function escHtml(str){return String(str??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+function escAttr(str){return escHtml(str).replace(/`/g,'&#96;');}
+function escJs(str){return String(str||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'");}
 function formatDeadline(iso){if(!iso)return'—';try{return new Date(iso).toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});}catch(e){return'—';}}
-function toast(msg,type='info'){const wrap=document.getElementById('toastWrap');const el=document.createElement('div');el.className=`toast ${type}`;const icon=type==='success'?'✓':type==='error'?'✕':'ℹ';el.innerHTML=`<span style="color:${type==='success'?'var(--accent)':type==='error'?'var(--red)':'var(--blue)'}">${icon}</span> ${msg}`;wrap.appendChild(el);setTimeout(()=>el.remove(),3500);}
+function toast(msg,type='info'){const wrap=document.getElementById('toastWrap');const el=document.createElement('div');el.className=`toast ${type}`;const icon=type==='success'?'✓':type==='error'?'✕':'ℹ';el.innerHTML=`<span style="color:${type==='success'?'var(--accent)':type==='error'?'var(--red)':'var(--blue)'}">${icon}</span> ${escHtml(msg)}`;wrap.appendChild(el);setTimeout(()=>el.remove(),3500);}
 
 init();
 </script>
